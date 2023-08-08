@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BeachEquipmentStore.Common\BeachEquipmentStore.Common.csproj" />
+    <ProjectReference Include="..\BeachEquipmentStore.Data.Models\BeachEquipmentStore.Data.Models.csproj" />
+    <ProjectReference Include="..\BeachEquipmentStore.Data\BeachEquipmentStore.Data.csproj" />
+    <ProjectReference Include="..\BeachEquipmentStore.ViewModels\BeachEquipmentStore.Web.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>
