@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeachEquipmentStore.Service
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{2D2A42CE-6918-4BBC-A6CC-3F083F97C205}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeachEquipmentStore.Services.Data.Models", "BeachEquipmentStore.Services.Data.Models\BeachEquipmentStore.Services.Data.Models.csproj", "{C0EC3335-6983-4BEC-87C5-2788F9168B68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{FD1044CD-75D6-43BF-9527-E6610C8A5443}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD1044CD-75D6-43BF-9527-E6610C8A5443}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD1044CD-75D6-43BF-9527-E6610C8A5443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0EC3335-6983-4BEC-87C5-2788F9168B68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0EC3335-6983-4BEC-87C5-2788F9168B68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0EC3335-6983-4BEC-87C5-2788F9168B68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0EC3335-6983-4BEC-87C5-2788F9168B68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +67,7 @@ Global
 		{531BEFF8-376B-49E7-B1CD-3F78645AD059} = {DF081B6A-3CBB-4737-8F23-186620F810F8}
 		{85C0E010-60EE-4665-A5A6-042754E2E545} = {224CAF39-92CF-49FF-B2F5-9654A4BCD5C6}
 		{FD1044CD-75D6-43BF-9527-E6610C8A5443} = {2D2A42CE-6918-4BBC-A6CC-3F083F97C205}
+		{C0EC3335-6983-4BEC-87C5-2788F9168B68} = {2D2A42CE-6918-4BBC-A6CC-3F083F97C205}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {821ED017-6E45-442B-9E29-6BF1929AD2BF}

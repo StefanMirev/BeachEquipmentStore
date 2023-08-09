@@ -8,6 +8,8 @@ namespace BeachEquipmentStore.Web
     using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Data.Models;
     using Microsoft.Extensions.DependencyInjection;
+    using BeachEquipmentStore.Services.Data.Interfaces;
+    using BeachEquipmentStore.Services.Data;
 
     public class Program
     {
@@ -18,7 +20,6 @@ namespace BeachEquipmentStore.Web
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<EquipmentStoreDbContext>(options =>
                 options.UseSqlServer(connectionString));
-            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
@@ -29,10 +30,11 @@ namespace BeachEquipmentStore.Web
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 6;
             })
-                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<EquipmentStoreDbContext>();
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
+            builder.Services.AddTransient<IProductService, ProductService>();
 
             var app = builder.Build();
 

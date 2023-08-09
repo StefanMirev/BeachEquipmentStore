@@ -5,24 +5,26 @@
     using Microsoft.AspNetCore.Mvc;
     
     using BeachEquipmentStore.Web.ViewModels.Home;
+    using BeachEquipmentStore.Services.Data.Interfaces;
+    using BeachEquipmentStore.Data;
+    using Microsoft.AspNetCore.Authorization;
 
+    [Authorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IProductService _products;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IProductService products)
         {
-            _logger = logger;
+            _products = products;
         }
 
-        public IActionResult Index()
+        [AllowAnonymous]
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
+            List<IndexViewModel> randomProducts = await this._products.GetNineRandomProductsInStockAsync();
 
-        public IActionResult Privacy()
-        {
-            return View();
+            return View(randomProducts);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
