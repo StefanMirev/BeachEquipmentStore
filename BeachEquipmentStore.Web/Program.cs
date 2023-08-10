@@ -1,13 +1,14 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using BeachEquipmentStore.Data;
+
 namespace BeachEquipmentStore.Web
 {
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.DependencyInjection;
+    
 
     using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Data.Models;
-    using Microsoft.Extensions.DependencyInjection;
+    using static BeachEquipmentStore.Web.Infrastructure.Extensions.WebApplicationBuilderExtensions;
     using BeachEquipmentStore.Services.Data.Interfaces;
     using BeachEquipmentStore.Services.Data;
 
@@ -34,7 +35,7 @@ namespace BeachEquipmentStore.Web
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
-            builder.Services.AddTransient<IProductService, ProductService>();
+            builder.Services.AddApplicationServices(typeof(IProductService));
 
             var app = builder.Build();
 

@@ -4,7 +4,7 @@ namespace BeachEquipmentStore.Web.Controllers
 {
     public class CartController : Controller
     {
-        public IActionResult Index()
+        public IActionResult GoToCart()
         {
             return View();
         }

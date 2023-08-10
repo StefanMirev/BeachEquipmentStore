@@ -10,6 +10,7 @@ namespace BeachEquipmentStore.Services.Data
     using BeachEquipmentStore.Services.Data.Interfaces;
     using System.Linq;
     using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Services.Data.Models;
 
     public class ProductService : IProductService
     {
@@ -20,10 +21,26 @@ namespace BeachEquipmentStore.Services.Data
             _data = data;
         }
 
-        public async Task<List<IndexViewModel>> GetNineRandomProductsInStockAsync()
+        public async Task<List<ProductServiceModel>> GetAllProductsAsync()
+        {
+            return await _data.Products
+                .OrderBy(p => p.Stock)
+                 .ThenBy(p => p.CategoryId)
+                 .ThenBy(p => p.Id)
+                 .Select(p => new ProductServiceModel
+                 {
+                     Id = p.Id,
+                     Name = p.Name,
+                     ImageUrl = p.ImageUrl,
+                     Price = p.Price
+                 })
+                 .ToListAsync();
+        }
+
+        public async Task<List<ProductServiceModel>> GetRandomProductsInStockAsync()
         {
             int productsInStock = await _data.Products.Where(p => p.Stock > 0).CountAsync();
-            
+
             if (productsInStock <= 0)
             {
                 throw new InvalidOperationException("There are currently no products in stock!");
@@ -33,7 +50,7 @@ namespace BeachEquipmentStore.Services.Data
                  .Where(p => p.Stock > 0)
                  .OrderBy(p => Guid.NewGuid())
                  .Take(productsInStock > 9 ? 9 : productsInStock)
-                 .Select(p => new IndexViewModel
+                 .Select(p => new ProductServiceModel
                  {
                      Id = p.Id,
                      Name = p.Name,
