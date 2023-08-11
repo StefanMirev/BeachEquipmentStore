@@ -10,7 +10,7 @@
 <div class="category-grid">
     @foreach (var category in Model)
     {
-        <form method="post" asp-controller="Product" asp-action="ProductsByCategory">
+        <form method="post" asp-controller="Product" asp-action="ProductsByCategory" asp-route-categoryId="@category.Id">
             <input type="hidden" name="categoryId" value="@category.Id" />
             <button type="submit">
                 <img src="@category.ImageUrl" alt="@category.Name">

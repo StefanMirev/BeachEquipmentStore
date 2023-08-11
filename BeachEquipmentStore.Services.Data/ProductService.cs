@@ -8,6 +8,8 @@
     using System.Linq;
     using BeachEquipmentStore.Data.Models;
     using BeachEquipmentStore.Services.Data.Models.Product;
+    using BeachEquipmentStore.Services.Data.Models.Cart;
+    using System.Collections.Generic;
 
     public class ProductService : IProductService
     {
@@ -83,6 +85,28 @@
                     Price = p.Price
                 })
                 .ToListAsync();
+        }
+
+        public async Task<List<ProductServiceModel>> GetProductsInCart(List<CartServiceModel> cartItems)
+        {
+            List<ProductServiceModel> productsInCart = new List<ProductServiceModel>();
+
+            foreach (CartServiceModel cartItem in cartItems)
+            {
+                productsInCart.AddRange(await _data.Products
+                    .Where(p => p.Id == cartItem.ProductId)
+                    .Select(p => new ProductServiceModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        ImageUrl = p.ImageUrl,
+                        Price = p.Price,
+                        Quantity = cartItem.Quantity
+                    })
+                    .ToListAsync());
+            }
+
+            return productsInCart;
         }
     }
 }

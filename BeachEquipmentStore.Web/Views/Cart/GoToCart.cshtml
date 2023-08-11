@@ -1,6 +1,59 @@
-﻿@{
+﻿@model List<ProductViewModel>
+
+@{
     ViewBag.Title = "Количка";
 }
 
 <h2>@ViewBag.Title</h2>
 <hr />
+
+@if (Model.Count == 0)
+{
+    <h3>Количката ви е празна!</h3>
+    <p>Можете да я напълните<a asp-action="Index" asp-controller="Products">тук</a>.</p>
+}
+else
+{
+    <h2>Вашата количка</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Артикул</th>
+                <th>Количество</th>
+                <th>Единична цена</th>
+                <th>Общо за артикула</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td><img src="@product.ImageUrl" alt="@product.Name" style="max-width: 100px; max-height: 100px;" /></td>
+                    <td>@product.Name</td>
+                    <td>@product.Quantity</td>
+                    <td>@product.Price.ToString("C")</td>
+                    @{
+                        decimal? totalProductPrice = product.Price * product.Quantity;
+                        string formattedTotalProductPrice = string.Format("{0:C}", totalProductPrice);
+                    }
+                    <td>@formattedTotalProductPrice</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3">Обща сума:</th>
+                <th>@string.Format("{0:C}", Model.Sum(p => p.Price * p.Quantity))</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div>
+        <a asp-action="All" asp-controller="Products">Continue Shopping</a>
+        <form asp-action="ClearCart" asp-controller="Cart" method="post">
+            <button type="submit">Clear Cart</button>
+        </form>
+        <a asp-action="FinishOrder" asp-controller="Cart">Finish Order</a>
+    </div>
+}

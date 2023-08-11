@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BeachEquipmentStore.Services.Data.Interfaces
+﻿namespace BeachEquipmentStore.Services.Data.Interfaces
 {
+    using BeachEquipmentStore.Services.Data.Models.Cart;
+
     public interface ICartService
     {
+        Task AddItemToCart(Guid customerId, Guid productId, int quantity);
+
+        Task<List<CartServiceModel>> GetItemsInCart(Guid customerId);
     }
 }

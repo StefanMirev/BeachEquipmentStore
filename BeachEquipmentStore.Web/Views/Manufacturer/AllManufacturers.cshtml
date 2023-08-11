@@ -10,7 +10,7 @@
 <div class="manufacturer-grid">
     @foreach (var manufacturer in Model)
     {
-        <form method="post" asp-controller="Product" asp-action="ProductsByManufacturer">
+        <form method="post" asp-controller="Product" asp-action="ProductsByManufacturer" asp-route-manufacturerId="@manufacturer.Id">
             <input type="hidden" name="manufacturerId" value="@manufacturer.Id" />
             <button type="submit">
                 <img src="@manufacturer.ImageUrl" alt="@manufacturer.Name">
