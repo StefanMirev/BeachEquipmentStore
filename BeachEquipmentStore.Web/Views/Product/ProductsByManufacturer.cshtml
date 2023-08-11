@@ -1,6 +1,26 @@
-﻿@{
-    ViewBag.Title = "Марки";
+﻿@model List<ProductViewModel>
+
+@{
+    ViewBag.Title = $"Продукти от производител:";
 }
 
 <h2>@ViewBag.Title</h2>
 <hr />
+
+<div class="container mt-5">
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="@Url.Content(product.ImageUrl)" class="card-img-top" alt="@product.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">@product.Price.ToString("C")</p>
+                        <a href="#" class="btn btn-primary">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

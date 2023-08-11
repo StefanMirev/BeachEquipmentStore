@@ -121,7 +121,7 @@
             {
                 Id = 3,
                 Name = "CPS TOYS",
-                ImageUrl = "https://drive.google.com/uc?export=download&id=1QALhuevKfNfYXoDy5BWciyCVmO0q0VSQ"
+                ImageUrl = "https://drive.google.com/uc?export=download&id=1FAraXYWyp2hs1Q_xATJAvz8rBc_kPWth"
             };
 
             var manufacturerDreamfox = new Manufacturer()

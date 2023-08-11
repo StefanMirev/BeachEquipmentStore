@@ -17,7 +17,8 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             var allCategories = await _categories.GetAllCategoriesAsync();
 
-            List<CategoryViewModel> resultCategories = allCategories.Select(c => new CategoryViewModel
+            List<CategoryViewModel> resultCategories = allCategories
+                .Select(c => new CategoryViewModel
             {
                 Id = c.Id,
                 Name = c.Name,

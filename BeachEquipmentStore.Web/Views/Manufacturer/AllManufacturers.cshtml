@@ -1,0 +1,21 @@
+﻿@model List<ManufacturerViewModel>
+
+@{
+    ViewBag.Title = "Марки";
+}
+
+<h2>@ViewBag.Title</h2>
+<hr />
+
+<div class="manufacturer-grid">
+    @foreach (var manufacturer in Model)
+    {
+        <form method="post" asp-controller="Product" asp-action="ProductsByManufacturer">
+            <input type="hidden" name="manufacturerId" value="@manufacturer.Id" />
+            <button type="submit">
+                <img src="@manufacturer.ImageUrl" alt="@manufacturer.Name">
+                <h2>@manufacturer.Name</h2>
+                </button>
+        </form>
+    }
+</div>

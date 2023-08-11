@@ -19,10 +19,9 @@ namespace BeachEquipmentStore.Services.Data
             _data = data;
         }
 
-
         public async Task<List<CategoryServiceModel>> GetAllCategoriesAsync()
         {
-            var allCategories = await _data.Categories
+            return await _data.Categories
                 .Select(c => new CategoryServiceModel
                 {
                     Id = c.Id,
@@ -30,8 +29,6 @@ namespace BeachEquipmentStore.Services.Data
                     ImageUrl = c.ImageUrl
                 })
                 .ToListAsync();
-
-            return allCategories;
         }
     }
 }

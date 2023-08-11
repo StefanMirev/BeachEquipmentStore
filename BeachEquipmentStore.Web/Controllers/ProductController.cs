@@ -46,16 +46,19 @@ namespace BeachEquipmentStore.Web.Controllers
             return View(resultProducts);
         }
 
-        [HttpGet]
-        public  IActionResult ProductsByManufacturer()
-        {
-            return View();
-        }
-
-        [HttpPost]
         public async Task<IActionResult> ProductsByManufacturer(int manufacturerId)
         {
-            var resultProducts = await this._products.GetProductsByManufacturerAsync(manufacturerId);
+            var queryProducts = await this._products.GetProductsByManufacturerAsync(manufacturerId);
+
+            var resultProducts = queryProducts
+                .Select(p => new ProductViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    Price = p.Price
+                })
+                .ToList();
 
             return View(resultProducts);
         }
