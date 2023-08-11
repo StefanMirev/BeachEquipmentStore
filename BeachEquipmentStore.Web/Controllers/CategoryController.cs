@@ -1,12 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BeachEquipmentStore.Services.Data.Interfaces;
+using BeachEquipmentStore.Web.ViewModels.Category;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BeachEquipmentStore.Web.Controllers
 {
     public class CategoryController : Controller
     {
-        public IActionResult Index()
+        private readonly ICategoryService _categories;
+
+        public CategoryController(ICategoryService categories)
         {
-            return View();
+            _categories = categories;
+        }
+
+        public async Task<IActionResult> AllCategories()
+        {
+            var allCategories = await _categories.GetAllCategoriesAsync();
+
+            List<CategoryViewModel> resultCategories = allCategories.Select(c => new CategoryViewModel
+            {
+                Id = c.Id,
+                Name = c.Name,
+                ImageUrl = c.ImageUrl
+            })
+                .ToList();
+
+            return View(resultCategories);
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿namespace BeachEquipmentStore.Data.Models
 {
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     using Microsoft.EntityFrameworkCore;
+    
+    using static BeachEquipmentStore.Common.EntityValidationConstants.Manufacturer;
 
-    using static BeachEquipmentStore.Common.EntityValidationConstants.Category;
-
-    public class Category
+    public class Manufacturer
     {
         [Key]
         public int Id { get; set; }

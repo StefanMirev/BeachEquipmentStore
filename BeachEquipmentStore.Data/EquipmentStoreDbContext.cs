@@ -22,6 +22,7 @@
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Delivery> Delivery { get; set; } = null!;
         public DbSet<Invoice> Invoices { get; set; } = null!;
+        public DbSet<Manufacturer> Manufacturers { get; set; } = null!;
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<ProductOrder> ProductOrders { get; set; } = null!;
@@ -55,6 +56,7 @@
 
             builder.SeedUsers();
             builder.SeedCategories();
+            builder.SeedManufacturers();
             builder.SeedProducts();
 
             base.OnModelCreating(builder);

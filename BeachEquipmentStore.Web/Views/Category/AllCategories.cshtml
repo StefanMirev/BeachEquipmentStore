@@ -1,0 +1,20 @@
+﻿@model List<CategoryViewModel>
+
+@{
+    ViewBag.Title = "Категории";
+}
+
+<h2>@ViewBag.Title</h2>
+<hr />
+
+<div class="category-grid">
+    @foreach (var category in Model)
+    {
+        <form method="post" asp-controller="Product" asp-action="ProductsByCategory">
+            <input type="hidden" name="categoryId" value="@category.Id" />
+            <button type="submit">
+                <img src="@category.ImageUrl" alt="@category.Name">
+                <h2>@category.Name</h2>
+        </form>
+    }
+</div>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BeachEquipmentStore.Services.Data.Models
+namespace BeachEquipmentStore.Services.Data.Models.Product
 {
     public class ProductServiceModel
     {

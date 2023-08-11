@@ -1,7 +1,4 @@
-﻿
-
-
-namespace BeachEquipmentStore.Services.Data
+﻿namespace BeachEquipmentStore.Services.Data
 {
     using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +7,7 @@ namespace BeachEquipmentStore.Services.Data
     using BeachEquipmentStore.Services.Data.Interfaces;
     using System.Linq;
     using BeachEquipmentStore.Data.Models;
-    using BeachEquipmentStore.Services.Data.Models;
+    using BeachEquipmentStore.Services.Data.Models.Product;
 
     public class ProductService : IProductService
     {
@@ -58,6 +55,34 @@ namespace BeachEquipmentStore.Services.Data
                      Price = p.Price
                  })
                  .ToListAsync();
+        }
+
+        public async Task<List<ProductServiceModel>> GetProductsByCategoryAsync(int categoryId)
+        {
+            return await _data.Products
+                .Where(p => p.CategoryId == categoryId)
+                .Select(p => new ProductServiceModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    Price = p.Price
+                })
+                .ToListAsync();
+        }
+
+        public async Task<List<ProductServiceModel>> GetProductsByManufacturerAsync(int manufacturerId)
+        {
+            return await _data.Products
+                .Where(p => p.ManufacturerId == manufacturerId)
+                .Select(p => new ProductServiceModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    Price = p.Price
+                })
+                .ToListAsync();
         }
     }
 }

@@ -27,12 +27,6 @@
 
         [Required]
         [Unicode]
-        [StringLength(ManufacturerNameMaxLength, MinimumLength = ManufacturerNameMinLength)]
-        [DisplayName("Manufacturer Name")]
-        public string ManufacturerName { get; set; } = null!;
-
-        [Required]
-        [Unicode]
         [StringLength(DescriptionMaxLength, MinimumLength = DescriptionMinLength)]
         public string Description { get; set; } = null!;
 
@@ -54,6 +48,11 @@
         [Required]
         [DisplayName("Quantity in stock")]
         public int Stock { get; set; }
+
+        [Required]
+        public int ManufacturerId { get; set; }
+        [ForeignKey(nameof(ManufacturerId))]
+        public Manufacturer Manufacturer { get; set; } = null!;
 
         [Required]
         public int CategoryId { get; set; }

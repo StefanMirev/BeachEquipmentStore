@@ -26,25 +26,6 @@
             public const int NameMinLength = 2;
         }
 
-
-        public static class Product
-        {
-            public const int NameMaxLength = 100;
-            public const int NameMinLength = 7;
-
-            public const int DescriptionMaxLength = 600;
-            public const int DescriptionMinLength = 15;
-
-            public const int ManufacturerNameMaxLength = 70;
-            public const int ManufacturerNameMinLength = 5;
-
-            public const int BarcodeMinValue = 5;
-            public const int BarcodeMaxValue = 13;
-
-            public const double PriceMinValue = 0.01;
-            public const int PriceMaxValue = 250;
-        }
-
         public static class Delivery
         {
             public const int TrackingNumberMaxLength = 40;
@@ -59,5 +40,26 @@
             public const int ZipCodeMaxValue = 9974;
             public const int ZipCodeMinValue = 1000;
         }
+
+        public static class Manufacturer 
+        {
+            public const int NameMaxLength = 70;
+            public const int NameMinLength = 5;
+        }
+
+        public static class Product
+        {
+            public const int NameMaxLength = 100;
+            public const int NameMinLength = 7;
+
+            public const int DescriptionMaxLength = 600;
+            public const int DescriptionMinLength = 15;
+
+            public const int BarcodeMinValue = 5;
+            public const int BarcodeMaxValue = 13;
+
+            public const double PriceMinValue = 0.01;
+            public const int PriceMaxValue = 250;
+        }       
     }
 }

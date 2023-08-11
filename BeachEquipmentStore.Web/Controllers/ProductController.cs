@@ -29,14 +29,35 @@ namespace BeachEquipmentStore.Web.Controllers
             return View(allProducts);
         }
 
-        public async Task<IActionResult> ProductsByCategory()
+        public async Task<IActionResult> ProductsByCategory(int categoryId)
+        {
+            var queryProducts = await this._products.GetProductsByCategoryAsync(categoryId);
+
+            var resultProducts = queryProducts
+                .Select(p => new ProductViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    Price = p.Price
+                })
+                .ToList();
+
+            return View(resultProducts);
+        }
+
+        [HttpGet]
+        public  IActionResult ProductsByManufacturer()
         {
             return View();
         }
 
-        public async Task<IActionResult> ProductsByManufacturer()
+        [HttpPost]
+        public async Task<IActionResult> ProductsByManufacturer(int manufacturerId)
         {
-            return View();
+            var resultProducts = await this._products.GetProductsByManufacturerAsync(manufacturerId);
+
+            return View(resultProducts);
         }
     }
 }
