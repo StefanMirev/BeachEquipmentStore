@@ -7,5 +7,7 @@
         Task AddItemToCart(Guid customerId, Guid productId, int quantity);
 
         Task<List<CartServiceModel>> GetItemsInCart(Guid customerId);
+
+        Task RemoveItemsFromCart(Guid customerId);
     }
 }

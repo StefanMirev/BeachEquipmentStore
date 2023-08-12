@@ -12,6 +12,6 @@ namespace BeachEquipmentStore.Web.ViewModels.Category
 
         public string Name { get; set; } = null!;
 
-        public string ImageUrl { get; set; } = null!;
+        public string? ImageUrl { get; set; } = null!;
     }
 }

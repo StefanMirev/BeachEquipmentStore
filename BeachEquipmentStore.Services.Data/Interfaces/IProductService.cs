@@ -2,11 +2,15 @@
 {
     using BeachEquipmentStore.Services.Data.Models.Cart;
     using BeachEquipmentStore.Services.Data.Models.Product;
-    using BeachEquipmentStore.Web.ViewModels.Home;
 
     public interface IProductService
-    { 
+    {
+        Task<bool> IsInStock(Guid productId, int quantity);
+
         Task<List<ProductServiceModel>> GetAllProductsAsync();
+        
+        Task<ExtendedProductServiceModel> GetProductById(Guid productId);
+
         Task<List<ProductServiceModel>> GetRandomProductsInStockAsync();
 
         Task<List<ProductServiceModel>> GetProductsByCategoryAsync(int categoryId);

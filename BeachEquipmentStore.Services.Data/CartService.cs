@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static BeachEquipmentStore.Common.EntityValidationConstants;
 
 namespace BeachEquipmentStore.Services.Data
 {
@@ -53,9 +54,20 @@ namespace BeachEquipmentStore.Services.Data
                 .ToListAsync();       
         }
 
-        public Task<List<CartServiceModel>> GetItemsInCart()
+        public async Task RemoveItemsFromCart(Guid customerId)
         {
-            throw new NotImplementedException();
+            var productsToRemove = await this._data.CartItems
+                .Where(p => p.CustomerId == customerId)
+            .ToListAsync();
+
+            foreach (var cartItem in productsToRemove) 
+            {
+                var dbProduct = await _data.Products.FirstAsync(p => p.Id == cartItem.ProductId);
+                dbProduct.Stock += cartItem.Quantity;
+            }
+            
+            _data.RemoveRange(productsToRemove);
+            await _data.SaveChangesAsync();
         }
     }
 }

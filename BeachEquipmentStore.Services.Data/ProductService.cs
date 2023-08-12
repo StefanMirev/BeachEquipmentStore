@@ -10,6 +10,8 @@
     using BeachEquipmentStore.Services.Data.Models.Product;
     using BeachEquipmentStore.Services.Data.Models.Cart;
     using System.Collections.Generic;
+    using BeachEquipmentStore.Services.Data.Models.Manufacturer;
+    using BeachEquipmentStore.Services.Data.Models.Category;
 
     public class ProductService : IProductService
     {
@@ -18,6 +20,35 @@
         public ProductService(EquipmentStoreDbContext data)
         {
             _data = data;
+        }
+
+        public async Task<ExtendedProductServiceModel> GetProductById(Guid productId)
+        {
+            Product product = await _data.Products
+                .Include(p => p.Manufacturer)
+                .Include(p => p.Category)
+                .FirstAsync(p => p.Id.ToString() == productId.ToString());
+
+            return new ExtendedProductServiceModel
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                ImageUrl = product.ImageUrl,
+                Barcode = product.Barcode,
+                Price = product.Price,
+                Stock = product.Stock,
+                Manufacturer = new ManufacturerServiceModel
+                {
+                    Id = product.Manufacturer.Id,
+                    Name = product.Manufacturer.Name
+                },
+                Category = new CategoryServiceModel 
+                { 
+                    Id = product.Category.Id,
+                    Name = product.Category.Name
+                }
+            };
         }
 
         public async Task<List<ProductServiceModel>> GetAllProductsAsync()
@@ -107,6 +138,14 @@
             }
 
             return productsInCart;
+        }
+
+        public async Task<bool> IsInStock(Guid productId, int quantity)
+        {
+            Product product = await _data.Products
+                .FirstAsync(p => p.Id == productId);
+
+            return product.Stock >= quantity ? true : false;
         }
     }
 }

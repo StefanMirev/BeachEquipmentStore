@@ -43,6 +43,20 @@
     <div class="container">
         <main role="main" class="pb-3">
             <div class="container landing-page bg-white">
+                @if (TempData.ContainsKey("Message"))
+                {
+                    <div class="alert alert-success">
+                        @TempData["Message"]
+                    </div>
+                }
+
+                @if (TempData.ContainsKey("ErrorMessage"))
+                {
+                    <div class="alert alert-danger">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+
                 @RenderBody()
             </div>
         </main>

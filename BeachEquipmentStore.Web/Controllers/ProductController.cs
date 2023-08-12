@@ -1,4 +1,6 @@
 ﻿using BeachEquipmentStore.Services.Data.Interfaces;
+using BeachEquipmentStore.Web.ViewModels.Category;
+using BeachEquipmentStore.Web.ViewModels.Manufacturer;
 using BeachEquipmentStore.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Mvc;
 
@@ -61,6 +63,32 @@ namespace BeachEquipmentStore.Web.Controllers
                 .ToList();
 
             return View(resultProducts);
+        }
+
+        public async Task<IActionResult> GetSelectedProduct(Guid productId)
+        {
+            var selectedProduct = await this._products.GetProductById(productId);
+
+            return View(new ExtendedProductViewModel
+            {
+                Id = selectedProduct.Id,
+                Name = selectedProduct.Name,
+                Description = selectedProduct.Description,
+                ImageUrl= selectedProduct.ImageUrl,
+                Barcode = selectedProduct.Barcode,
+                Price= selectedProduct.Price,
+                Stock = selectedProduct.Stock,
+                Manufacturer = new ManufacturerViewModel
+                {
+                    Id = selectedProduct.Manufacturer.Id,
+                    Name = selectedProduct.Manufacturer.Name, 
+                },
+                Category = new CategoryViewModel
+                {
+                    Id = selectedProduct.Category.Id,
+                    Name = selectedProduct.Category.Name
+                }
+            });
         }
     }
 }

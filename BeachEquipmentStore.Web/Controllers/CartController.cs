@@ -40,11 +40,27 @@ namespace BeachEquipmentStore.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(Guid customerId, Guid productId, int quantity)
         {
-            await _cartItems.AddItemToCart(customerId, productId, quantity);
-
             string refererUrl = Request.Headers["Referer"].ToString();
 
+            if (await _products.IsInStock(productId, quantity))
+            {
+                await _cartItems.AddItemToCart(customerId, productId, quantity);
+
+                TempData["Message"] = "Product successfully added to cart!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Product is not in stock.";
+            }
+
             return Redirect(refererUrl);
+        }
+
+        public async Task<IActionResult> ClearCart(Guid customerId)
+        {
+            await _cartItems.RemoveItemsFromCart(customerId);   
+
+            return RedirectToAction("All", "Product");
         }
     }
 }
