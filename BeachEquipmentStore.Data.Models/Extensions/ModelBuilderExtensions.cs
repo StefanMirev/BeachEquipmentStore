@@ -6,44 +6,70 @@
 
     public static class ModelBuilderExtensions
     {
+        private static ApplicationUser UserOne = new ApplicationUser();
+        private static ApplicationUser UserTwo = new ApplicationUser();
+        private static ApplicationUser UserThree = new ApplicationUser();
         public static void SeedUsers(this ModelBuilder modelBuilder)
         {
             var hasher = new PasswordHasher<ApplicationUser>();
 
-            var userOne = new ApplicationUser()
-            {
-                FirstName = "Petar",
-                LastName = "Petrov",
-                UserName = "p.petrov@mail.com",
-                NormalizedUserName = "p.petrov@mail.com",
-                Email = "p.petrov@mail.com",
-                NormalizedEmail = "p.petrov@mail.com"
-            };
-            userOne.PasswordHash = hasher.HashPassword(userOne, "123123");
+            UserOne.FirstName = "Petar";
+            UserOne.LastName = "Petrov";
+            UserOne.UserName = "p.petrov@mail.com";
+            UserOne.NormalizedUserName = "P.PETROV@MAIL.COM";
+            UserOne.Email = "p.petrov@mail.com";
+            UserOne.NormalizedEmail = "P.PETROV@MAIL.COM";
+            UserOne.PhoneNumber = "0876596224";
+            UserOne.PasswordHash = hasher.HashPassword(UserOne, "123123");
 
-            var userTwo = new ApplicationUser()
-            {
-                FirstName = "Nicko",
-                LastName = "Flacko",
-                UserName = "n.flacko@mail.com",
-                NormalizedUserName = "n.flacko@mail.com",
-                Email = "n.flacko@mail.com",
-                NormalizedEmail = "n.flacko@mail.com"
-            };
-            userTwo.PasswordHash = hasher.HashPassword(userTwo, "123123");
+            UserTwo.FirstName = "Nicko";
+            UserTwo.LastName = "Flacko";
+            UserTwo.UserName = "n.flacko@mail.com";
+            UserTwo.NormalizedUserName = "N.FLACKO@MAIL.COM";
+            UserTwo.Email = "n.flacko@mail.com";
+            UserTwo.NormalizedEmail = "N.FLACKO@MAIL.COM";
+            UserTwo.PhoneNumber = "0888202449";
+            UserTwo.PasswordHash = hasher.HashPassword(UserTwo, "123123");
 
-            var userThree = new ApplicationUser()
-            {
-                FirstName = "Stamat",
-                LastName = "Sarafov",
-                UserName = "s.sarafov@mail.com",
-                NormalizedUserName = "s.sarafov@mail.com",
-                Email = "s.sarafov@mail.com",
-                NormalizedEmail = "s.sarafov@mail.com"
-            };
-            userThree.PasswordHash = hasher.HashPassword(userThree, "123123");
+            UserThree.FirstName = "Stamat";
+            UserThree.LastName = "Sarafov";
+            UserThree.UserName = "s.sarafov@mail.com";
+            UserThree.NormalizedUserName = "S.SARAFOV@MAIL.COM";
+            UserThree.Email = "s.sarafov@mail.com";
+            UserThree.NormalizedEmail = "S.SARAFOV@MAIL.COM";
+            UserThree.PhoneNumber = "0885527733";
+            UserThree.PasswordHash = hasher.HashPassword(UserThree, "123123");
 
-            modelBuilder.Entity<ApplicationUser>().HasData(userOne, userTwo, userThree);
+            modelBuilder.Entity<ApplicationUser>().HasData(UserOne, UserTwo, UserThree);
+        }
+
+        public static void SeedAddresses(this ModelBuilder modelBuilder)
+        {
+            var addressOne = new Address()
+            {
+                Name = "ул. Кракра №3",
+                Town = "София",
+                ZipCode = 1000,
+                CustomerId = UserOne.Id
+            };
+
+            var addressTwo = new Address()
+            {
+                Name = "кв. Овча Купел, ул. Рачка №9",
+                Town = "София",
+                ZipCode = 1000,
+                CustomerId = UserTwo.Id
+            };
+
+            var addressThree = new Address()
+            {
+                Name = "ул. Обзорски Тигър № 33",
+                Town = "Обзор",
+                ZipCode = 1000,
+                CustomerId = UserTwo.Id
+            };
+
+            modelBuilder.Entity<Address>().HasData(addressOne, addressTwo, addressThree);
         }
 
         public static void SeedCategories(this ModelBuilder modelBuilder)
@@ -51,35 +77,35 @@
             var categoryTowel = new Category()
             {
                 Id = 1,
-                Name = "Towel",
+                Name = "Плажни кърпи",
                 ImageUrl = "https://drive.google.com/uc?export=download&id=1JdKCD7760eDhZMyz2PMTPs8_cCRlxOIy"
             };
 
             var categoryUmberlla = new Category()
             {
                 Id = 2,
-                Name = "Umbrella",
+                Name = "Чадъри",
                 ImageUrl = "https://drive.google.com/uc?export=download&id=10dHA3b3yfniTLBRqTPUOoG5ViR5haXTF"
             };
 
             var categoryBag = new Category()
             {
                 Id = 3,
-                Name = "Bag",
+                Name = "Чанти",
                 ImageUrl = "https://drive.google.com/uc?export=download&id=16xAqp3w9XhGunshFMlyCkRqaklNFqjnM"
             };
 
             var categoryBeachToy = new Category()
             {
                 Id = 4,
-                Name = "Beach Toy",
+                Name = "Плажни играчи",
                 ImageUrl = "https://drive.google.com/uc?export=download&id=167EWd3eT6d-rsAYwOf9F2Il61FydivXd"
             };
 
             var categorySwimmingEquipment = new Category()
             {
                 Id = 5,
-                Name = "Swimming Equipment",
+                Name = "Обурудвабе за плуване",
                 ImageUrl = "https://drive.google.com/uc?export=download&id=1A7wUFEC7laR2iQBYoMV2pryD4qW8D-gd"
 
             };
@@ -87,14 +113,14 @@
             var categoryFloaty = new Category()
             {
                 Id = 6,
-                Name = "Floaty",
+                Name = "Надувни",
                 ImageUrl = "https://drive.google.com/uc?export=download&id=1i9tFNjRi7OAW3lle188G4DMA2aMSjvix"
             };
 
             var categoryBall = new Category()
             {
                 Id = 7,
-                Name = "Ball",
+                Name = "Топки",
                 ImageUrl = "https://drive.google.com/uc?export=download&id=1_2OH8K54pi-UsiYBCVjkLHRsYXTrp9Gy"
             };
 
@@ -173,7 +199,7 @@
                 ImageUrl = "https://drive.google.com/uc?export=download&id=12nW3Spi5yXjBb8-vtNZQsLwfpS8R95nm"
             };
 
-            modelBuilder.Entity<Manufacturer>().HasData(manufacturerVinex,manufacturerCoveri,manufacturerCPS,manufacturerDreamfox,manufacturerIntex,manufacturerPublidea,manufacturerShenzhen,manufacturerShui,manufacturerStar,manufacturerVanguard);
+            modelBuilder.Entity<Manufacturer>().HasData(manufacturerVinex, manufacturerCoveri, manufacturerCPS, manufacturerDreamfox, manufacturerIntex, manufacturerPublidea, manufacturerShenzhen, manufacturerShui, manufacturerStar, manufacturerVanguard);
         }
 
         public static void SeedProducts(this ModelBuilder modelBuilder)

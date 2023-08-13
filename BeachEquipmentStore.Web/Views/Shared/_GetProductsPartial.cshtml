@@ -9,11 +9,12 @@
                     <div class="card-body">
                         <h5 class="card-title">@product.Name</h5>
                         <p class="card-text">@product.Price.ToString("C")</p>
-                        <partial name="_AddToCartPartial" model="@product"/>
+                        
                     </div>
                 </div>
             </div>
             </a>
+            <partial name="_AddToCartPartial" model="@product" />
         }
     </div>
 </div>

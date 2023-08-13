@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{2D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeachEquipmentStore.Services.Data.Models", "BeachEquipmentStore.Services.Data.Models\BeachEquipmentStore.Services.Data.Models.csproj", "{C0EC3335-6983-4BEC-87C5-2788F9168B68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeachEquipmentStore.Web.Infrastructure", "BeachEquipmentStore.Web.Infrastructure\BeachEquipmentStore.Web.Infrastructure.csproj", "{4AF154E2-212E-4ED1-BB0A-04974F9D022E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeachEquipmentStore.Web.Infrastructure", "BeachEquipmentStore.Web.Infrastructure\BeachEquipmentStore.Web.Infrastructure.csproj", "{4AF154E2-212E-4ED1-BB0A-04974F9D022E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

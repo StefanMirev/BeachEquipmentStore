@@ -1,0 +1,20 @@
+﻿@model MyProfileViewModel
+
+@{
+    Layout = "_Layout";
+}
+<h2>My Profile</h2>
+<hr />
+
+<nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+    <partial name="_ManageNav" />
+</nav>
+<div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <p>@Model.FirstName</p>
+        <p>@Model.LastName</p>
+        <p>@Model.Email</p>
+        <p>@Model.PhoneNumber</p>
+    </div>
+</div>
+

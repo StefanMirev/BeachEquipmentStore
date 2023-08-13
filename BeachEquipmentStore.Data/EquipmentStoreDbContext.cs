@@ -4,11 +4,11 @@
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
 
-    using BeachEquipmentStore.Data.Models;
     using System.Reflection;
+
+    using BeachEquipmentStore.Data.Models;
     using BeachEquipmentStore.Data.Models.Extensions;
-    using System.Reflection.Emit;
-    using System.Reflection.Metadata;
+
 
     public class EquipmentStoreDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
@@ -18,6 +18,7 @@
 
         }
 
+        public DbSet<Address> Addresses { get; set; } = null!;
         public DbSet<CartItem> CartItems { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Delivery> Delivery { get; set; } = null!;
@@ -55,6 +56,7 @@
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.SeedUsers();
+            builder.SeedAddresses();
             builder.SeedCategories();
             builder.SeedManufacturers();
             builder.SeedProducts();

@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using BeachEquipmentStore.Data;
 
 namespace BeachEquipmentStore.Web
 {
@@ -60,7 +63,10 @@ namespace BeachEquipmentStore.Web
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapRazorPages();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+            });
 
             app.Run();
         }

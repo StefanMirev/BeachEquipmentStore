@@ -18,6 +18,7 @@
             this.Orders = new HashSet<Order>();
             this.Invoices = new HashSet<Invoice>();
             this.Deliveries = new HashSet<Delivery>();
+            this.Addresses = new HashSet<Address>();
         }
 
         [Required]
@@ -31,6 +32,8 @@
         [StringLength(LastNameMaxLength, MinimumLength = LastNameMinLength)]
         [DisplayName("Last Name")]
         public string LastName { get; set; } = null!;
+
+        public ICollection<Address> Addresses { get; set; }
 
         public ICollection<CartItem> CartItems { get; set; }
 
