@@ -9,15 +9,21 @@ namespace BeachEquipmentStore.Services.Data.Interfaces
 {
     public interface IProfileService
     {
-        Task<MyProfileServiceModel> GetUserInfo (string userId);
+        Task<UserInfoServiceModel> GetUserInfo (string userId);
 
-        Task<MyProfileServiceModel> ChangeUserInfo(string firstName, string lastName, string email, string phoneNumber);
+        Task ChangeUserInfo(string userId, string firstName, string lastName, string email, string phoneNumber);
 
-        Task<PasswordServiceModel> ChangePassword (string currentPassword, string newPasswordHash, string newPasswordConfirmation);
+        Task ChangePassword (string userId, string currentPassword, string newPassword, string newPasswordConfirmation);
 
-        Task<AddressServiceModel> GetAddressInfo (string userId);
+        Task<List<AddressServiceModel>> GetAllAddressesInfo (string userId);
 
-        Task<AddressServiceModel> ChangeAddressInfo(string address, string town, string zipCode);
+        Task<AddressServiceModel> GetAddressInfo (string addressId);
+
+        Task AddAddress(string userId, string name, string town, int zipCode);
+
+        Task ChangeAddressInfo(Guid addressId, string address, string town, int zipCode);
+
+        Task DeleteAddress(Guid addressId);
 
         Task<OrderHistoryServiceModel> GetOrderHistory(string userId);
     }

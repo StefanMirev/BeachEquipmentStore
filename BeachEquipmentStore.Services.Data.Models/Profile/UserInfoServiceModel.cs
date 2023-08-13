@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BeachEquipmentStore.Services.Data.Models.Profile
 {
-    public class MyProfileServiceModel
+    public class UserInfoServiceModel
     {
         public string FirstName { get; set; } = null!;
 
