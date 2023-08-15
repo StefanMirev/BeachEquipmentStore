@@ -1,4 +1,5 @@
 ﻿using BeachEquipmentStore.Web.ViewModels.Product;
+using BeachEquipmentStore.Web.ViewModels.Profile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,19 +15,9 @@ namespace BeachEquipmentStore.Web.ViewModels.Order
             this.Products = new List<ProductViewModel>();    
         }
 
-        public string FirstName { get; set; } = null!;
-
-        public string LastName { get; set; } = null!;
-
-        public string Email { get; set; } = null!;
-
-        public string PhoneNumber { get; set; } = null!;
-
-        public string? AddressName { get; set; }
-
-        public string? Town { get; set; }
-
-        public int? ZipCode { get; set; }
+        public  UserInfoViewModel UserInfo { get; set; }
+        
+        public AddressViewModel? UserAddress { get; set; }
 
         public List<ProductViewModel> Products { get; set; }
     }

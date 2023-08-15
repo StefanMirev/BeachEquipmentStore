@@ -1,0 +1,94 @@
+﻿@model OrderDetailViewModel
+
+<h2>Детайли за доставка</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th colspan="2">Детайли</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Проъчка №:</td>
+            <td>@Model.Id</td>
+        </tr>
+        <tr>
+            <td>Дата:</td>
+            <td>@Model.OrderDate</td>
+        </tr>
+        <tr>
+            <td>Начин на плащане:</td>
+            <td> Плащане при доставка</td>
+        </tr>
+        <tr>
+            <td>Метод на доставка:</td>
+            <td> Доставка до адрес</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Адрес за доставка</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <p>@Model.Address.Name</p>
+                <p>@Model.Address.Town, @Model.Address.ZipCode</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Име на продукт</th>
+            <th>Артикул №</th>
+            <th>Количество</th>
+            <th>Ед. цена</th>
+            <th>Всичко</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Products)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Barcode</td>
+                <td>@item.Stock</td>
+                <td>@item.Price.ToString("C")</td>
+                @{
+                    decimal totalItemPrice = item.Price * item.Stock;
+                }
+                <td>@totalItemPrice.ToString("C")</td>
+            </tr>
+        }   
+    </tbody>
+    <tr>Сума: @Model.TotalPrice.ToString("C")</tr>
+    <tr>Цена за доставка: @Model.DeliveryPrice.ToString("C")</tr>
+    <tr>Всичко: @Model.OverallPrice.ToString("C")
+    <tr />
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Статус на поръчката</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <p>@Model.DeliveryStatus</p>
+                <p>@Model.ShippingDate</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<a asp-controller="Profile" asp-action="OrderHistory" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Обратно към история на поръчките</a>

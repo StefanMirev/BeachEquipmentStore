@@ -12,6 +12,7 @@
         {
             this.Id = Guid.NewGuid();
             this.OrderProducts = new HashSet<ProductOrder>();
+            this.ShippingDate = null;
         }
 
         [Key]
@@ -21,9 +22,8 @@
         [DisplayName("Order Date")]
         public DateTime OrderDate { get; set; }
 
-        [Required]
         [DisplayName("Shipping Date")]
-        public DateTime ShippingDate { get; set; }
+        public DateTime? ShippingDate { get; set; }
 
         [Required]
         [DisplayName("Delivery Status")]

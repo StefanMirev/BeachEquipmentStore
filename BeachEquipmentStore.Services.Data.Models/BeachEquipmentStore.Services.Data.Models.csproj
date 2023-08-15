@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BeachEquipmentStore.Data.Models\BeachEquipmentStore.Data.Models.csproj" />
+  </ItemGroup>
+
 </Project>

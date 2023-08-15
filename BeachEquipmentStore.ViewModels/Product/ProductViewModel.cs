@@ -16,6 +16,6 @@ namespace BeachEquipmentStore.Web.ViewModels.Product
 
         public decimal Price { get; set; }
 
-        public int? Quantity { get; set; }
+        public int Quantity { get; set; }
     }
 }
