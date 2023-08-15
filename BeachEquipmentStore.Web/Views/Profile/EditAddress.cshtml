@@ -18,7 +18,7 @@
         <label for="zipCode">Пощенски код</label>
         <input type="text" class="form-control" id="zipCode" name="ZipCode" value="@Model.ZipCode" required>
     </div>
-    <button type="submit" class="btn btn-primary" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)" asp-route-addressId="@Model.Id">Запази промените</button>
+    <button type="submit" class="btn btn-primary" asp-route-userId="@User.GetId()" asp-route-addressId="@Model.Id">Запази промените</button>
 </form>
 
-<a asp-controller="Profile" asp-action="GetAddress" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Откажи промените</a>
+<a asp-controller="Profile" asp-action="GetAddress" asp-route-userId="@User.GetId()">Откажи промените</a>

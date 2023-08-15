@@ -56,8 +56,8 @@ namespace BeachEquipmentStore.Services.Data
                 },
                 UserAddress = new AddressServiceModel
                 {
-                    Name = userAddress.Name,
-                    Town = userAddress.Town,
+                    Name = userAddress!.Name,
+                    Town = userAddress!.Town,
                     ZipCode = userAddress.ZipCode,
                 },
                 Products = userProducts
@@ -70,8 +70,8 @@ namespace BeachEquipmentStore.Services.Data
             {
                 Address address = new Address()
                 {
-                    Name = addressName,
-                    Town = town,
+                    Name = addressName!,
+                    Town = town!,
                     ZipCode = zipCode,
                     CustomerId = Guid.Parse(userId)
                 };

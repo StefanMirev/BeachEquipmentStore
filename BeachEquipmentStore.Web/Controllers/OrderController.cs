@@ -26,7 +26,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             var orderServiceData = await _orders.GetDataRequiredForOrder(userId);
 
-            bool hasAddress = !string.IsNullOrEmpty(orderServiceData.UserAddress.Name);
+            bool hasAddress = !string.IsNullOrEmpty(orderServiceData.UserAddress?.Name);
             ViewBag.HasAddress = hasAddress;
 
             decimal? sumOfAllProducts = orderServiceData.Products.Sum(p => p.Price * p.Quantity);
@@ -43,8 +43,8 @@ namespace BeachEquipmentStore.Web.Controllers
                 },
                 UserAddress = new AddressViewModel
                 {
-                    Name = orderServiceData.UserAddress.Name,
-                    Town = orderServiceData.UserAddress.Town,
+                    Name = orderServiceData.UserAddress!.Name,
+                    Town = orderServiceData.UserAddress!.Town,
                     ZipCode = orderServiceData.UserAddress.ZipCode
                 },
                 Products = new List<ProductViewModel>(orderServiceData.Products.Select(p => new ProductViewModel

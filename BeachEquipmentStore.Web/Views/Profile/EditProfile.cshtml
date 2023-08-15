@@ -26,5 +26,5 @@
         <input type="text" id="PhoneNumber" name="PhoneNumber" class="form-control" value="@Model.PhoneNumber" />
     </div>
 
-    <button type="submit" class="btn btn-primary" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Запази промените</button>
+    <button type="submit" class="btn btn-primary" asp-route-userId="@User.GetId()">Запази промените</button>
 </form>

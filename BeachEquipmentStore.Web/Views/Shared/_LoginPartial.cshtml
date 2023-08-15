@@ -5,13 +5,13 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="GoToCart" asp-route-customerId="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Количка</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="GoToCart" asp-route-customerId="@User.GetId()">Количка</a>
         </li>
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Административен панел</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Profile" asp-action="MyProfile" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)" title="Manage">Hello @User.Identity?.Name!</a>
+            <a class="nav-link text-dark" asp-controller="Profile" asp-action="MyProfile" asp-route-userId="@User.GetId()" title="Manage">Hello @User.Identity?.Name!</a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

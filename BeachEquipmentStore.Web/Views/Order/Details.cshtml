@@ -91,4 +91,4 @@
     </tbody>
 </table>
 
-<a asp-controller="Profile" asp-action="OrderHistory" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)">Обратно към история на поръчките</a>
+<a asp-controller="Profile" asp-action="OrderHistory" asp-route-userId="@User.GetId()">Обратно към история на поръчките</a>

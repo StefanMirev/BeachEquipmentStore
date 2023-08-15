@@ -55,9 +55,9 @@ else
     <div>
         <a asp-action="All" asp-controller="Product">ПРОДЪЛЖИ С ПОКУПКИТЕ</a>
         <form asp-action="ClearCart" asp-controller="Cart" method="post">
-            <input type="hidden" name="customerId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+            <input type="hidden" name="customerId" value="@User.GetId()" />
             <button type="submit">ИЗЧИСТИ КОЛИЧКАТА</button>
         </form>
-        <a asp-action="CreateOrder" asp-controller="Order" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)">ПРИКЛЮЧИ ПОРЪЧКАТА</a>
+        <a asp-action="CreateOrder" asp-controller="Order" asp-route-userId="@User.GetId()">ПРИКЛЮЧИ ПОРЪЧКАТА</a>
     </div>
 }
