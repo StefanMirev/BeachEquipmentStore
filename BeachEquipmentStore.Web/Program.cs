@@ -14,6 +14,7 @@ namespace BeachEquipmentStore.Web
     using static BeachEquipmentStore.Web.Infrastructure.Extensions.WebApplicationBuilderExtensions;
     using BeachEquipmentStore.Services.Data.Interfaces;
     using BeachEquipmentStore.Services.Data;
+    using BeachEquipmentStore.Web.Infrastructure.ModelBinders;
 
     public class Program
     {
@@ -36,7 +37,11 @@ namespace BeachEquipmentStore.Web
             })
                 .AddEntityFrameworkStores<EquipmentStoreDbContext>();
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews()
+                .AddMvcOptions(options =>
+                {
+                    options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
+                });
             builder.Services.AddRazorPages();
             builder.Services.AddApplicationServices(typeof(IProductService));
 

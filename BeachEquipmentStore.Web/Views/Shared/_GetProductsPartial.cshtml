@@ -1,6 +1,8 @@
-﻿<div class="container mt-5">
+﻿<partial name="_FilterProducts"/>
+
+<div class="container mt-5">
     <div class="row">
-        @foreach (var product in Model)
+        @foreach (var product in Model.FilteredProducts.Products)
         {
             <a asp-controller="Product" asp-action="GetSelectedProduct" asp-route-productId="@product.Id">
             <div class="col-md-4 mb-4">

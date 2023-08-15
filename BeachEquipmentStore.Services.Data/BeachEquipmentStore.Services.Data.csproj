@@ -11,7 +11,6 @@
     <ProjectReference Include="..\BeachEquipmentStore.Data.Models\BeachEquipmentStore.Data.Models.csproj" />
     <ProjectReference Include="..\BeachEquipmentStore.Data\BeachEquipmentStore.Data.csproj" />
     <ProjectReference Include="..\BeachEquipmentStore.Services.Data.Models\BeachEquipmentStore.Services.Data.Models.csproj" />
-    <ProjectReference Include="..\BeachEquipmentStore.ViewModels\BeachEquipmentStore.Web.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,4 @@
 ﻿using BeachEquipmentStore.Services.Data.Models.Order;
-using BeachEquipmentStore.Web.ViewModels.Product;
-using BeachEquipmentStore.Web.ViewModels.Profile;
 
 namespace BeachEquipmentStore.Services.Data.Interfaces
 {

@@ -18,5 +18,7 @@
         Task<List<ProductServiceModel>> GetProductsByManufacturerAsync(int manufacturerId);
 
         Task<List<ProductServiceModel>> GetProductsInCart(List<CartServiceModel> cartItems);
+
+        Task<ExtendedFiltrationServiceModel> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId);
     }
 }

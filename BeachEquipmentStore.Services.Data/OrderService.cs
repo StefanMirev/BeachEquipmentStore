@@ -1,18 +1,17 @@
 ﻿using BeachEquipmentStore.Data;
 using BeachEquipmentStore.Data.Models;
-using BeachEquipmentStore.Data.Models.Enums;
+
 using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Services.Data.Models.Cart;
+
 using BeachEquipmentStore.Services.Data.Models.Order;
 using BeachEquipmentStore.Services.Data.Models.Product;
 using BeachEquipmentStore.Services.Data.Models.Profile;
-using BeachEquipmentStore.Web.ViewModels.Product;
+
 using Microsoft.EntityFrameworkCore;
 
 using ApplicationUser = BeachEquipmentStore.Data.Models.ApplicationUser;
 using Address = BeachEquipmentStore.Data.Models.Address;
 using Product = BeachEquipmentStore.Data.Models.Product;
-using BeachEquipmentStore.Web.ViewModels.Profile;
 using static BeachEquipmentStore.Common.EntityValidationConstants;
 
 namespace BeachEquipmentStore.Services.Data

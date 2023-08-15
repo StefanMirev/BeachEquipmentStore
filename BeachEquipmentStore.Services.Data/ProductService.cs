@@ -3,15 +3,15 @@
     using Microsoft.EntityFrameworkCore;
 
     using BeachEquipmentStore.Data;
-    using BeachEquipmentStore.Web.ViewModels.Home;
     using BeachEquipmentStore.Services.Data.Interfaces;
     using System.Linq;
-    using BeachEquipmentStore.Data.Models;
     using BeachEquipmentStore.Services.Data.Models.Product;
     using BeachEquipmentStore.Services.Data.Models.Cart;
     using System.Collections.Generic;
     using BeachEquipmentStore.Services.Data.Models.Manufacturer;
     using BeachEquipmentStore.Services.Data.Models.Category;
+    using Product = BeachEquipmentStore.Data.Models.Product;
+    using BeachEquipmentStore.Data.Models;
 
     public class ProductService : IProductService
     {
@@ -43,8 +43,8 @@
                     Id = product.Manufacturer.Id,
                     Name = product.Manufacturer.Name
                 },
-                Category = new CategoryServiceModel 
-                { 
+                Category = new CategoryServiceModel
+                {
                     Id = product.Category.Id,
                     Name = product.Category.Name
                 }
@@ -146,6 +146,65 @@
                 .FirstAsync(p => p.Id == productId);
 
             return product.Stock >= quantity ? true : false;
+        }
+
+        public async Task<ExtendedFiltrationServiceModel> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId)
+        {
+            List<Product> filteredProducts = await _data.Products.ToListAsync();
+            List<Category> allCategories = await _data.Categories.ToListAsync();
+            List<Manufacturer> allManufacturers = await _data.Manufacturers.ToListAsync();
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                filteredProducts = filteredProducts
+                    .Where(p => p.Name.Contains(keyword) ||
+                    p.Manufacturer.Name.Contains(keyword) ||
+                    p.Description.Contains(keyword) ||
+                    p.Category.Name.Contains(keyword))
+                    .ToList();
+            }
+
+            if (categoryId > 0)
+            {
+                filteredProducts = filteredProducts.Where(p => p.CategoryId == categoryId).ToList();
+            }
+
+            if (manufacturerId > 0)
+            {
+                filteredProducts = filteredProducts.Where(p => p.Manufacturer.Id == manufacturerId).ToList();
+            }
+
+            var filteredModel = new ExtendedFiltrationServiceModel
+            {
+                Keyword = keyword,
+                CategoryId = categoryId,
+                ManufacturerId = manufacturerId,
+                FilteredProducts = new FilterProductsServiceModel
+                {
+                    Categories = allCategories.Select(c => new CategoryServiceModel
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    })
+                .ToList(),
+                    Manufacturers = allManufacturers.Select(m => new ManufacturerServiceModel
+                    {
+                        Id = m.Id,
+                        Name = m.Name
+                    })
+                .ToList(),
+                    Products = filteredProducts.Select(p => new ProductServiceModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        ImageUrl = p.ImageUrl,
+                        Price = p.Price,
+                        Quantity = p.Stock
+                    }).ToList()
+                }
+            };
+
+            return filteredModel;
         }
     }
 }

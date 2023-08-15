@@ -7,7 +7,8 @@
     using BeachEquipmentStore.Web.ViewModels.Home;
     using BeachEquipmentStore.Services.Data.Interfaces;
     using Microsoft.AspNetCore.Authorization;
-    
+    using BeachEquipmentStore.Web.ViewModels.Product;
+
     [Authorize]
     public class HomeController : Controller
     {
@@ -21,16 +22,17 @@
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            List<IndexViewModel> resultsetOfProducts = new List<IndexViewModel>();
+            List<ProductViewModel> resultsetOfProducts = new List<ProductViewModel>();
 
             var randomisedProducs = await this._products.GetRandomProductsInStockAsync();
 
-            resultsetOfProducts.AddRange(randomisedProducs.Select(p => new IndexViewModel
+            resultsetOfProducts.AddRange(randomisedProducs.Select(p => new ProductViewModel
             {
                 Id = p.Id,
                 Name = p.Name,
                 ImageUrl = p.ImageUrl,
                 Price = p.Price
+
             }));
 
             return View(resultsetOfProducts);
