@@ -1,5 +1,6 @@
 ﻿namespace BeachEquipmentStore.Data.Models
 {
+    using BeachEquipmentStore.Data.Models.Enums;
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
@@ -11,7 +12,6 @@
         {
             this.Id = Guid.NewGuid();
             this.OrderProducts = new HashSet<ProductOrder>();
-            this.Invoices = new HashSet<Invoice>();
         }
 
         [Key]
@@ -22,6 +22,14 @@
         public DateTime OrderDate { get; set; }
 
         [Required]
+        [DisplayName("Shipping Date")]
+        public DateTime ShippingDate { get; set; }
+
+        [Required]
+        [DisplayName("Delivery Status")]
+        public DeliveryStatus DeliveryStatus { get; set; }
+
+        [Required]
         [Precision(18, 2)]
         [DisplayName("Total Price")]
         public decimal TotalPrice { get; set; }
@@ -30,12 +38,6 @@
         public Guid CustomerId { get; set; }
         [ForeignKey(nameof(CustomerId))]
         public ApplicationUser Customer { get; set; } = null!;
-
-        public Guid? DeliveryId { get; set; }
-        [ForeignKey(nameof(DeliveryId))]
-        public Delivery Delivery { get; set; } = null!;
-
-        public ICollection<Invoice> Invoices { get; set; }
 
         public ICollection<ProductOrder> OrderProducts { get; set; }
     }

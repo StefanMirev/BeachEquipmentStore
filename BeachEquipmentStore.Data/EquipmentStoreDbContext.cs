@@ -21,8 +21,6 @@
         public DbSet<Address> Addresses { get; set; } = null!;
         public DbSet<CartItem> CartItems { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
-        public DbSet<Delivery> Delivery { get; set; } = null!;
-        public DbSet<Invoice> Invoices { get; set; } = null!;
         public DbSet<Manufacturer> Manufacturers { get; set; } = null!;
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
@@ -42,18 +40,6 @@
 
             builder.Entity<CartItem>()
                 .HasKey(p => new { p.ProductId, p.CustomerId });
-
-            builder.Entity<Order>()
-                .HasOne(d => d.Delivery)
-                .WithMany(o => o.Orders)
-                .HasForeignKey(d => d.DeliveryId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Invoice>()
-                .HasOne(o => o.Order)
-                .WithMany(inv => inv.Invoices)
-                .HasForeignKey(fk => fk.OrderId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             builder.SeedUsers();
             builder.SeedAddresses();

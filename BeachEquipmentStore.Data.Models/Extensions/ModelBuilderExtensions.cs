@@ -2,7 +2,6 @@
 {
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
-    using System.Runtime.CompilerServices;
 
     public static class ModelBuilderExtensions
     {

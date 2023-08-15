@@ -25,6 +25,6 @@ namespace BeachEquipmentStore.Services.Data.Interfaces
 
         Task DeleteAddress(Guid addressId);
 
-        Task<OrderHistoryServiceModel> GetOrderHistory(string userId);
+        Task<List<OrderHistoryServiceModel>> GetOrderHistory(string userId);
     }
 }

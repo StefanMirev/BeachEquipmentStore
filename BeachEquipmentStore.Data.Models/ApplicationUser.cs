@@ -16,8 +16,6 @@
             this.Id = Guid.NewGuid();
             this.CartItems = new HashSet<CartItem>();
             this.Orders = new HashSet<Order>();
-            this.Invoices = new HashSet<Invoice>();
-            this.Deliveries = new HashSet<Delivery>();
             this.Addresses = new HashSet<Address>();
         }
 
@@ -38,9 +36,5 @@
         public ICollection<CartItem> CartItems { get; set; }
 
         public ICollection<Order> Orders { get; set; }
-
-        public ICollection<Invoice> Invoices { get; set; }
-
-        public ICollection<Delivery> Deliveries { get; set; }
     }
 }

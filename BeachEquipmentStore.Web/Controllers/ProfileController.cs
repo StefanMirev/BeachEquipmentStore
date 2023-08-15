@@ -1,4 +1,5 @@
 ﻿using BeachEquipmentStore.Services.Data.Interfaces;
+using BeachEquipmentStore.Services.Data.Models.Profile;
 using BeachEquipmentStore.Web.ViewModels.Profile;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -133,9 +134,18 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult OrderHistory()
+        public async Task<IActionResult> OrderHistory(string userId)
         {
-            return View();
+            List<OrderHistoryServiceModel> orderHistory = await _profiles.GetOrderHistory(userId);
+
+            return View(orderHistory
+                .Select(o => new OrderHistoryViewModel
+                {
+                    Id = o.Id,
+                    DeliveryStatus = o.DeliveryStatus,
+                    OrderDate = o.OrderDate,
+                    TotalPrice = o.TotalPrice
+                }).ToList());
         }
     }
 }

@@ -129,9 +129,18 @@ namespace BeachEquipmentStore.Services.Data
             await _data.SaveChangesAsync();
         }
 
-        public Task<OrderHistoryServiceModel> GetOrderHistory(string userId)
+        public async Task<List<OrderHistoryServiceModel>> GetOrderHistory(string userId)
         {
-            throw new NotImplementedException();
+            return await _data.Orders
+                .Where(o => o.CustomerId.ToString() == userId)
+                .Select(o => new OrderHistoryServiceModel
+                {
+                    Id = o.Id,
+                    DeliveryStatus = o.DeliveryStatus.ToString(),
+                    OrderDate = o.OrderDate,
+                    TotalPrice = o.TotalPrice
+                })
+                .ToListAsync();
         }
     }
 }
