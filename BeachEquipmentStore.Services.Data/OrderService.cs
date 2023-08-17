@@ -25,13 +25,18 @@ namespace BeachEquipmentStore.Services.Data
             this._data = data;
         }
 
-        public async Task<CreateOrderServiceModel> GetDataRequiredForOrder(string userId)
+        public async Task<CreateOrderServiceModel> GetDataRequiredForOrder(Guid userId)
         {
-            ApplicationUser currentUser = await _data.Users.Include(u => u.Addresses).FirstAsync(u => u.Id.ToString() == userId);
-            Address? userAddress = currentUser.Addresses.ElementAtOrDefault(0);
+            ApplicationUser currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
+            Address userAddress = new Address();
+
+            if (currentUser.AddressId != null && await _data.Addresses.AnyAsync(a => a.Id == currentUser.AddressId))
+            {
+                userAddress = currentUser.Address;
+            }
 
             List<CartItem> userCartItems = await _data.CartItems.Include(p => p.Product)
-                .Where(ci => ci.CustomerId.ToString() == userId)
+                .Where(ci => ci.CustomerId == userId)
                 .ToListAsync();
 
             List<ProductServiceModel> userProducts = userCartItems.Select(p => new ProductServiceModel
@@ -55,15 +60,15 @@ namespace BeachEquipmentStore.Services.Data
                 },
                 UserAddress = new AddressServiceModel
                 {
-                    Name = userAddress!.Name,
-                    Town = userAddress!.Town,
+                    Name = userAddress.Name,
+                    Town = userAddress.Town,
                     ZipCode = userAddress.ZipCode,
                 },
                 Products = userProducts
             };
         }
 
-        public async Task GenerateOrder(string userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
+        public async Task GenerateOrder(Guid userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
         {
             if (!hasAddress)
             {
@@ -72,7 +77,7 @@ namespace BeachEquipmentStore.Services.Data
                     Name = addressName!,
                     Town = town!,
                     ZipCode = zipCode,
-                    CustomerId = Guid.Parse(userId)
+                    CustomerId = userId
                 };
 
                 _data.Addresses.Add(address);
@@ -84,11 +89,11 @@ namespace BeachEquipmentStore.Services.Data
                 DeliveryStatus = 0,
                 OrderDate = DateTime.Now,
                 TotalPrice = totalSum,
-                CustomerId = Guid.Parse(userId)
+                CustomerId = userId
             };
 
             var userCartItems = await _data.CartItems.Include(p => p.Product)
-              .Where(ci => ci.CustomerId.ToString() == userId)
+              .Where(ci => ci.CustomerId == userId)
               .ToListAsync();
 
             List<ProductOrder> productOrders = new List<ProductOrder>();

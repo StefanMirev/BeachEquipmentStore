@@ -1,4 +1,4 @@
-﻿@model List<AddressViewModel>
+﻿@model AddressViewModel
 @{
     ViewData["Title"] = "Edit Address";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,7 +10,7 @@
     <partial name="_ManageNav" />
 </nav>
 
-@if (Model.Any())
+@if (Model != null)
 {
     <table class="table">
         <thead>
@@ -22,24 +22,21 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var address in Model)
-            {
-                <tr>
-                    <td>@address.Name</td>
-                    <td>@address.Town</td>
-                    <td>@address.ZipCode</td>
-                    <td>
-                        <a asp-controller = "Profile" asp-action="EditAddress" asp-route-addressId="@address.Id">Edit</a> |
-                        <a asp-controller="Profile" asp-action="DeleteAddress" asp-route-addressId="@address.Id" asp-route-userId="@User.GetId()">Delete</a>
-                    </td>
-                </tr>
-            }
+            <tr>
+                <td>@Model.Name</td>
+                <td>@Model.Town</td>
+                <td>@Model.ZipCode</td>
+                <td>
+                    <a asp-controller="Profile" asp-action="EditAddress" asp-route-addressId="@Model.Id">Редактирай</a> |
+                    <a asp-controller="Profile" asp-action="DeleteAddress" asp-route-addressId="@Model.Id" asp-route-userId="@User.GetId()">Изтрий</a>
+                </td>
+            </tr>
         </tbody>
     </table>
 }
 else
 {
-    <p>No addresses found.</p>
+    <p>Все още нямате регистриран адрес!</p>
+    <a asp-controller="Profile" asp-action="AddAddress">Добави адрес</a>
 }
 
-<a asp-controller="Profile" asp-action="AddAddress">Add New Address</a>

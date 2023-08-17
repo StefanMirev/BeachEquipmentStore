@@ -15,6 +15,7 @@ namespace BeachEquipmentStore.Web
     using BeachEquipmentStore.Services.Data.Interfaces;
     using BeachEquipmentStore.Services.Data;
     using BeachEquipmentStore.Web.Infrastructure.ModelBinders;
+    using Microsoft.AspNetCore.Mvc;
 
     public class Program
     {
@@ -34,6 +35,9 @@ namespace BeachEquipmentStore.Web
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 6;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
             })
                 .AddEntityFrameworkStores<EquipmentStoreDbContext>();
 
@@ -41,7 +45,9 @@ namespace BeachEquipmentStore.Web
                 .AddMvcOptions(options =>
                 {
                     options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
+                    options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
                 });
+
             builder.Services.AddRazorPages();
             builder.Services.AddApplicationServices(typeof(IProductService));
 

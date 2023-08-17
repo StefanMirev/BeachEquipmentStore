@@ -42,7 +42,7 @@
 
         [Required]
         [Precision(18, 2)]
-        [Range(PriceMinValue, PriceMaxValue)]
+        [Range(typeof(decimal),PriceMinValue, PriceMaxValue)]
         public decimal Price { get; set; }
 
         [Required]

@@ -1,12 +1,12 @@
 ﻿<form id="filter-form" method="get" asp-controller="Product" asp-action="FilterProducts">
     <div>
-        <label for="keyword">Keyword:</label>
+        <label for="keyword">Ключова дума:</label>
         <input type="text" id="keyword" name="keyword" value="@Model.Keyword" />
     </div>
     <div>
-        <label for="category">Category:</label>
+        <label for="category">Категория:</label>
         <select id="category-dropdown" name="categoryId" value="@Model.CategoryId">
-            <option value="">All Categories</option>
+            <option value="">Всички категории</option>
             @foreach (var category in Model.FilteredProducts.Categories)
             {
                 <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">@category.Name</option>
@@ -14,9 +14,9 @@
         </select>
     </div>
     <div>
-        <label for="manufacturer">Manufacturer:</label>
+        <label for="manufacturer">Марка:</label>
         <select id="manufacturer-dropdown" name="manufacturerId" value="@Model.ManufacturerId">
-            <option value="">All Manufacturers</option>
+            <option value="">Всички марки</option>
             @foreach (var manufacturer in Model.FilteredProducts.Manufacturers)
             {
                 <option value="@manufacturer.Id" selected="@(Model.ManufacturerId == manufacturer.Id)">@manufacturer.Name</option>
@@ -24,9 +24,9 @@
         </select>
     </div>
     <div>
-        <button type="button" id="clear-filters-button">Clear Filters</button>
-        <button type="submit">Apply Filters</button>
+        <button type="button" id="clear-filters-button">Премахни филтрите</button>
+        <button type="submit">Приложи филтрите</button>
     </div>
 </form>
 
-<script src="~/js/site.js"></script>
+<script src="~/js/site.js"></script>    

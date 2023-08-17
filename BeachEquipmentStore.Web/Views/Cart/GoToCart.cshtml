@@ -30,7 +30,13 @@ else
                 <tr>
                     <td><img src="@product.ImageUrl" alt="@product.Name" style="max-width: 100px; max-height: 100px;" /></td>
                     <td>@product.Name</td>
-                    <td>@product.Quantity</td>
+                    <td>
+                        @product.Quantity
+                        <form method="post" asp-controller="Cart" asp-action="Remove" asp-route-userId="@User.GetId()">
+                            <input type="hidden" name="productId" value="@product.Id" />
+                            <button type="submit">Премахни</button>
+                        </form>
+                    </td>
                     <td>@product.Price.ToString("C")</td>
                     @{
                         decimal? totalProductPrice = product.Price * product.Quantity;
@@ -55,7 +61,7 @@ else
     <div>
         <a asp-action="All" asp-controller="Product">ПРОДЪЛЖИ С ПОКУПКИТЕ</a>
         <form asp-action="ClearCart" asp-controller="Cart" method="post">
-            <input type="hidden" name="customerId" value="@User.GetId()" />
+            <input type="hidden" name="userId" value="@User.GetId()" />
             <button type="submit">ИЗЧИСТИ КОЛИЧКАТА</button>
         </form>
         <a asp-action="CreateOrder" asp-controller="Order" asp-route-userId="@User.GetId()">ПРИКЛЮЧИ ПОРЪЧКАТА</a>

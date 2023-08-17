@@ -1,6 +1,7 @@
 ﻿using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Services.Data.Models.Profile;
 using BeachEquipmentStore.Web.ViewModels.Profile;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 
 namespace BeachEquipmentStore.Web.Controllers
 {
+    [Authorize]
     public class ProfileController : Controller
     {
         private readonly IProfileService _profiles;
@@ -19,7 +21,7 @@ namespace BeachEquipmentStore.Web.Controllers
             _profiles = profiles;
         }
 
-        public async Task<IActionResult> MyProfile(string userId)
+        public async Task<IActionResult> MyProfile(Guid userId)
         {
             var userInfo = await _profiles.GetUserInfo(userId);
 
@@ -33,7 +35,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditProfile(string userId)
+        public async Task<IActionResult> EditProfile(Guid userId)
         {
             var userInfo = await _profiles.GetUserInfo(userId);
 
@@ -47,7 +49,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditProfile(string userId, string firstName, string lastName, string email, string phoneNumber)
+        public async Task<IActionResult> EditProfile(Guid userId, string firstName, string lastName, string email, string phoneNumber)
         {
             await _profiles.ChangeUserInfo(userId, firstName, lastName, email, phoneNumber);
 
@@ -61,7 +63,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(string userId, string currentPassword, string newPassword, string confirmPassword)
+        public async Task<IActionResult> ChangePassword(Guid userId, string currentPassword, string newPassword, string confirmPassword)
         {
             try
             {
@@ -77,17 +79,25 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAddress(string userId)
+        public async Task<IActionResult> GetAddress(Guid userId)
         {
-            var addresses = await _profiles.GetAllAddressesInfo(userId);
-
-            return View(addresses.Select(a => new AddressViewModel
+            try
             {
-                Id = a.Id,
-                Name = a.Name,
-                Town = a.Town,
-                ZipCode = a.ZipCode
-            }).ToList());
+                var address = await _profiles.GetAllAddressInfo(userId);
+
+                return View(new AddressViewModel
+                {
+                    Id = address.Id,
+                    Name = address.Name,
+                    Town = address.Town,
+                    ZipCode = address.ZipCode
+                });
+            }
+            catch (Exception ex)
+            {
+                
+                return View();
+            }
         }
 
         [HttpGet]
@@ -97,7 +107,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAddress(string userId, string name, string town, int zipCode)
+        public async Task<IActionResult> AddAddress(Guid userId, string name, string town, int zipCode)
         {
             await _profiles.AddAddress(userId, name, town, zipCode);
 
@@ -119,14 +129,14 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditAddress(string userId, Guid addressId, string name, string town, int zipCode)
+        public async Task<IActionResult> EditAddress(Guid userId, Guid addressId, string name, string town, int zipCode)
         {
             await _profiles.ChangeAddressInfo(addressId, name, town, zipCode);
 
             return RedirectToAction("GetAddress","Profile", new { userId = userId} );
         }
 
-        public async Task<IActionResult> DeleteAddress(Guid addressId, string userId)
+        public async Task<IActionResult> DeleteAddress(Guid addressId, Guid userId)
         {
             await _profiles.DeleteAddress(addressId);
 
@@ -134,7 +144,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> OrderHistory(string userId)
+        public async Task<IActionResult> OrderHistory(Guid userId)
         {
             List<OrderHistoryServiceModel> orderHistory = await _profiles.GetOrderHistory(userId);
 

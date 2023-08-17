@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 
 <form method="post" asp-controller="Cart" asp-action="Add" asp-route-productId="@Model.Id">
-    <input type="hidden" name="customerId" value="@User.GetId()" />
+    <input type="hidden" name="userId" value="@User.GetId()" />
     <input type="number" name="quantity" value="1" />
-    <button type="submit">Add to Cart</button>
+    <button type="submit">Добави в количката</button>
 </form>

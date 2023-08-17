@@ -19,9 +19,9 @@ namespace BeachEquipmentStore.Services.Data
             _userManager = userManager;
         }
 
-        public async Task<UserInfoServiceModel> GetUserInfo(string userId)
+        public async Task<UserInfoServiceModel> GetUserInfo(Guid userId)
         {
-            ApplicationUser currentUser = await _data.Users.FirstAsync(u => u.Id.ToString() == userId);
+            ApplicationUser currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
 
             return new UserInfoServiceModel()
             {
@@ -32,14 +32,14 @@ namespace BeachEquipmentStore.Services.Data
             };
         }
 
-        public async Task ChangePassword(string userId, string currentPassword, string newPassword, string newPasswordConfirmation)
+        public async Task ChangePassword(Guid userId, string currentPassword, string newPassword, string newPasswordConfirmation)
         {
             var hasher = new PasswordHasher<ApplicationUser>();
-            var currentUser = await _data.Users.FirstAsync(u => u.Id.ToString() == userId);
+            var currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
 
             if (await _userManager.CheckPasswordAsync(currentUser, currentPassword))
             {
-                if(newPassword == newPasswordConfirmation)
+                if (newPassword == newPasswordConfirmation)
                 {
                     currentUser.PasswordHash = hasher.HashPassword(currentUser, newPassword);
                     await _data.SaveChangesAsync();
@@ -54,10 +54,10 @@ namespace BeachEquipmentStore.Services.Data
                 throw new ArgumentException("Въведената парола е грешна! Моля опитайте отново!");
             }
         }
-        
-        public async Task ChangeUserInfo(string userId, string firstName, string lastName, string email, string phoneNumber)
+
+        public async Task ChangeUserInfo(Guid userId, string firstName, string lastName, string email, string phoneNumber)
         {
-            var currentUser = await _data.Users.FirstAsync(u => u.Id.ToString() == userId);
+            var currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
 
             currentUser.FirstName = firstName;
             currentUser.LastName = lastName;
@@ -66,19 +66,23 @@ namespace BeachEquipmentStore.Services.Data
 
             await _data.SaveChangesAsync();
         }
-       
-        public async Task<List<AddressServiceModel>> GetAllAddressesInfo(string userId)
+
+        public async Task<AddressServiceModel> GetAllAddressInfo(Guid userId)
         {
-            return await _data.Addresses
-                .Where(a => a.CustomerId.ToString() == userId)
-                .Select(a => new AddressServiceModel
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    Town = a.Town,
-                    ZipCode = a.ZipCode
-                })
-                .ToListAsync();
+            if (!await _data.Addresses.AnyAsync(a => a.CustomerId == userId))
+            {
+                throw new InvalidOperationException("You don't have an address yet!");
+            }
+
+            Address userAddress = await _data.Addresses.FirstAsync(a => a.CustomerId == userId);
+
+            return new AddressServiceModel
+            {
+                Id = userAddress.Id,
+                Name = userAddress.Name,
+                Town = userAddress.Town,
+                ZipCode = userAddress.ZipCode
+            };
         }
 
         public async Task<AddressServiceModel> GetAddressInfo(string addressId)
@@ -94,7 +98,7 @@ namespace BeachEquipmentStore.Services.Data
             };
         }
 
-        public async Task AddAddress(string userId, string name, string town, int zipCode)
+        public async Task AddAddress(Guid userId, string name, string town, int zipCode)
         {
             Address address = new Address()
             {
@@ -102,7 +106,7 @@ namespace BeachEquipmentStore.Services.Data
                 Name = name,
                 Town = town,
                 ZipCode = zipCode,
-                CustomerId = Guid.Parse(userId)
+                CustomerId = userId
             };
 
             _data.Addresses.Add(address);
@@ -129,10 +133,10 @@ namespace BeachEquipmentStore.Services.Data
             await _data.SaveChangesAsync();
         }
 
-        public async Task<List<OrderHistoryServiceModel>> GetOrderHistory(string userId)
+        public async Task<List<OrderHistoryServiceModel>> GetOrderHistory(Guid userId)
         {
             return await _data.Orders
-                .Where(o => o.CustomerId.ToString() == userId)
+                .Where(o => o.CustomerId == userId)
                 .Select(o => new OrderHistoryServiceModel
                 {
                     Id = o.Id,

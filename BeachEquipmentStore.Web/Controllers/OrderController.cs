@@ -1,28 +1,33 @@
 ﻿using BeachEquipmentStore.Data.Models;
+using BeachEquipmentStore.Services.Data;
 using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Services.Data.Models.Product;
 using BeachEquipmentStore.Services.Data.Models.Profile;
 using BeachEquipmentStore.Web.ViewModels.Order;
 using BeachEquipmentStore.Web.ViewModels.Product;
 using BeachEquipmentStore.Web.ViewModels.Profile;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static BeachEquipmentStore.Common.EntityValidationConstants;
 
 namespace BeachEquipmentStore.Web.Controllers
 {
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly IOrderService _orders;
-        private readonly ICartService _cartService;
+        private readonly ICartService _cart;
+        private readonly IProfileService _profile;
 
-        public OrderController(IOrderService orders, ICartService cartService)
+        public OrderController(IOrderService orders, ICartService cart, IProfileService profile)
         {
             _orders = orders;
-            _cartService = cartService;
+            _cart = cart;
+            _profile = profile;
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateOrder(string userId)
+        public async Task<IActionResult> CreateOrder(Guid userId)
         {
             var orderServiceData = await _orders.GetDataRequiredForOrder(userId);
 
@@ -59,11 +64,10 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder(string userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
+        public async Task<IActionResult> CreateOrder(Guid userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
         {
             await _orders.GenerateOrder(userId, hasAddress, addressName, town, zipCode, totalSum);
-            await _cartService.RemoveItemsFromCart(Guid.Parse(userId));
-
+            await _cart.RemoveAllItemsFromCart(userId);
             return RedirectToAction("OrderHistory", "Profile", new { userId = userId});
         }
         

@@ -33,7 +33,6 @@ namespace BeachEquipmentStore.Data.Models
 
         [Required]
         public Guid CustomerId { get; set; }
-        [ForeignKey(nameof(CustomerId))]
         public ApplicationUser Customer { get; set; } = null!;
     }
 }

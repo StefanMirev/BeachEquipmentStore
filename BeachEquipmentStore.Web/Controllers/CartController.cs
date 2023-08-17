@@ -17,9 +17,9 @@ namespace BeachEquipmentStore.Web.Controllers
             this._products = products;
         }
 
-        public async Task<IActionResult> GoToCart(Guid customerId)
+        public async Task<IActionResult> GoToCart(Guid userId)
         {
-            var cartItems = await _cartItems.GetItemsInCart(customerId);
+            var cartItems = await _cartItems.GetItemsInCart(userId);
 
             var resultQuery = await _products.GetProductsInCart(cartItems);
 
@@ -38,13 +38,18 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(Guid customerId, Guid productId, int quantity)
+        public async Task<IActionResult> Add(Guid userId, Guid productId, int quantity)
         {
             string refererUrl = Request.Headers["Referer"].ToString();
 
+            if (quantity <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Can't add less than one product in cart!");
+            }
+
             if (await _products.IsInStock(productId, quantity))
             {
-                await _cartItems.AddItemToCart(customerId, productId, quantity);
+                await _cartItems.AddItemToCart(userId, productId, quantity);
 
                 TempData["Message"] = "Product successfully added to cart!";
             }
@@ -56,9 +61,16 @@ namespace BeachEquipmentStore.Web.Controllers
             return Redirect(refererUrl);
         }
 
-        public async Task<IActionResult> ClearCart(Guid customerId)
+        public async Task<IActionResult> ClearCart(Guid userId)
         {
-            await _cartItems.RemoveItemsFromCart(customerId);   
+            await _cartItems.RemoveAllItemsFromCart(userId);
+
+            return RedirectToAction("All", "Product");
+        }
+
+        public async Task<IActionResult> Remove(Guid userId, Guid productId)
+        {
+            await _cartItems.RemoveItemFromCart(userId, productId);
 
             return RedirectToAction("All", "Product");
         }

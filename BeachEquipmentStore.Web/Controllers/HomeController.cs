@@ -9,7 +9,6 @@
     using Microsoft.AspNetCore.Authorization;
     using BeachEquipmentStore.Web.ViewModels.Product;
 
-    [Authorize]
     public class HomeController : Controller
     {
         private readonly IProductService _products;

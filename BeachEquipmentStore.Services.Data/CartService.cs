@@ -14,11 +14,11 @@ namespace BeachEquipmentStore.Services.Data
         {
             this._data = data;
         }
-        public async Task AddItemToCart(Guid customerId, Guid productId, int quantity)
+        public async Task AddItemToCart(Guid userId, Guid productId, int quantity)
         {
-            if (await _data.CartItems.AnyAsync(ci => ci.CustomerId == customerId && ci.ProductId == productId))
+            if (await _data.CartItems.AnyAsync(ci => ci.CustomerId == userId && ci.ProductId == productId))
             {
-                var cartProduct = await _data.CartItems.FirstAsync(ci => ci.CustomerId == customerId && ci.ProductId == productId);
+                var cartProduct = await _data.CartItems.FirstAsync(ci => ci.CustomerId == userId && ci.ProductId == productId);
                 cartProduct.Quantity += quantity;
 
                 var dbProduct =  await _data.Products.FirstAsync(p => p.Id == productId);
@@ -28,7 +28,7 @@ namespace BeachEquipmentStore.Services.Data
             {
                 await _data.CartItems.AddAsync(new CartItem
                 {
-                    CustomerId = customerId,
+                    CustomerId = userId,
                     ProductId = productId,
                     Quantity = quantity
                 });
@@ -36,10 +36,10 @@ namespace BeachEquipmentStore.Services.Data
             await _data.SaveChangesAsync();
         }
 
-        public async Task<List<CartServiceModel>> GetItemsInCart(Guid customerId)
+        public async Task<List<CartServiceModel>> GetItemsInCart(Guid userId)
         {
             return await _data.CartItems
-                .Where(ci => ci.CustomerId == customerId)
+                .Where(ci => ci.CustomerId == userId)
                 .Select(ci => new CartServiceModel
                 {
                     ProductId = ci.ProductId,
@@ -48,10 +48,10 @@ namespace BeachEquipmentStore.Services.Data
                 .ToListAsync();       
         }
 
-        public async Task RemoveItemsFromCart(Guid customerId)
+        public async Task RemoveAllItemsFromCart(Guid userId)
         {
             var productsToRemove = await this._data.CartItems
-                .Where(p => p.CustomerId == customerId)
+                .Where(p => p.CustomerId == userId)
             .ToListAsync();
 
             foreach (var cartItem in productsToRemove) 
@@ -61,6 +61,14 @@ namespace BeachEquipmentStore.Services.Data
             }
             
             _data.RemoveRange(productsToRemove);
+            await _data.SaveChangesAsync();
+        }
+
+        public async Task RemoveItemFromCart(Guid userId, Guid productId)
+        {
+            var cartItem = await _data.CartItems.FirstAsync(ci => ci.CustomerId == userId && ci.ProductId == productId);
+
+            _data.CartItems.Remove(cartItem);
             await _data.SaveChangesAsync();
         }
     }

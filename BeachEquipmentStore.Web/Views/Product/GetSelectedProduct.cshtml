@@ -17,7 +17,7 @@
                     <p>В наличност</p>
                     <form asp-action="Add" asp-controller="Cart" method="post" asp-route-categoryId="@Model.Category.Id">
                         <input type="hidden" name="productId" value="@Model.Id" />
-                        <input type="hidden" name="customerId" value="@User.GetId()" />
+                        <input type="hidden" name="userId" value="@User.GetId()" />
                         <input type="number" name="quantity" value="1" />
                         <button type="submit">Добави в количката</button>
                     </form>

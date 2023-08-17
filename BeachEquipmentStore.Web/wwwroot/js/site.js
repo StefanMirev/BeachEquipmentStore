@@ -34,5 +34,4 @@
         console.log('Clear Filters button clicked');
         document.getElementById('filter-form').submit();
     });
-
 });
