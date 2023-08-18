@@ -3,7 +3,7 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     
@@ -16,6 +16,7 @@
             this.Id = Guid.NewGuid();
             this.CartItems = new HashSet<CartItem>();
             this.Orders = new HashSet<Order>();
+            this.Addresses = new HashSet<Address>();
         }
 
         [Required]
@@ -30,9 +31,7 @@
         [DisplayName("Last Name")]
         public string LastName { get; set; } = null!;
 
-        public Guid? AddressId { get; set; }
-        [ForeignKey(nameof(AddressId))]
-        public Address Address { get; set; }
+        public ICollection<Address> Addresses { get; set; }
 
         public ICollection<CartItem> CartItems { get; set; }
 

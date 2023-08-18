@@ -72,7 +72,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             await _cartItems.RemoveItemFromCart(userId, productId);
 
-            return RedirectToAction("All", "Product");
+            return RedirectToAction("GoToCart", "Cart", new { userId = userId});
         }
     }
 }

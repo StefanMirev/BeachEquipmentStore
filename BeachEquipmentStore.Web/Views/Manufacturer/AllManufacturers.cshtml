@@ -8,14 +8,18 @@
 <hr />
 
 <div class="manufacturer-grid">
-    @foreach (var manufacturer in Model)
-    {
-        <form method="post" asp-controller="Product" asp-action="ProductsByManufacturer" asp-route-manufacturerId="@manufacturer.Id">
-            <input type="hidden" name="manufacturerId" value="@manufacturer.Id" />
-            <button type="submit">
-                <img src="@manufacturer.ImageUrl" alt="@manufacturer.Name">
-                <h2>@manufacturer.Name</h2>
-                </button>
-        </form>
-    }
+    <div class="row justify-content-evenly">
+        @foreach (var manufacturer in Model)
+        {
+            <div class="col-md-4 mb-4" style="height: 325px; width: 325px; column-gap: 200px;">
+                <form method="post" asp-controller="Product" asp-action="ProductsByManufacturer" asp-route-manufacturerId="@manufacturer.Id" class="manufacturer-form">
+                    <input type="hidden" name="manufacturerId" value="@manufacturer.Id" />
+                    <button type="submit" class="manufacturer-button">
+                        <img src="@manufacturer.ImageUrl" alt="@manufacturer.Name">
+                        <h2>@manufacturer.Name</h2>
+                    </button>
+                </form>
+            </div>
+        }
+    </div>
 </div>

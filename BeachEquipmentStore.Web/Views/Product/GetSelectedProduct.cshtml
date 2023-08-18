@@ -8,8 +8,8 @@
         <div class="col-md-6">
             <h2>@Model.Name</h2>
             <p>№: @Model.Barcode</p>
-            <p>Категория: <a asp-action="ProductsByCategory" asp-controller="Products" asp-route-id="@Model.Category.Id">@Model.Category.Name</a></p>
-            <p>Производител: <a asp-action="ProductsByManufacturer" asp-controller="Products" asp-route-id="@Model.Manufacturer.Id">@Model.Manufacturer.Name</a></p>
+            <p>Категория: <a asp-action="ProductsByCategory" asp-controller="Product" asp-route-categoryId="@Model.Category.Id">@Model.Category.Name</a></p>
+            <p>Производител: <a asp-action="ProductsByManufacturer" asp-controller="Product" asp-route-manufacturerId="@Model.Manufacturer.Id">@Model.Manufacturer.Name</a></p>
             <p>Цена: @Model.Price.ToString("C")</p>
             @{
                 if (Model.Stock > 0)

@@ -57,7 +57,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
-        public  IActionResult ChangePassword()
+        public IActionResult ChangePassword()
         {
             return View();
         }
@@ -95,7 +95,7 @@ namespace BeachEquipmentStore.Web.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 return View();
             }
         }
@@ -111,7 +111,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             await _profiles.AddAddress(userId, name, town, zipCode);
 
-            return RedirectToAction("MyProfile", "Profile", new { userId = userId });
+            return RedirectToAction("GetAddress", "Profile", new { userId = userId });
         }
 
         [HttpGet]
@@ -133,7 +133,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             await _profiles.ChangeAddressInfo(addressId, name, town, zipCode);
 
-            return RedirectToAction("GetAddress","Profile", new { userId = userId} );
+            return RedirectToAction("GetAddress", "Profile", new { userId = userId });
         }
 
         public async Task<IActionResult> DeleteAddress(Guid addressId, Guid userId)
@@ -155,7 +155,9 @@ namespace BeachEquipmentStore.Web.Controllers
                     DeliveryStatus = o.DeliveryStatus,
                     OrderDate = o.OrderDate,
                     TotalPrice = o.TotalPrice
-                }).ToList());
+                })
+                .OrderByDescending(oh => oh.OrderDate)
+                .ToList());
         }
     }
 }

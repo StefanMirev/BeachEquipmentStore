@@ -27,12 +27,12 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task<CreateOrderServiceModel> GetDataRequiredForOrder(Guid userId)
         {
-            ApplicationUser currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
+            ApplicationUser currentUser = await _data.Users.Include(a => a.Addresses).FirstAsync(u => u.Id == userId);
             Address userAddress = new Address();
 
-            if (currentUser.AddressId != null && await _data.Addresses.AnyAsync(a => a.Id == currentUser.AddressId))
+            if (currentUser.Addresses.Any() && await _data.Addresses.AnyAsync(a => a.Id == currentUser.Addresses.ElementAt(0).Id))
             {
-                userAddress = currentUser.Address;
+                userAddress = currentUser.Addresses.ElementAt(0);
             }
 
             List<CartItem> userCartItems = await _data.CartItems.Include(p => p.Product)
@@ -70,17 +70,20 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task GenerateOrder(Guid userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
         {
+            Address address = new Address();
+
             if (!hasAddress)
             {
-                Address address = new Address()
-                {
-                    Name = addressName!,
-                    Town = town!,
-                    ZipCode = zipCode,
-                    CustomerId = userId
-                };
+                address.Name = addressName!;
+                address.Town = town!;
+                address.ZipCode = zipCode;
+                address.CustomerId = userId;
 
                 _data.Addresses.Add(address);
+            }
+            else
+            {
+              address = await _data.Addresses.FirstAsync(a => a.CustomerId == userId);
             }
 
             Order order = new Order()
@@ -89,7 +92,10 @@ namespace BeachEquipmentStore.Services.Data
                 DeliveryStatus = 0,
                 OrderDate = DateTime.Now,
                 TotalPrice = totalSum,
-                CustomerId = userId
+                CustomerId = userId,
+                AddressName = address.Name,
+                TownName = address.Town,
+                ZipCode = address.ZipCode
             };
 
             var userCartItems = await _data.CartItems.Include(p => p.Product)
@@ -121,7 +127,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             Order order = await _data.Orders.FirstAsync(p => p.Id.ToString() == orderId);
 
-            Address address = await _data.Addresses.FirstAsync(p => p.CustomerId == order.CustomerId);
+            //Address address = await _data.Addresses.FirstAsync(p => p.CustomerId == order.CustomerId);
 
             List<ProductOrder> productOrders = await _data.ProductOrders
                 .Include(p => p.Product)
@@ -135,19 +141,17 @@ namespace BeachEquipmentStore.Services.Data
                 ShippingDate = order.ShippingDate,
                 DeliveryStatus = order.DeliveryStatus.ToString(),
                 TotalPrice = order.TotalPrice,
-                Address = new AddressServiceModel()
-                {
-                    Name = address.Name,
-                    Town = address.Town,
-                    ZipCode = address.ZipCode
-                },
+                AddressName = order.AddressName,
+                TownName = order.TownName,
+                ZipCode = order.ZipCode,
                 Products = productOrders.Select(po => new ExtendedProductServiceModel
                 {
                     Name = po.Product.Name,
                     Barcode = po.Product.Barcode,
                     Price = po.Product.Price,
                     Stock = po.Quantity
-                }).ToList()
+                })
+                .ToList()
             };
         }
     }

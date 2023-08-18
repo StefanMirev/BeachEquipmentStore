@@ -8,6 +8,8 @@
 
     using BeachEquipmentStore.Data.Models;
     using BeachEquipmentStore.Data.Models.Extensions;
+    using System.Reflection.Emit;
+    using System.Reflection.Metadata;
 
 
     public class EquipmentStoreDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>

@@ -67,14 +67,14 @@ namespace BeachEquipmentStore.Web.Controllers
         public async Task<IActionResult> CreateOrder(Guid userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
         {
             await _orders.GenerateOrder(userId, hasAddress, addressName, town, zipCode, totalSum);
-            await _cart.RemoveAllItemsFromCart(userId);
-            return RedirectToAction("OrderHistory", "Profile", new { userId = userId});
+            await _cart.ClearCartAfterOrder(userId);
+            return RedirectToAction("OrderHistory", "Profile", new { userId = userId });
         }
-        
+
         public async Task<IActionResult> Details(string orderId)
         {
             var detailsModel = await _orders.GetOrderDetails(orderId);
-           
+
             return View(new OrderDetailViewModel
             {
                 Id = detailsModel.Id,
@@ -84,12 +84,9 @@ namespace BeachEquipmentStore.Web.Controllers
                 DeliveryPrice = detailsModel.DeliveryPrice,
                 OverallPrice = detailsModel.TotalPrice,
                 TotalPrice = detailsModel.TotalPrice - detailsModel.DeliveryPrice,
-                Address = new AddressViewModel()
-                {
-                    Name = detailsModel.Address.Name,
-                    Town = detailsModel.Address.Town,
-                    ZipCode = detailsModel.Address.ZipCode
-                },
+                AddressName = detailsModel.AddressName,
+                TownName = detailsModel.TownName,
+                ZipCode = detailsModel.ZipCode,
                 Products = detailsModel.Products.Select(p => new ExtendedProductViewModel
                 {
                     Name = p.Name,

@@ -4,6 +4,7 @@ using BeachEquipmentStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BeachEquipmentStore.Data.Migrations
 {
     [DbContext(typeof(EquipmentStoreDbContext))]
-    partial class EquipmentStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230817154057_FixedFkBetweenUserAndAddress")]
+    partial class FixedFkBetweenUserAndAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,24 +57,24 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("b6ba34c2-a655-4b75-ab54-3bc43322cee6"),
-                            CustomerId = new Guid("01e09b5f-de35-4afb-8c28-6788b4080809"),
+                            Id = new Guid("196eab30-a57e-4a75-94f0-19c96c8937f0"),
+                            CustomerId = new Guid("cd897834-21d3-4e6c-86da-23b1d961363b"),
                             Name = "ул. Кракра №3",
                             Town = "София",
                             ZipCode = 1000
                         },
                         new
                         {
-                            Id = new Guid("ec3442f0-c6bc-437b-bd60-1fcb31269c3e"),
-                            CustomerId = new Guid("e73ae685-0dc3-4f0a-bbdb-eb92a3a38302"),
+                            Id = new Guid("3a7dab5f-31d2-48d1-a7f8-1179e3b7bfa7"),
+                            CustomerId = new Guid("54cffa15-f634-4229-a42b-a353a182eefb"),
                             Name = "кв. Овча Купел, ул. Рачка №9",
                             Town = "София",
                             ZipCode = 1000
                         },
                         new
                         {
-                            Id = new Guid("19aed63f-d616-4a8a-beb9-08cd7c58c4aa"),
-                            CustomerId = new Guid("e73ae685-0dc3-4f0a-bbdb-eb92a3a38302"),
+                            Id = new Guid("f07beed3-f6fe-41c2-a70a-6d0d586b147d"),
+                            CustomerId = new Guid("54cffa15-f634-4229-a42b-a353a182eefb"),
                             Name = "ул. Обзорски Тигър № 33",
                             Town = "Обзор",
                             ZipCode = 1000
@@ -159,9 +161,9 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("01e09b5f-de35-4afb-8c28-6788b4080809"),
+                            Id = new Guid("cd897834-21d3-4e6c-86da-23b1d961363b"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1a27e0f8-2084-4e3f-aecf-0442b0c58af8",
+                            ConcurrencyStamp = "c518004c-e2bb-4ad0-8d9d-8b9a943ddc7a",
                             Email = "p.petrov@mail.com",
                             EmailConfirmed = false,
                             FirstName = "Petar",
@@ -169,7 +171,7 @@ namespace BeachEquipmentStore.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "P.PETROV@MAIL.COM",
                             NormalizedUserName = "P.PETROV@MAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGVPSZ3wcA5ujHR7zHPyVsKl3P+q1hT48qlqf+1+2Rio37SIJ93Rh+URGVepCqV5Ug==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEDp5cEL7aEK0UvHYByHCDbYal2yjK9/1ZUoo+8LbKqjYWpzwZ8Z33h16inauAwOfgQ==",
                             PhoneNumber = "0876596224",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
@@ -177,9 +179,9 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e73ae685-0dc3-4f0a-bbdb-eb92a3a38302"),
+                            Id = new Guid("54cffa15-f634-4229-a42b-a353a182eefb"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7a9b0f15-aa7a-4ee7-a08e-7553ebb4e460",
+                            ConcurrencyStamp = "ebe98c5a-aaf6-4a7a-a121-a94af9d1776a",
                             Email = "n.flacko@mail.com",
                             EmailConfirmed = false,
                             FirstName = "Nicko",
@@ -187,7 +189,7 @@ namespace BeachEquipmentStore.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "N.FLACKO@MAIL.COM",
                             NormalizedUserName = "N.FLACKO@MAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKu2GwEMLT71QSG/xOEWACb12X1WUCdo7L3nYt5nw/DXTYSZoKiu9QVbrYZHW6Dd/A==",
+                            PasswordHash = "AQAAAAEAACcQAAAAENSIzYcsghZKV8R8cD3yZUDCaO+zTsMkLbar0B73X/SwZwJL6FHjnKDnLASz/DZ8XQ==",
                             PhoneNumber = "0888202449",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
@@ -195,9 +197,9 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("8cbdaa45-24b8-4e18-8d44-1ad08cde7b26"),
+                            Id = new Guid("642e7e1c-ea78-4124-85c0-f607a5706700"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7c09f343-0c97-4c21-b692-fb3cfee69662",
+                            ConcurrencyStamp = "52a4984e-75e7-40fa-b085-8af183fad87e",
                             Email = "s.sarafov@mail.com",
                             EmailConfirmed = false,
                             FirstName = "Stamat",
@@ -205,7 +207,7 @@ namespace BeachEquipmentStore.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "S.SARAFOV@MAIL.COM",
                             NormalizedUserName = "S.SARAFOV@MAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMQ22VQeZg62mgpXo58BdzDLxcq742fzqVcDf4P4+cKiA0U9ICrYFJBdklQ9Pj+WGw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJVMYvH2DA4kuCzDPPIfTBPbAhhHIDSeekAbJdOtkR/5foXH2Dl6ePRSN9rDSDbRhQ==",
                             PhoneNumber = "0885527733",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
@@ -389,12 +391,6 @@ namespace BeachEquipmentStore.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AddressName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
@@ -410,15 +406,6 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.Property<decimal>("TotalPrice")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("TownName")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<int>("ZipCode")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -480,7 +467,7 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("934a68a2-5be6-4dd4-9df8-7b6a9857a9f1"),
+                            Id = new Guid("2415e294-d06f-4e6d-b79a-6358487c3635"),
                             Barcode = 57532,
                             CategoryId = 1,
                             Description = "Памучна детска плажна хавлия с изообразени акула и рибки. Грамаж: 380 гр.",
@@ -492,7 +479,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("feb5050e-3a39-4c41-8e06-5aea9474b550"),
+                            Id = new Guid("e500f8e6-28d7-494b-9dd1-3da0da83d708"),
                             Barcode = 38527,
                             CategoryId = 1,
                             Description = "Микрофибърна плажна хавлия с изоображение на морско дъно с 2 делфина и с надпис Bulgaria.",
@@ -504,7 +491,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e5481ad4-3900-41ef-b2fd-b16d973aa36c"),
+                            Id = new Guid("490b7384-ca60-4a46-bbcc-71aca872efd7"),
                             Barcode = 57523,
                             CategoryId = 1,
                             Description = "Памучна плажна хавлия с котвички, синя. Грамаж: 360 гр.",
@@ -516,7 +503,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a211d265-b17c-47b9-b6be-7966f64bb225"),
+                            Id = new Guid("faf19a48-6524-4a63-98c9-b06d8ec916ae"),
                             Barcode = 57526,
                             CategoryId = 1,
                             Description = "Памучна плажна хавлия с ананаси, розова. Грамаж: 360 гр.",
@@ -528,7 +515,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("009da7f8-e987-435c-8887-fe4a62ee018a"),
+                            Id = new Guid("8dca73e9-97da-45ba-8b7a-df01e9b08822"),
                             Barcode = 56130,
                             CategoryId = 1,
                             Description = "Микрофибърна плажна хавлия с изоображение на русалка и надписи.",
@@ -540,7 +527,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("587350d6-7969-4dab-a9f9-913d5d79dd11"),
+                            Id = new Guid("fe00e606-7acb-4af4-ab62-b09381fd5703"),
                             Barcode = 58922,
                             CategoryId = 1,
                             Description = "Микрофибърна плажна хавлия с изоображение на китара поставена на плаж.",
@@ -552,7 +539,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("925c3da1-b37a-4398-bf2a-efcfcc238c05"),
+                            Id = new Guid("a37414e9-8f50-4b1b-aa1e-0ca24bfaaa4f"),
                             Barcode = 55555,
                             CategoryId = 2,
                             Description = "Чадърите на \"Публиидея\" са перфектният аксесоар за горещите дни на плажа и ще Ви предпази парещите слънчеви лъчи. Лeceн е зa мoнтиpaнe, ocигypявa зaщитa oт cлънчeвитe лъчи UV25. Moжe лecнo дa бъдe нагласен в кoятo и дa e пocoкa, блaгoдapeниe нa чупещошд рамо. Диаметър: 100 см.",
@@ -564,7 +551,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("80b836f5-faf8-4eee-ba7f-09d3d6f0650e"),
+                            Id = new Guid("5993cc6d-dec9-461c-babd-d18b3a51d284"),
                             Barcode = 44443,
                             CategoryId = 2,
                             Description = "Чадърите на \"Публиидея\" са перфектният аксесоар за горещите дни на плажа и ще Ви предпази парещите слънчеви лъчи. Лeceн е зa мoнтиpaнe, ocигypявa зaщитa oт cлънчeвитe лъчи UV20+. Moжe лecнo дa бъдe нагласен в кoятo и дa e пocoкa, блaгoдapeниe нa чупещошд рамо. Диаметър: 100 см.",
@@ -576,7 +563,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("64958846-c833-4edc-ba72-a6d092fd5cf0"),
+                            Id = new Guid("5154ce81-61d4-4b1b-b775-5fb38ea32ef7"),
                             Barcode = 44442,
                             CategoryId = 2,
                             Description = "Чадърите на \"Публиидея\" са перфектният аксесоар за горещите дни на плажа и ще Ви предпази парещите слънчеви лъчи. Лeceн е зa мoнтиpaнe, ocигypявa зaщитa oт cлънчeвитe лъчи UV20+. Moжe лecнo дa бъдe нагласен в кoятo и дa e пocoкa, блaгoдapeниe нa чупещошд рамо. Диаметър: 100 см.",
@@ -588,7 +575,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("9bead1dc-9031-4fc4-bacf-db8f825c060b"),
+                            Id = new Guid("082a1f85-d28b-4789-9cb5-307997144632"),
                             Barcode = 44444,
                             CategoryId = 2,
                             Description = "Чадърите на \"Публиидея\" са перфектният аксесоар за горещите дни на плажа и ще Ви предпази парещите слънчеви лъчи. Лeceн е зa мoнтиpaнe, ocигypявa зaщитa oт cлънчeвитe лъчи UV20+. Moжe лecнo дa бъдe нагласен в кoятo и дa e пocoкa, блaгoдapeниe нa чупещошд рамо. Диаметър: 100 см.",
@@ -600,7 +587,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7b6abb1f-ba59-40dd-8540-2aa43886f680"),
+                            Id = new Guid("46673771-b49b-4185-ba2c-e93890009ed4"),
                             Barcode = 56718,
                             CategoryId = 3,
                             Description = "Плажна чанта с плетени дръжки и изообразени дини и черни палмови листа на бял фон.",
@@ -612,7 +599,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7bb74373-2401-4bee-be48-22f0cf100b62"),
+                            Id = new Guid("cecfd1a6-5502-4c8a-9e8d-9fe025719f64"),
                             Barcode = 56724,
                             CategoryId = 3,
                             Description = "Плажна чанта с плетени дръжки и изообразени котва на син фон с рози. ",
@@ -624,7 +611,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("40b0afd7-501e-4a2d-9038-10d09bd3afd4"),
+                            Id = new Guid("82933766-5629-4737-a89f-2cc790027fa4"),
                             Barcode = 56723,
                             CategoryId = 3,
                             Description = "Плажна чанта с плетени дръжки и изообразени макове на черно-бял фон.",
@@ -636,7 +623,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a8570f9c-0ae9-4970-9177-9498b8bc75bc"),
+                            Id = new Guid("447801da-a3c9-48d9-8a4a-5da01f62f7e4"),
                             Barcode = 56721,
                             CategoryId = 3,
                             Description = "Плажна чанта с плетени дръжки и изообразени миди и рулове на бял фон.",
@@ -648,7 +635,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("3677a066-6440-40d9-b4cc-2f2616318b28"),
+                            Id = new Guid("ecaf6a48-26ed-4ac5-bdd9-27b9f8733c8f"),
                             Barcode = 56720,
                             CategoryId = 3,
                             Description = "Плажна чанта с плетени дръжки и изообразени орхидеи на бял фон.",
@@ -660,7 +647,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("5e02ae59-e86f-492d-94d1-5362c9d05069"),
+                            Id = new Guid("ddfe34a2-651a-4a3d-8359-92fa217647cc"),
                             Barcode = 18040,
                             CategoryId = 4,
                             Description = "Комплектът съдържа гребло, лопатка, сито и формичка риба. Кофичката е с диаметър 29см.",
@@ -672,7 +659,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("1c70d25f-dd44-4fe5-ba43-609219297fb1"),
+                            Id = new Guid("a86aee9c-52fd-41c5-86f5-322eb68da6c8"),
                             Barcode = 17005,
                             CategoryId = 4,
                             Description = "Комплектът съдържа гребло, лопатка, сито и формички риба и костенурка. Кофичката е с диаметър 26см.",
@@ -684,7 +671,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("23427f59-7cd2-4eaa-bda4-e09aa42d18d8"),
+                            Id = new Guid("57722833-6c0a-4710-be2d-98ed633da56a"),
                             Barcode = 10805,
                             CategoryId = 4,
                             Description = "Комплектът съдържа гребло, лопатка, сито и формички риба, костенурка, мида и морска звезда. Кофичката е с диаметър 26см.",
@@ -696,7 +683,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f2bd2bc0-ab2e-4193-99e0-3f75f591395f"),
+                            Id = new Guid("e1cfea10-044e-4783-a48c-1d3b3da440f3"),
                             Barcode = 33306,
                             CategoryId = 4,
                             Description = " Комплектът съдържа гребло, лопатка, сито, лейка и три формички замък. Кофичката е квадратна, с размери 16 х 16 см.",
@@ -708,7 +695,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("197b824d-d18c-4662-9849-01b3f17724d3"),
+                            Id = new Guid("cbd1aae5-4c94-4183-aadd-7154b0e424aa"),
                             Barcode = 36113,
                             CategoryId = 4,
                             Description = "Лопата за пясък, дървена дръжка с дължина 62 см.",
@@ -720,7 +707,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("84ad6191-f21d-4783-ab4a-cd136885ab2b"),
+                            Id = new Guid("93953521-f62e-4578-9988-89beb6ac1541"),
                             Barcode = 58849,
                             CategoryId = 4,
                             Description = "Воден пистолет CPS TOYS, асортимент 38 см. Механизъм на помпата - функция помпане, дължина: 38 см, обем на резервоара: 900 мл, изстрелва водата до 8 метра!",
@@ -732,7 +719,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("c98c048c-2130-4c0d-a0b4-7950a253272b"),
+                            Id = new Guid("2bee5b79-784e-4c72-bcc1-c817c208b114"),
                             Barcode = 42178,
                             CategoryId = 5,
                             Description = "Плувна маска за цяло лице в мрежа S, M силикон, синьо, електрикаво зелено, черно",
@@ -744,7 +731,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e7718124-5086-4767-97a2-8b8e5804e089"),
+                            Id = new Guid("93d80c6e-75cd-4829-945b-952dde37ded1"),
                             Barcode = 59139,
                             CategoryId = 5,
                             Description = "Плавниците cа подходящи за гмуркане или тренировки по плуване. Tяхната площ ще даде възможноcт на вcеки любител на водните приключения да cе движи много по-бързо!",
@@ -756,7 +743,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("d84b9683-c6b9-427f-b05d-cf48f61309de"),
+                            Id = new Guid("4f972698-1207-44cd-b724-360ad671c987"),
                             Barcode = 42181,
                             CategoryId = 5,
                             Description = "Плавниците cа подходящи за гмуркане или тренировки по плуване. Tяхната площ ще даде възможноcт на вcеки любител на водните приключения да cе движи много по-бързо!",
@@ -768,7 +755,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("9e7b82c3-c310-4bdf-9eb4-b537be932cbe"),
+                            Id = new Guid("ffc514d6-7e9e-4c2b-9328-6b3bc2c82c86"),
                             Barcode = 24040,
                             CategoryId = 5,
                             Description = "Шапка за плуване, текстил. Размери: 21 х 12 см.",
@@ -780,7 +767,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("76758a76-d7c4-45c8-9f5d-ca782c94a433"),
+                            Id = new Guid("0b275f43-678c-4bb6-8ce9-cd6ef6087f83"),
                             Barcode = 31386,
                             CategoryId = 5,
                             Description = "Плувни очила, силикон, цветни, здраво прелепващи 13 см. ",
@@ -792,7 +779,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a1ff79be-1978-42a6-8b25-a8e94c1e9489"),
+                            Id = new Guid("5536363a-a23a-43c9-89b1-98525284874e"),
                             Barcode = 51375,
                             CategoryId = 5,
                             Description = "Плувни очила за възрастни, широки, черен силикон 18х8 см.",
@@ -804,7 +791,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a6c79a5d-795c-46c9-b462-9d6b82825ea8"),
+                            Id = new Guid("c03f94d9-00ee-46d5-b65d-7056a36766a5"),
                             Barcode = 42174,
                             CategoryId = 5,
                             Description = "Мундщук от поливинилхлорид за меко и удобно прилягане. Дихателна тръба със среден диаметър и дължина 42 см. Дизайн идеален за деца.",
@@ -816,7 +803,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("762f2561-4de4-4179-b908-c3507aa620e4"),
+                            Id = new Guid("d757677d-8011-45dd-8083-d75ab1800727"),
                             Barcode = 42172,
                             CategoryId = 5,
                             Description = "Шнорхел за възрастни с удобен термопластичен гумен мундщукшнорхел. Дихателна тръба с висококачествена P.V.C. изработка и дължина 42 см.",
@@ -828,7 +815,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("14932280-4864-44e2-9d6b-2d23d0391f99"),
+                            Id = new Guid("3ecdc0a6-d6d6-4463-95fb-ae2b800900e5"),
                             Barcode = 58546,
                             CategoryId = 6,
                             Description = "Алигаторите нe ca тoлкoвa cтpaшни кoлкoтo cи миcлитe. Сeгa имaтe възмoжнocт дa ce зaбaвлявaтe c eдин oт тях в бaceйнa, морeто или дори и нa cушaтa. Алигаторът e c paзмepи, кoитo ca cхoдни c тeзи нa иcтинcкитe му cъбpaтя и e гoтoв зa мнoгo игpи c вaшият мaлчугaн. Изработен е от качествен винил и има 1 здрaва дръжка за захващане зa по-голямa уcтойчивоcт и cигурноcт нa дeтeто. Размер: 168 х 86 см.",
@@ -840,7 +827,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e4147d80-1ebf-4789-88cf-477ed3261637"),
+                            Id = new Guid("f23515f3-0bc2-406a-bea2-aa7299dd68ad"),
                             Barcode = 49230,
                             CategoryId = 6,
                             Description = "Кaквo мoжe дa нaпpaви плувaнeтo в бaceйнa или в мopeтo oщe пo-зaбaвнo? Нaпpимep aкo дeтeтo влeзe във вoдaтa с пояс с брокат със забавен дизайн във формата на еднорог. Размер: 90 см.",
@@ -852,7 +839,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("ffbba546-22dd-4d18-9c64-51057d29896c"),
+                            Id = new Guid("48f7985f-0012-44e6-bd70-8816f0873b87"),
                             Barcode = 36727,
                             CategoryId = 6,
                             Description = "Надуваем остров с диаметър 70 см. Свеж дизайн. Въже за захващане.",
@@ -864,7 +851,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("cca15e42-1118-4892-95fb-1155af07bab2"),
+                            Id = new Guid("f687edd0-6dfa-4e61-8f55-68f3a896bf0c"),
                             Barcode = 56113,
                             CategoryId = 6,
                             Description = "Изработен е от качествен винил и има 4 въздушни камери, голям външeн пpъcтeн зa по-голямa cтaбилноcт и отвоpи зa кpaчeтaтa нa дeтeто, които оcигуpявaт нeговaтa бeзопacноcт и пpeдотвpaтявaт вepоятноcттa от изхлузване от пояca.",
@@ -876,7 +863,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("1ddb9590-894c-485d-968a-7ac0bd67e587"),
+                            Id = new Guid("19b65a72-8a1e-46cc-ae0b-ffba4697fbe6"),
                             Barcode = 58762,
                             CategoryId = 6,
                             Description = "Насладете се на почивката със забавния надуваем дюшек във формата на близалка от Intex. Той е достатъчно голям, за да се чувствате удобно и комфортно върху него. Можете да го ползвате и в басейна и на плажа. Изработен е от висококачествен винил, което го прави устойчив на надраскване и разкъсване.",
@@ -888,7 +875,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("aad6566a-3a90-40c6-b8f1-2c1d605ca160"),
+                            Id = new Guid("095a29d7-1cc7-43f5-ad1d-3ae5558ef2a5"),
                             Barcode = 59720,
                             CategoryId = 6,
                             Description = "Отпуснете се в басейна и се забавлявайте на следващото парти това лято с този надуваем дюшек. Забавният дизайн създава освежаващо и забавно настроение, докато релаксирате на слънце през цялото лято.",
@@ -900,7 +887,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("5d080500-1281-4cf2-abf0-ec63c2abceb0"),
+                            Id = new Guid("8707da55-a71d-48d4-bfd2-f083288f8b12"),
                             Barcode = 58786,
                             CategoryId = 6,
                             Description = "Надуваем дюшек Ангелски крила INTEX. Размери и тегло - Размери: 251 x 106 см.; Тегло: 3.47 кг.",
@@ -912,7 +899,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("354ba31a-2aba-45f6-8a60-9a0d1cc98bea"),
+                            Id = new Guid("730ecab6-8215-425d-b3e9-9574ca2421be"),
                             Barcode = 101730,
                             CategoryId = 7,
                             Description = "Висококачествена топка с диаметър 21см. Игрите с топка ще помогнат на децата да задоволят естественото си желание за движение по забавен начин. Те използват енергията си по подходящ начин - активното движение на чист въздух е полезно за здравето и в същото време носи радост от играта.",
@@ -924,7 +911,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("d9797e25-2e54-470a-b3f2-9ae963acb0e6"),
+                            Id = new Guid("fc7d9ec7-7c96-4345-8d03-a9867a5fd263"),
                             Barcode = 101019,
                             CategoryId = 7,
                             Description = "Висококачествена топка с диаметър 21см. Игрите с топка ще помогнат на децата да задоволят естественото си желание за движение по забавен начин. Те използват енергията си по подходящ начин - активното движение на чист въздух е полезно за здравето и в същото време носи радост от играта.",
@@ -936,7 +923,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("57bce037-f81b-4883-9d2a-e8dc48adc037"),
+                            Id = new Guid("11b6f680-b148-4c74-82f1-40c1db8ce2c9"),
                             Barcode = 101090,
                             CategoryId = 7,
                             Description = "Висококачествена топка с диаметър 21см. Игрите с топка ще помогнат на децата да задоволят естественото си желание за движение по забавен начин. Те използват енергията си по подходящ начин - активното движение на чист въздух е полезно за здравето и в същото време носи радост от играта.",
@@ -948,7 +935,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("97d63ae5-55da-4907-a40e-ed1af60bc8c5"),
+                            Id = new Guid("75a3ac9b-d03d-44e3-b8d3-00260b122f9f"),
                             Barcode = 101011,
                             CategoryId = 7,
                             Description = "Висококачествена топка с диаметър 21см. Игрите с топка ще помогнат на децата да задоволят естественото си желание за движение по забавен начин. Те използват енергията си по подходящ начин - активното движение на чист въздух е полезно за здравето и в същото време носи радост от играта.",

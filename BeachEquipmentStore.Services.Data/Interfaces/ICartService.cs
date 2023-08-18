@@ -11,5 +11,7 @@
         Task RemoveAllItemsFromCart(Guid userId);
 
         Task RemoveItemFromCart(Guid userId, Guid productId);
+
+        Task ClearCartAfterOrder(Guid userId);
     }
 }

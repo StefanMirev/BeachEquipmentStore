@@ -7,14 +7,14 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                <label for="FirstName">Име</label>
-                <p>@Model.UserInfo.FirstName" <p/>
+                <label for="FirstName">Име:</label>
+                <p>@Model.UserInfo.FirstName<p />
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
                 <label for="LastName">Фамилия:</label>
-                <p>@Model.UserInfo.LastName" <p/>
+                <p>@Model.UserInfo.LastName<p />
             </div>
         </div>
     </div>
@@ -22,13 +22,13 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="Email">Е-поща:</label>
-                <p>@Model.UserInfo.Email <p/>
+                <p>@Model.UserInfo.Email<p />
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
                 <label for="PhoneNumber">Телефон:</label>
-                <p>@Model.UserInfo.PhoneNumber <p/>
+                <p>@Model.UserInfo.PhoneNumber<p />
             </div>
         </div>
     </div>
@@ -38,98 +38,102 @@
     {
         <div class="form-group">
             <label for="AddressName">Адрес: </label>
-            <p>@Model.UserAddress!.Name <p/>
+            <p>@Model.UserAddress!.Name<p />
         </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="Town">Град: </label>
-                   <p>@Model.UserAddress.Town <p/>
+                    <p>@Model.UserAddress.Town<p />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="ZipCode">Пощенски код:</label>
+                    <p>@Model.UserAddress.ZipCode<p />
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="form-group">
+            <label for="AddressName">Адрес</label>
+            <input type="text" class="form-control" id="AddressName" name="AddressName" />
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="Town">Град</label>
+                    <input type="text" class="form-control" id="Town" name="Town" />
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="ZipCode">Пощенски код</label>
-                    <p>@Model.UserAddress.ZipCode <p/>
+                    <input type="text" class="form-control" id="ZipCode" name="ZipCode" />
                 </div>
             </div>
         </div>
     }
-    else{
-    <div class="form-group">
-        <label for="AddressName">Адрес</label>
-            <input type="text" class="form-control" id="AddressName" name="AddressName" />
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="Town">Град</label>
-                <input type="text" class="form-control" id="Town" name="Town" />
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="ZipCode">Пощенски код</label>
-                <input type="text" class="form-control" id="ZipCode" name="ZipCode"/>
-            </div>
-        </div>
-    </div>
-    }
 
     <h3>Съдържание на количката:</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Артикул</th>
-                <th>Количество</th>
-                <th>Единична цена</th>
-                <th>Общо за артикула</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model.Products)
-            {
-                <tr>
-                    <td><img src="@product.ImageUrl" alt="@product.Name" style="max-width: 100px; max-height: 100px;" /></td>
-                    <td>@product.Name</td>
-                    <td>@product.Quantity</td>
-                    <td>@product.Price.ToString("C")</td>
-                    @{
-                        decimal? totalProductPrice = product.Price * product.Quantity;
-                        string formattedTotalProductPrice = string.Format("{0:C}", totalProductPrice);
-                    }
-                    <td>@formattedTotalProductPrice</td>
-                </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <th colspan="3">Обща сума:</th>
-                @{
-                    decimal? overallPrice = Model.Products.Sum(p => p.Price * p.Quantity);
-                    string formattedOverallPrice = string.Format("{0:C}", overallPrice);
-                }
-                <th>@formattedOverallPrice</th>
-            </tr>
-        </tfoot>
-    </table>
+    <div class="container">
+        <div class="cart-container">
+            <table class="table" style="overflow-x: hidden;">
+                <thead>
+                    <tr>
+                        <th style="left: 50px; position: relative;">Артикул</th>
+                        <th class="text-center align-middle">Количество</th>
+                        <th class="text-center align-middle">Единична цена</th>
+                        <th class="text-center align-middle">Общо за артикула</th>
+                    </tr>
+                </thead>
 
-    <div class="row justify-content-end">
-        <div class="col-md-6">
-            @{
-                decimal? deliveryPrice = 5.50m;
-                decimal? finalSum = overallPrice + deliveryPrice;
-            }
-            <div class="form-group">
-                <label for="DeliverySum">Цена на доставката:</label>
-                <p>@String.Format("{0:C}", deliveryPrice)</p>
-            </div>
-            <div class="form-group">
-                <label for="TotalSum">Общо:</label>
-                <p>@String.Format("{0:C}", finalSum)</p>
-            </div>
-            <button type="submit" class="btn btn-primary" asp-route-userId = "@User.GetId()" asp-route-hasAddress="@ViewBag.HasAddress" asp-route-totalSum="@finalSum">Завърши поръчката</button>
+                <tbody>
+                    @foreach (var product in Model.Products)
+                    {
+                        <tr class="cart-item">
+                            <td><img src="@product.ImageUrl" alt="@product.Name" style="max-width: 100px; max-height: 100px;" />   <span>@product.Name</span></td>
+                            <td class="text-center align-middle">@product.Quantity</td>
+                            <td class="text-center align-middle">@product.Price.ToString("C")</td>
+                            @{
+                                decimal? totalProductPrice = product.Price * product.Quantity;
+                                string formattedTotalProductPrice = string.Format("{0:C}", totalProductPrice);
+                            }
+                            <td class="text-center align-middle">@formattedTotalProductPrice</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot style="overflow-x: hidden;">
+                    <tr>
+                        <th colspan="2"></th>
+                        <th style="right: -17px; position:relative">Обща сума:</th>
+                        @{
+                            decimal? overallPrice = Model.Products.Sum(p => p.Price * p.Quantity);
+                            string formattedOverallPrice = string.Format("{0:C}", overallPrice);
+                        }
+                        <th class="text-center align-middle" style="position:relative;">@formattedOverallPrice</th>
+                    </tr>
+                    @{
+                        decimal? deliveryPrice = 5.50m;
+                        decimal? finalSum = overallPrice + deliveryPrice;
+                    }
+                    <tr>
+                        <th colspan="2"></th>
+                        <th style="right: -17px; position:relative">Цена на доставката:</th>
+                        <th class="text-center align-middle" style="position:relative;">@String.Format("{0:C}", deliveryPrice)</th>
+                    </tr>
+                    <tr>
+                        <th colspan="2"></th>
+                        <th style="right: -17px; position:relative">Общо:</th>
+                        <th class="text-center align-middle" style="position:relative;">@String.Format("{0:C}", finalSum)</th>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
+    </div>
+    <div class="row justify-content-center">
+        <button style="width: 800px" type="submit" class="btn btn-primary" asp-route-userId="@User.GetId()" asp-route-hasAddress="@ViewBag.HasAddress" asp-route-totalSum="@finalSum">Завърши поръчката</button>
     </div>
 </form>

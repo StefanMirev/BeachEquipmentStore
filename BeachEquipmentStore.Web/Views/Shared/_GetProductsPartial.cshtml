@@ -1,22 +1,22 @@
-﻿    <partial name="_FilterProducts"/>
+﻿<partial name="_FilterProducts" />
 
 <div class="container mt-5">
     <div class="row">
         @foreach (var product in Model.FilteredProducts.Products)
         {
-            <a asp-controller="Product" asp-action="GetSelectedProduct" asp-route-productId="@product.Id">
             <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="@Url.Content(product.ImageUrl)" class="card-img-top" alt="@product.Name">
-                    <div class="card-body">
-                        <h5 class="card-title">@product.Name</h5>
-                        <p class="card-text">@product.Price.ToString("C")</p>
-                        
+                <a asp-controller="Product" asp-action="GetSelectedProduct" asp-route-productId="@product.Id">
+                    <div class="card product-card">
+                        <img src="@Url.Content(product.ImageUrl)" class="card-img-top product-image" alt="@product.Name">
+                        <div class="card-body product-card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text">@product.Price.ToString("C")</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-            </a>
-            <partial name="_AddToCartPartial" model="@product" />
+
+                </a>
+                <partial name="_AddToCartPartial" model="@product" />
+            </div>  
         }
     </div>
 </div>

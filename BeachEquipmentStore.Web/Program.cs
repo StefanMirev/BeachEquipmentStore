@@ -7,7 +7,7 @@ namespace BeachEquipmentStore.Web
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
-    
+
 
     using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Data.Models;
@@ -16,6 +16,7 @@ namespace BeachEquipmentStore.Web
     using BeachEquipmentStore.Services.Data;
     using BeachEquipmentStore.Web.Infrastructure.ModelBinders;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authentication.Cookies;
 
     public class Program
     {
@@ -47,6 +48,20 @@ namespace BeachEquipmentStore.Web
                     options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
                     options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
                 });
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "Identity/Account/Login";
+                });
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAuthenticatedUser", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                });
+            });
+
 
             builder.Services.AddRazorPages();
             builder.Services.AddApplicationServices(typeof(IProductService));

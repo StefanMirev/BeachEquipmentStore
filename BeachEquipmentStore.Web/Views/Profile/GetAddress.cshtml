@@ -1,42 +1,45 @@
 ﻿@model AddressViewModel
 @{
-    ViewData["Title"] = "Edit Address";
+    ViewBag.Title = "Редакция на адрес";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit Address</h1>
+<h2>@ViewBag.Title</h2>
+<hr />
 
-<nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-    <partial name="_ManageNav" />
-</nav>
-
-@if (Model != null)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Адрес</th>
-                <th>Град</th>
-                <th>Пощенски код</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>@Model.Name</td>
-                <td>@Model.Town</td>
-                <td>@Model.ZipCode</td>
-                <td>
-                    <a asp-controller="Profile" asp-action="EditAddress" asp-route-addressId="@Model.Id">Редактирай</a> |
-                    <a asp-controller="Profile" asp-action="DeleteAddress" asp-route-addressId="@Model.Id" asp-route-userId="@User.GetId()">Изтрий</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-}
-else
-{
-    <p>Все още нямате регистриран адрес!</p>
-    <a asp-controller="Profile" asp-action="AddAddress">Добави адрес</a>
-}
-
+<div class="row">
+    <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+        <partial name="_ManageNav" />
+    </nav>
+    <div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+        @if (Model != null)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Адрес</th>
+                        <th>Град</th>
+                        <th>Пощенски код</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.Name</td>
+                        <td>@Model.Town</td>
+                        <td>@Model.ZipCode</td>
+                        <td>
+                            <a asp-controller="Profile" asp-action="EditAddress" asp-route-addressId="@Model.Id">Редактирай</a> |
+                            <a asp-controller="Profile" asp-action="DeleteAddress" asp-route-addressId="@Model.Id" asp-route-userId="@User.GetId()">Изтрий</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>Все още нямате регистриран адрес!</p>
+            <a style="margin-top: 5px;" asp-controller="Profile" asp-action="AddAddress">Добави адрес</a>
+        }
+    </div>
+</div>

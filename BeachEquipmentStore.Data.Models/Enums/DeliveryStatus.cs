@@ -8,7 +8,7 @@ namespace BeachEquipmentStore.Data.Models.Enums
 {
     public enum DeliveryStatus
     {
-        InTransit,
-        Delivered
+        Пътува,
+        Доставена
     }
 }

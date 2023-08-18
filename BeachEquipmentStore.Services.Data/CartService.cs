@@ -21,7 +21,7 @@ namespace BeachEquipmentStore.Services.Data
                 var cartProduct = await _data.CartItems.FirstAsync(ci => ci.CustomerId == userId && ci.ProductId == productId);
                 cartProduct.Quantity += quantity;
 
-                var dbProduct =  await _data.Products.FirstAsync(p => p.Id == productId);
+                var dbProduct = await _data.Products.FirstAsync(p => p.Id == productId);
                 dbProduct.Stock -= quantity;
             }
             else
@@ -45,7 +45,7 @@ namespace BeachEquipmentStore.Services.Data
                     ProductId = ci.ProductId,
                     Quantity = ci.Quantity
                 })
-                .ToListAsync();       
+                .ToListAsync();
         }
 
         public async Task RemoveAllItemsFromCart(Guid userId)
@@ -54,12 +54,12 @@ namespace BeachEquipmentStore.Services.Data
                 .Where(p => p.CustomerId == userId)
             .ToListAsync();
 
-            foreach (var cartItem in productsToRemove) 
+            foreach (var cartItem in productsToRemove)
             {
                 var dbProduct = await _data.Products.FirstAsync(p => p.Id == cartItem.ProductId);
                 dbProduct.Stock += cartItem.Quantity;
             }
-            
+
             _data.RemoveRange(productsToRemove);
             await _data.SaveChangesAsync();
         }
@@ -68,7 +68,20 @@ namespace BeachEquipmentStore.Services.Data
         {
             var cartItem = await _data.CartItems.FirstAsync(ci => ci.CustomerId == userId && ci.ProductId == productId);
 
+            var dbProduct = await _data.Products.FirstAsync(p => p.Id == cartItem.ProductId);
+            dbProduct.Stock += cartItem.Quantity;
+
             _data.CartItems.Remove(cartItem);
+            await _data.SaveChangesAsync();
+        }
+
+        public async Task ClearCartAfterOrder(Guid userId)
+        {
+            var productsToRemove = await this._data.CartItems
+               .Where(p => p.CustomerId == userId)
+               .ToListAsync();
+
+            _data.RemoveRange(productsToRemove);
             await _data.SaveChangesAsync();
         }
     }

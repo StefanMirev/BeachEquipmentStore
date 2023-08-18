@@ -4,27 +4,31 @@
 }
 
 <h2>@ViewData["Title"]</h2>
+<hr />
 
-<nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-    <partial name="_ManageNav" />
-</nav>
-<form method="post">
-    <div class="form-group">
-        <label for="FirstName">Име</label>
-        <input type="text" id="FirstName" name="FirstName" class="form-control" value="@Model.FirstName" />
+<div class="row">
+    <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+        <partial name="_ManageNav" />
+    </nav>
+    <div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+        <form method="post">
+            <div class="form-group">
+                <label for="FirstName">Име</label>
+                <input type="text" id="FirstName" name="FirstName" class="form-control" value="@Model.FirstName" required>
+            </div>
+            <div class="form-group">
+                <label for="LastName">Фамилия</label>
+                <input type="text" id="LastName" name="LastName" class="form-control" value="@Model.LastName" required>
+            </div>
+            <div class="form-group">
+                <label for="Email">Е-поща</label>
+                <input type="email" id="Email" name="Email" class="form-control" value="@Model.Email" required>
+            </div>
+            <div class="form-group">
+                <label for="PhoneNumber">Телефон</label>
+                <input type="text" id="PhoneNumber" name="PhoneNumber" class="form-control" value="@Model.PhoneNumber" required>
+            </div>
+            <button style="margin-top: 5px;" type=" submit" class="btn btn-primary" asp-route-userId="@User.GetId()">Запази промените</button>
+        </form>
     </div>
-    <div class="form-group">
-        <label for="LastName">Фамилия</label>
-        <input type="text" id="LastName" name="LastName" class="form-control" value="@Model.LastName" />
-    </div>
-    <div class="form-group">
-        <label for="Email">Е-поща</label>
-        <input type="email" id="Email" name="Email" class="form-control" value="@Model.Email" />
-    </div>
-    <div class="form-group">
-        <label for="PhoneNumber">Телефон</label>
-        <input type="text" id="PhoneNumber" name="PhoneNumber" class="form-control" value="@Model.PhoneNumber" />
-    </div>
-
-    <button type="submit" class="btn btn-primary" asp-route-userId="@User.GetId()">Запази промените</button>
-</form>
+</div>
