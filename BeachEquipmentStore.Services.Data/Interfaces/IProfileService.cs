@@ -13,8 +13,6 @@ namespace BeachEquipmentStore.Services.Data.Interfaces
 
         Task ChangeUserInfo(Guid userId, string firstName, string lastName, string email, string phoneNumber);
 
-        Task ChangePassword (Guid userId, string currentPassword, string newPassword, string newPasswordConfirmation);
-
         Task<AddressServiceModel> GetAllAddressInfo (Guid userId);
 
         Task<AddressServiceModel> GetAddressInfo (string addressId);

@@ -8,6 +8,7 @@
         private static ApplicationUser UserOne = new ApplicationUser();
         private static ApplicationUser UserTwo = new ApplicationUser();
         private static ApplicationUser UserThree = new ApplicationUser();
+
         public static void SeedUsers(this ModelBuilder modelBuilder)
         {
             var hasher = new PasswordHasher<ApplicationUser>();
@@ -20,6 +21,7 @@
             UserOne.NormalizedEmail = "P.PETROV@MAIL.COM";
             UserOne.PhoneNumber = "0876596224";
             UserOne.PasswordHash = hasher.HashPassword(UserOne, "123123");
+            UserOne.SecurityStamp = Guid.NewGuid().ToString("D");
 
             UserTwo.FirstName = "Nicko";
             UserTwo.LastName = "Flacko";
@@ -29,6 +31,7 @@
             UserTwo.NormalizedEmail = "N.FLACKO@MAIL.COM";
             UserTwo.PhoneNumber = "0888202449";
             UserTwo.PasswordHash = hasher.HashPassword(UserTwo, "123123");
+            UserTwo.SecurityStamp = Guid.NewGuid().ToString("D");
 
             UserThree.FirstName = "Stamat";
             UserThree.LastName = "Sarafov";
@@ -38,6 +41,7 @@
             UserThree.NormalizedEmail = "S.SARAFOV@MAIL.COM";
             UserThree.PhoneNumber = "0885527733";
             UserThree.PasswordHash = hasher.HashPassword(UserThree, "123123");
+            UserThree.SecurityStamp = Guid.NewGuid().ToString("D");
 
             modelBuilder.Entity<ApplicationUser>().HasData(UserOne, UserTwo, UserThree);
         }

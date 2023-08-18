@@ -32,29 +32,6 @@ namespace BeachEquipmentStore.Services.Data
             };
         }
 
-        public async Task ChangePassword(Guid userId, string currentPassword, string newPassword, string newPasswordConfirmation)
-        {
-            var hasher = new PasswordHasher<ApplicationUser>();
-            var currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
-
-            if (await _userManager.CheckPasswordAsync(currentUser, currentPassword))
-            {
-                if (newPassword == newPasswordConfirmation)
-                {
-                    currentUser.PasswordHash = hasher.HashPassword(currentUser, newPassword);
-                    await _data.SaveChangesAsync();
-                }
-                else
-                {
-                    throw new ArgumentException("Паролите в полетата \"Нова парола\" и \"Потвърди парола\" се различават!");
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Въведената парола е грешна! Моля опитайте отново!");
-            }
-        }
-
         public async Task ChangeUserInfo(Guid userId, string firstName, string lastName, string email, string phoneNumber)
         {
             var currentUser = await _data.Users.FirstAsync(u => u.Id == userId);

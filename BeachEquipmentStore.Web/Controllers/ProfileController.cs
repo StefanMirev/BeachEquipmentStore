@@ -1,5 +1,7 @@
-﻿using BeachEquipmentStore.Services.Data.Interfaces;
+﻿using BeachEquipmentStore.Data.Models;
+using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Services.Data.Models.Profile;
+using BeachEquipmentStore.Web.Infrastructure.Extensions;
 using BeachEquipmentStore.Web.ViewModels.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,14 +13,16 @@ using System.Security.Claims;
 
 namespace BeachEquipmentStore.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "RequireAuthenticatedUser")]
     public class ProfileController : Controller
     {
         private readonly IProfileService _profiles;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProfileController(IProfileService profiles)
+        public ProfileController(IProfileService profiles, UserManager<ApplicationUser> userManager)
         {
             _profiles = profiles;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> MyProfile(Guid userId)
@@ -63,19 +67,30 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(Guid userId, string currentPassword, string newPassword, string confirmPassword)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                await this._profiles.ChangePassword(userId, currentPassword, newPassword, confirmPassword);
-            }
-            catch (ArgumentException ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
-                return RedirectToAction("ChangePassword", "Profile");
+                return View(model);
             }
 
-            return RedirectToAction("MyProfile", "Profile");
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!changePasswordResult.Succeeded)
+            {
+                foreach (var error in changePasswordResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return View(model);
+            }
+
+            return RedirectToAction("MyProfile", "Profile", new {userId = Guid.Parse(User.GetId())});
         }
 
         [HttpGet]

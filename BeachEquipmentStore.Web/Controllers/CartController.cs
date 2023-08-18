@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BeachEquipmentStore.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "RequireAuthenticatedUser")]
     public class CartController : Controller
     {
         private readonly ICartService _cartItems;

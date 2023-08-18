@@ -12,7 +12,7 @@ using static BeachEquipmentStore.Common.EntityValidationConstants;
 
 namespace BeachEquipmentStore.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "RequireAuthenticatedUser")]
     public class OrderController : Controller
     {
         private readonly IOrderService _orders;

@@ -13,10 +13,11 @@ namespace BeachEquipmentStore.Web
     using BeachEquipmentStore.Data.Models;
     using static BeachEquipmentStore.Web.Infrastructure.Extensions.WebApplicationBuilderExtensions;
     using BeachEquipmentStore.Services.Data.Interfaces;
-    using BeachEquipmentStore.Services.Data;
     using BeachEquipmentStore.Web.Infrastructure.ModelBinders;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Authentication.Cookies;
+
+    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
+
 
     public class Program
     {
@@ -40,7 +41,9 @@ namespace BeachEquipmentStore.Web
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
             })
-                .AddEntityFrameworkStores<EquipmentStoreDbContext>();
+                .AddRoles<IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<EquipmentStoreDbContext>()
+                .AddDefaultTokenProviders();
 
             builder.Services.AddControllersWithViews()
                 .AddMvcOptions(options =>
@@ -49,11 +52,17 @@ namespace BeachEquipmentStore.Web
                     options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
                 });
 
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            builder.Services.AddRazorPages();
+            builder.Services.AddApplicationServices(typeof(IProductService));
+
+            builder.Services.AddAuthentication()
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "Identity/Account/Login";
+                    options.Cookie.HttpOnly = true;
                 });
+
+            builder.Services.ConfigureApplicationCookie(options => options.LoginPath = $"/Identity/Account/Login");
+
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireAuthenticatedUser", policy =>
@@ -61,10 +70,6 @@ namespace BeachEquipmentStore.Web
                     policy.RequireAuthenticatedUser();
                 });
             });
-
-
-            builder.Services.AddRazorPages();
-            builder.Services.AddApplicationServices(typeof(IProductService));
 
             var app = builder.Build();
 
@@ -85,6 +90,8 @@ namespace BeachEquipmentStore.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.SeedAdministrator(AdminEmailAddress);
 
             app.MapControllerRoute(
                 name: "default",
