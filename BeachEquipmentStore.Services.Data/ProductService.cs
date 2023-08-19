@@ -14,6 +14,7 @@
     using BeachEquipmentStore.Data.Models;
     using System.Data.Common;
     using Microsoft.Data.SqlClient;
+    using System.Runtime.CompilerServices;
 
     public class ProductService : IProductService
     {
@@ -64,7 +65,8 @@
                      Id = p.Id,
                      Name = p.Name,
                      ImageUrl = p.ImageUrl,
-                     Price = p.Price
+                     Price = p.Price,
+                     Quantity = p.Stock
                  })
                  .ToListAsync();
         }
@@ -206,6 +208,15 @@
             };
 
             return filteredModel;
+        }
+
+        public async Task RestockProduct(Guid productId, int quantity)
+        {
+            var product = _data.Products.Find(productId);
+
+            product.Stock += quantity;
+
+            await _data.SaveChangesAsync();
         }
     }
 }

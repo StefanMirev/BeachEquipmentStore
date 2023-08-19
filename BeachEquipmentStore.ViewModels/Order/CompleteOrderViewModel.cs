@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BeachEquipmentStore.Services.Data.Interfaces
+namespace BeachEquipmentStore.Web.ViewModels.Order
 {
-    public interface IAdminService
+    public class CompleteOrderViewModel
     {
+        public  Guid Id { get; set; }
+
     }
 }

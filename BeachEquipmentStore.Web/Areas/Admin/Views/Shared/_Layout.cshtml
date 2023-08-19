@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+
+<h1>Административен панел</h1>
+<div class="row">
+    <a asp-area="Admin" asp-controller="User" asp-action="MakeAdmin"
+       class="btn btn-primary btn-lg">Добави админ</a>
+    <span> | </span>
+    <a asp-area="Admin" asp-controller="Order" asp-action="Deliver"
+       class="btn btn-primary btn-lg">Завърши доставка</a>
+    <span> | </span>
+    <a asp-area="Admin" asp-controller="Product" asp-action="Restock"
+       class="btn btn-primary btn-lg">Възстанови запасите</a>
+    <span> | </span>
+    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+        <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+    </form>
+</div>
+
+<hr class="my-4">
+
+@RenderBody()
+
+<script src="/_framework/aspnetcore-browser-refresh.js"></script>
+

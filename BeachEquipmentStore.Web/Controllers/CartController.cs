@@ -51,11 +51,11 @@ namespace BeachEquipmentStore.Web.Controllers
             {
                 await _cartItems.AddItemToCart(userId, productId, quantity);
 
-                TempData["Message"] = "Product successfully added to cart!";
+                TempData["Message"] = "Продуктът бе успешно добавен!";
             }
             else
             {
-                TempData["ErrorMessage"] = "Product is not in stock.";
+                TempData["ErrorMessage"] = "Продуктът не е в наличност!";
             }
 
             return Redirect(refererUrl);

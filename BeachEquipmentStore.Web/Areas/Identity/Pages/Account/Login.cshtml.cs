@@ -115,7 +115,7 @@ namespace BeachEquipmentStore.Web.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home", new { area = "" });
                 }
                 if (result.RequiresTwoFactor)
                 {

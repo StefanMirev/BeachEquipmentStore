@@ -9,6 +9,9 @@
     using Microsoft.AspNetCore.Authorization;
     using BeachEquipmentStore.Web.ViewModels.Product;
 
+    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
+    using BeachEquipmentStore.Web.Infrastructure.Extensions;
+
     public class HomeController : Controller
     {
         private readonly IProductService _products;
@@ -21,6 +24,12 @@
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
+            if (User.IsInRole(AdminRoleName))
+            {
+                var adminUrl = Url.Action("Index", "Home", new { area = AdminAreaName });
+                return Redirect(adminUrl);
+            }
+
             List<ProductViewModel> resultsetOfProducts = new List<ProductViewModel>();
 
             var randomisedProducs = await this._products.GetRandomProductsInStockAsync();

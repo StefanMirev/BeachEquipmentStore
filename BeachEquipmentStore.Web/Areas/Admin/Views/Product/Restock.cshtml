@@ -1,0 +1,29 @@
+﻿@model RestockProductsViewModel
+
+<table>
+    <thead>
+        <tr>
+            <th>Артикул</th>
+            <th>Брой</th>
+            <th>Поръчай</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @{
+            foreach (var product in Model.Products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Quantity</td>
+                    <td>
+                        <form method="post" asp-controller="Product" asp-action="FinishRestock" asp-route-productId="@product.Id">
+                            <input type="number" name="quantity" required>
+                            <button type="submit">Поръчай</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

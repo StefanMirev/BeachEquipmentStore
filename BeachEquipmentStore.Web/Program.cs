@@ -59,7 +59,10 @@ namespace BeachEquipmentStore.Web
                 .AddCookie(options =>
                 {
                     options.Cookie.HttpOnly = true;
+                    options.Cookie.Expiration = TimeSpan.FromDays(30);
                 });
+
+            builder.Services.AddMemoryCache();
 
             builder.Services.ConfigureApplicationCookie(options => options.LoginPath = $"/Identity/Account/Login");
 
@@ -93,13 +96,20 @@ namespace BeachEquipmentStore.Web
 
             app.SeedAdministrator(AdminEmailAddress);
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                  name: "areas",
+                  pattern: "/{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                );
+                endpoints.MapControllerRoute(
+                  name: "default",
+                  pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
+
+
 
             app.Run();
         }

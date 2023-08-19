@@ -3,6 +3,7 @@ using BeachEquipmentStore.Web.ViewModels.Category;
 using BeachEquipmentStore.Web.ViewModels.Manufacturer;
 using BeachEquipmentStore.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.Runtime.CompilerServices;
 
 namespace BeachEquipmentStore.Web.Controllers
@@ -12,12 +13,14 @@ namespace BeachEquipmentStore.Web.Controllers
         private readonly ICategoryService _categories;
         private readonly IProductService _products;
         private readonly IManufacturerService _manufacturers;
+        private readonly IMemoryCache _cache;
 
-        public ProductController(IProductService products, ICategoryService categories, IManufacturerService manufacturers)
+        public ProductController(IProductService products, ICategoryService categories, IManufacturerService manufacturers, IMemoryCache cache)
         {
             _products = products;
             _categories = categories;
             _manufacturers = manufacturers;
+            _cache = cache;
 
         }
         public async Task<IActionResult> All()

@@ -20,5 +20,7 @@
         Task<List<ProductServiceModel>> GetProductsInCart(List<CartServiceModel> cartItems);
 
         Task<ExtendedFiltrationServiceModel> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId);
+
+        Task RestockProduct(Guid productId, int quantity);
     }
 }

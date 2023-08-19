@@ -13,6 +13,9 @@ using ApplicationUser = BeachEquipmentStore.Data.Models.ApplicationUser;
 using Address = BeachEquipmentStore.Data.Models.Address;
 using Product = BeachEquipmentStore.Data.Models.Product;
 using static BeachEquipmentStore.Common.EntityValidationConstants;
+using BeachEquipmentStore.Web.ViewModels.Order;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using BeachEquipmentStore.Data.Models.Enums;
 
 namespace BeachEquipmentStore.Services.Data
 {
@@ -83,7 +86,7 @@ namespace BeachEquipmentStore.Services.Data
             }
             else
             {
-              address = await _data.Addresses.FirstAsync(a => a.CustomerId == userId);
+                address = await _data.Addresses.FirstAsync(a => a.CustomerId == userId);
             }
 
             Order order = new Order()
@@ -153,6 +156,30 @@ namespace BeachEquipmentStore.Services.Data
                 })
                 .ToList()
             };
+        }
+
+        public async Task<List<CompleteOrderViewModel>> GetUndeliveredOrders()
+        {
+            var orders = await _data.Orders
+                .Where(o => (int)o.DeliveryStatus == 0)
+                .Select(o => new CompleteOrderViewModel
+                {
+                    Id = o.Id
+                })
+                .ToListAsync();
+
+            return orders;
+        }
+
+
+        public async Task DeliverORders(Guid orderId)
+        {
+            Order order = await _data.Orders.FindAsync(orderId);
+
+            order.ShippingDate = DateTime.UtcNow;
+            order.DeliveryStatus += 1;
+
+            await _data.SaveChangesAsync();
         }
     }
 }

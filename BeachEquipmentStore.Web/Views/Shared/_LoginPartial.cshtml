@@ -10,9 +10,6 @@
             <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="GoToCart" asp-route-userId="@User.GetId()">Количка</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Административен панел</a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link text-dark" asp-controller="Profile" asp-action="MyProfile" asp-route-userId="@User.GetId()" title="Manage">Hello, @Model.FirstName @Model.LastName!</a>
         </li>
         <li class="nav-item">

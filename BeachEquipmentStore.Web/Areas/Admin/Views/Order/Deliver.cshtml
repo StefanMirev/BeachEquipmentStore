@@ -1,0 +1,25 @@
+﻿@model List<CompleteOrderViewModel>
+
+<table>
+    <thead>
+        <tr>
+            <th>Поръчка №:</th>
+            <th>Доставка:</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>
+                        <form method="post" asp-controller="Order" asp-action="CompleteDelivery" asp-route-orderId="@order.Id">
+                            <button type="submit">Завърши</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -1,4 +1,5 @@
 ﻿using BeachEquipmentStore.Services.Data.Models.Order;
+using BeachEquipmentStore.Web.ViewModels.Order;
 
 namespace BeachEquipmentStore.Services.Data.Interfaces
 {
@@ -9,5 +10,9 @@ namespace BeachEquipmentStore.Services.Data.Interfaces
         Task GenerateOrder(Guid userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum);
 
         Task<OrderDetailServiceModel> GetOrderDetails(string orderId);
+
+        Task<List<CompleteOrderViewModel>> GetUndeliveredOrders();
+
+        Task DeliverORders(Guid orderId);
     }
 }
