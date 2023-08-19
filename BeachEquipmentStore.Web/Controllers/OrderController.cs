@@ -29,72 +29,99 @@ namespace BeachEquipmentStore.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateOrder(Guid userId)
         {
-            var orderServiceData = await _orders.GetDataRequiredForOrder(userId);
-
-            bool hasAddress = !string.IsNullOrEmpty(orderServiceData.UserAddress?.Name);
-            ViewBag.HasAddress = hasAddress;
-
-            decimal? sumOfAllProducts = orderServiceData.Products.Sum(p => p.Price * p.Quantity);
-            ViewBag.FormattedSum = string.Format("{0:C}", sumOfAllProducts);
-
-            return View(new CreateOrderViewModel
+            try
             {
-                UserInfo = new UserInfoViewModel
+                var orderServiceData = await _orders.GetDataRequiredForOrder(userId);
+
+                bool hasAddress = !string.IsNullOrEmpty(orderServiceData.UserAddress?.Name);
+                ViewBag.HasAddress = hasAddress;
+
+                decimal? sumOfAllProducts = orderServiceData.Products.Sum(p => p.Price * p.Quantity);
+                ViewBag.FormattedSum = string.Format("{0:C}", sumOfAllProducts);
+
+                return View(new CreateOrderViewModel
                 {
-                    FirstName = orderServiceData.UserInfo.FirstName,
-                    LastName = orderServiceData.UserInfo.LastName,
-                    Email = orderServiceData.UserInfo.Email,
-                    PhoneNumber = orderServiceData.UserInfo.PhoneNumber,
-                },
-                UserAddress = new AddressViewModel
-                {
-                    Name = orderServiceData.UserAddress!.Name,
-                    Town = orderServiceData.UserAddress!.Town,
-                    ZipCode = orderServiceData.UserAddress.ZipCode
-                },
-                Products = new List<ProductViewModel>(orderServiceData.Products.Select(p => new ProductViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    ImageUrl = p.ImageUrl,
-                    Price = p.Price,
-                    Quantity = p.Quantity
-                }))
-            });
+                    UserInfo = new UserInfoViewModel
+                    {
+                        FirstName = orderServiceData.UserInfo.FirstName,
+                        LastName = orderServiceData.UserInfo.LastName,
+                        Email = orderServiceData.UserInfo.Email,
+                        PhoneNumber = orderServiceData.UserInfo.PhoneNumber,
+                    },
+                    UserAddress = new AddressViewModel
+                    {
+                        Name = orderServiceData.UserAddress!.Name,
+                        Town = orderServiceData.UserAddress!.Town,
+                        ZipCode = orderServiceData.UserAddress.ZipCode
+                    },
+                    Products = new List<ProductViewModel>(orderServiceData.Products.Select(p => new ProductViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        ImageUrl = p.ImageUrl,
+                        Price = p.Price,
+                        Quantity = p.Quantity
+                    }))
+                });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateOrder(Guid userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
         {
-            await _orders.GenerateOrder(userId, hasAddress, addressName, town, zipCode, totalSum);
-            await _cart.ClearCartAfterOrder(userId);
-            return RedirectToAction("OrderHistory", "Profile", new { userId = userId });
+            try
+            {
+                await _orders.GenerateOrder(userId, hasAddress, addressName, town, zipCode, totalSum);
+                await _cart.ClearCartAfterOrder(userId);
+                return RedirectToAction("OrderHistory", "Profile", new { userId = userId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public async Task<IActionResult> Details(string orderId)
         {
-            var detailsModel = await _orders.GetOrderDetails(orderId);
-
-            return View(new OrderDetailViewModel
+            try
             {
-                Id = detailsModel.Id,
-                OrderDate = detailsModel.OrderDate,
-                ShippingDate = detailsModel.ShippingDate,
-                DeliveryStatus = detailsModel.DeliveryStatus,
-                DeliveryPrice = detailsModel.DeliveryPrice,
-                OverallPrice = detailsModel.TotalPrice,
-                TotalPrice = detailsModel.TotalPrice - detailsModel.DeliveryPrice,
-                AddressName = detailsModel.AddressName,
-                TownName = detailsModel.TownName,
-                ZipCode = detailsModel.ZipCode,
-                Products = detailsModel.Products.Select(p => new ExtendedProductViewModel
+                var detailsModel = await _orders.GetOrderDetails(orderId);
+
+                return View(new OrderDetailViewModel
                 {
-                    Name = p.Name,
-                    Barcode = p.Barcode,
-                    Price = p.Price,
-                    Stock = p.Stock
-                }).ToList()
-            });
+                    Id = detailsModel.Id,
+                    OrderDate = detailsModel.OrderDate,
+                    ShippingDate = detailsModel.ShippingDate,
+                    DeliveryStatus = detailsModel.DeliveryStatus,
+                    DeliveryPrice = detailsModel.DeliveryPrice,
+                    OverallPrice = detailsModel.TotalPrice,
+                    TotalPrice = detailsModel.TotalPrice - detailsModel.DeliveryPrice,
+                    AddressName = detailsModel.AddressName,
+                    TownName = detailsModel.TownName,
+                    ZipCode = detailsModel.ZipCode,
+                    Products = detailsModel.Products.Select(p => new ExtendedProductViewModel
+                    {
+                        Name = p.Name,
+                        Barcode = p.Barcode,
+                        Price = p.Price,
+                        Stock = p.Stock
+                    }).ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

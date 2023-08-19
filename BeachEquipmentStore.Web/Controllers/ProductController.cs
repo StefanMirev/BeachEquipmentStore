@@ -4,7 +4,6 @@ using BeachEquipmentStore.Web.ViewModels.Manufacturer;
 using BeachEquipmentStore.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using System.Runtime.CompilerServices;
 
 namespace BeachEquipmentStore.Web.Controllers
 {
@@ -29,7 +28,7 @@ namespace BeachEquipmentStore.Web.Controllers
             var manufacturers = await _manufacturers.GetAllManufacturersAsync();
             var queryResult = await this._products.GetAllProductsAsync();
 
-            
+
             FilterProductsViewModel allProducts = new FilterProductsViewModel()
             {
                 Products = queryResult.Select(p => new ProductViewModel
@@ -62,100 +61,128 @@ namespace BeachEquipmentStore.Web.Controllers
 
         public async Task<IActionResult> ProductsByCategory(int categoryId)
         {
-            var queryProducts = await this._products.GetProductsByCategoryAsync(categoryId);
-            var categories = await _categories.GetAllCategoriesAsync();
-            var manufacturers = await _manufacturers.GetAllManufacturersAsync();
-            var resultProducts = new FilterProductsViewModel()
+            try
             {
-                Products = queryProducts.Select(p => new ProductViewModel
+                var queryProducts = await this._products.GetProductsByCategoryAsync(categoryId);
+                var categories = await _categories.GetAllCategoriesAsync();
+                var manufacturers = await _manufacturers.GetAllManufacturersAsync();
+                var resultProducts = new FilterProductsViewModel()
                 {
-                    Id = p.Id,
-                    Name = p.Name,
-                    ImageUrl = p.ImageUrl,
-                    Price = p.Price
-                }).ToList(),
-                Categories = categories.Select(p => new CategoryViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name
-                }).ToList(),
-                Manufacturers = manufacturers.Select(p => new ManufacturerViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                }).ToList()
-            };
+                    Products = queryProducts.Select(p => new ProductViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        ImageUrl = p.ImageUrl,
+                        Price = p.Price
+                    }).ToList(),
+                    Categories = categories.Select(p => new CategoryViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name
+                    }).ToList(),
+                    Manufacturers = manufacturers.Select(p => new ManufacturerViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                    }).ToList()
+                };
 
-            ExtendendedFiltrationViewModel model = new ExtendendedFiltrationViewModel()
+                ExtendendedFiltrationViewModel model = new ExtendendedFiltrationViewModel()
+                {
+                    FilteredProducts = resultProducts
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
             {
-                FilteredProducts = resultProducts
-            };
+                TempData["ErrorMessage"] = ex.Message;
 
-            return View(model);
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public async Task<IActionResult> ProductsByManufacturer(int manufacturerId)
         {
-            var queryProducts = await this._products.GetProductsByManufacturerAsync(manufacturerId);
-            var categories = await _categories.GetAllCategoriesAsync();
-            var manufacturers = await _manufacturers.GetAllManufacturersAsync();
-            var resultProducts = new FilterProductsViewModel()
+            try
             {
-                Products = queryProducts.Select(p => new ProductViewModel
+                var queryProducts = await this._products.GetProductsByManufacturerAsync(manufacturerId);
+                var categories = await _categories.GetAllCategoriesAsync();
+                var manufacturers = await _manufacturers.GetAllManufacturersAsync();
+                var resultProducts = new FilterProductsViewModel()
                 {
-                    Id = p.Id,
-                    Name = p.Name,
-                    ImageUrl = p.ImageUrl,
-                    Price = p.Price
-                }).ToList(),
-                Categories = categories.Select(p => new CategoryViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name
-                }).ToList(),
-                Manufacturers = manufacturers.Select(p => new ManufacturerViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                }).ToList()
-            };
+                    Products = queryProducts.Select(p => new ProductViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        ImageUrl = p.ImageUrl,
+                        Price = p.Price
+                    }).ToList(),
+                    Categories = categories.Select(p => new CategoryViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name
+                    }).ToList(),
+                    Manufacturers = manufacturers.Select(p => new ManufacturerViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                    }).ToList()
+                };
 
-            ExtendendedFiltrationViewModel model = new ExtendendedFiltrationViewModel()
+                ExtendendedFiltrationViewModel model = new ExtendendedFiltrationViewModel()
+                {
+                    FilteredProducts = resultProducts
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
             {
-                FilteredProducts = resultProducts
-            };
+                TempData["ErrorMessage"] = ex.Message;
 
-            return View(model);
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public async Task<IActionResult> GetSelectedProduct(Guid productId)
         {
-            var selectedProduct = await this._products.GetProductById(productId);
-
-            return View(new ExtendedProductViewModel
+            try
             {
-                Id = selectedProduct.Id,
-                Name = selectedProduct.Name,
-                Description = selectedProduct.Description,
-                ImageUrl = selectedProduct.ImageUrl,
-                Barcode = selectedProduct.Barcode,
-                Price = selectedProduct.Price,
-                Stock = selectedProduct.Stock,
-                Manufacturer = new ManufacturerViewModel
+                var selectedProduct = await this._products.GetProductById(productId);
+
+                return View(new ExtendedProductViewModel
                 {
-                    Id = selectedProduct.Manufacturer.Id,
-                    Name = selectedProduct.Manufacturer.Name,
-                },
-                Category = new CategoryViewModel
-                {
-                    Id = selectedProduct.Category.Id,
-                    Name = selectedProduct.Category.Name
-                }
-            });
+                    Id = selectedProduct.Id,
+                    Name = selectedProduct.Name,
+                    Description = selectedProduct.Description,
+                    ImageUrl = selectedProduct.ImageUrl,
+                    Barcode = selectedProduct.Barcode,
+                    Price = selectedProduct.Price,
+                    Stock = selectedProduct.Stock,
+                    Manufacturer = new ManufacturerViewModel
+                    {
+                        Id = selectedProduct.Manufacturer.Id,
+                        Name = selectedProduct.Manufacturer.Name,
+                    },
+                    Category = new CategoryViewModel
+                    {
+                        Id = selectedProduct.Category.Id,
+                        Name = selectedProduct.Category.Name
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public async Task<IActionResult> FilterProducts(string keyword, int categoryId, int manufacturerId)
         {
+            try { 
             var filteredProducts = await _products.GetFilteredProductsAsync(keyword, categoryId, manufacturerId);
 
             return View("All", new ExtendendedFiltrationViewModel()
@@ -171,15 +198,15 @@ namespace BeachEquipmentStore.Web.Controllers
                         Name = c.Name
                     })
                     .ToList(),
-                    Manufacturers = filteredProducts.FilteredProducts.Manufacturers.Select(m => new ManufacturerViewModel 
-                    { 
+                    Manufacturers = filteredProducts.FilteredProducts.Manufacturers.Select(m => new ManufacturerViewModel
+                    {
                         Id = m.Id,
-                        Name = m.Name 
+                        Name = m.Name
                     })
                     .ToList(),
                     Products = filteredProducts.FilteredProducts.Products.Select(p => new ProductViewModel
                     {
-                        Id= p.Id,
+                        Id = p.Id,
                         Name = p.Name,
                         ImageUrl = p.ImageUrl,
                         Price = p.Price,
@@ -188,6 +215,13 @@ namespace BeachEquipmentStore.Web.Controllers
                     .ToList()
                 }
             });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

@@ -24,6 +24,7 @@
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
+            try { 
             if (User.IsInRole(AdminRoleName))
             {
                 var adminUrl = Url.Action("Index", "Home", new { area = AdminAreaName });
@@ -44,6 +45,13 @@
             }));
 
             return View(resultsetOfProducts);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [AllowAnonymous]
@@ -57,7 +65,6 @@
         {
             return View();
         }
-
         
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -2,8 +2,11 @@
 using BeachEquipmentStore.Data.Models;
 using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Services.Data.Models.Profile;
+using BeachEquipmentStore.Web.ViewModels.Profile;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Linq;
 
 namespace BeachEquipmentStore.Services.Data
@@ -21,6 +24,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task<UserInfoServiceModel> GetUserInfo(Guid userId)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new ArgumentNullException("This user does not exist!");
+            }
+
             ApplicationUser currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
 
             return new UserInfoServiceModel()
@@ -32,20 +40,30 @@ namespace BeachEquipmentStore.Services.Data
             };
         }
 
-        public async Task ChangeUserInfo(Guid userId, string firstName, string lastName, string email, string phoneNumber)
+        public async Task ChangeUserInfo(Guid userId, UserInfoViewModel infoModel)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new ArgumentNullException("This user does not exist!");
+            }
+
             var currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
 
-            currentUser.FirstName = firstName;
-            currentUser.LastName = lastName;
-            currentUser.Email = email;
-            currentUser.PhoneNumber = phoneNumber;
+            currentUser.FirstName = infoModel.FirstName;
+            currentUser.LastName = infoModel.LastName;
+            currentUser.Email = infoModel.Email;
+            currentUser.PhoneNumber = infoModel.PhoneNumber;
 
             await _data.SaveChangesAsync();
         }
 
         public async Task<AddressServiceModel> GetAllAddressInfo(Guid userId)
         {
+            if (!await _data.Users.AnyAsync(a => a.Id == userId))
+            {
+                throw new InvalidOperationException("This user doesn't exist!");
+            }
+
             if (!await _data.Addresses.AnyAsync(a => a.CustomerId == userId))
             {
                 throw new InvalidOperationException("You don't have an address yet!");
@@ -64,6 +82,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task<AddressServiceModel> GetAddressInfo(string addressId)
         {
+            if (!await _data.Addresses.AnyAsync(a => a.Id == Guid.Parse(addressId)))
+            {
+                throw new InvalidOperationException("You don't have an address yet!");
+            }
+
             var address = await _data.Addresses.FirstAsync(a => a.Id.ToString() == addressId);
 
             return new AddressServiceModel
@@ -77,6 +100,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task AddAddress(Guid userId, string name, string town, int zipCode)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new ArgumentNullException("This user does not exist!");
+            }
+
             Address address = new Address()
             {
                 Id = Guid.NewGuid(),
@@ -92,6 +120,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task ChangeAddressInfo(Guid addressId, string name, string town, int zipCode)
         {
+            if (!await _data.Addresses.AnyAsync(a => a.Id == addressId))
+            {
+                throw new InvalidOperationException("You don't have an address yet!");
+            }
+
             var addressToChange = await _data.Addresses.FirstAsync(a => a.Id == addressId);
 
             addressToChange.Name = name;
@@ -105,6 +138,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task DeleteAddress(Guid addressId)
         {
+            if (!_data.Addresses.Any(u => u.Id == addressId))
+            {
+                throw new InvalidOperationException("This address does not exist!");
+            }
+
             Address address = await _data.Addresses.FirstAsync(a => a.Id == addressId);
             _data.Addresses.Remove(address);
             await _data.SaveChangesAsync();
@@ -112,6 +150,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task<List<OrderHistoryServiceModel>> GetOrderHistory(Guid userId)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new ArgumentNullException("This user does not exist!");
+            }
+
             return await _data.Orders
                 .Where(o => o.CustomerId == userId)
                 .Select(o => new OrderHistoryServiceModel

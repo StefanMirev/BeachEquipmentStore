@@ -16,6 +16,11 @@ namespace BeachEquipmentStore.Services.Data
         }
         public async Task AddItemToCart(Guid userId, Guid productId, int quantity)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new InvalidOperationException("This user does not exist!");
+            }
+
             if (await _data.CartItems.AnyAsync(ci => ci.CustomerId == userId && ci.ProductId == productId))
             {
                 var cartProduct = await _data.CartItems.FirstAsync(ci => ci.CustomerId == userId && ci.ProductId == productId);
@@ -38,6 +43,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task<List<CartServiceModel>> GetItemsInCart(Guid userId)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new InvalidOperationException("This user does not exist!");
+            }
+
             return await _data.CartItems
                 .Where(ci => ci.CustomerId == userId)
                 .Select(ci => new CartServiceModel
@@ -50,6 +60,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task RemoveAllItemsFromCart(Guid userId)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new InvalidOperationException("This user does not exist!");
+            }
+
             var productsToRemove = await this._data.CartItems
                 .Where(p => p.CustomerId == userId)
             .ToListAsync();
@@ -66,6 +81,16 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task RemoveItemFromCart(Guid userId, Guid productId)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new InvalidOperationException("This user does not exist!");
+            }
+
+            if (!_data.Products.Any(u => u.Id == productId))
+            {
+                throw new InvalidOperationException("This product does not exist!");
+            }
+
             var cartItem = await _data.CartItems.FirstAsync(ci => ci.CustomerId == userId && ci.ProductId == productId);
 
             var dbProduct = await _data.Products.FirstAsync(p => p.Id == cartItem.ProductId);
@@ -77,6 +102,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task ClearCartAfterOrder(Guid userId)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new InvalidOperationException("This user does not exist!");
+            }
+
             var productsToRemove = await this._data.CartItems
                .Where(p => p.CustomerId == userId)
                .ToListAsync();

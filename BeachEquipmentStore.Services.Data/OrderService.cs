@@ -30,6 +30,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task<CreateOrderServiceModel> GetDataRequiredForOrder(Guid userId)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new InvalidOperationException("This user does not exist!");
+            }
+
             ApplicationUser currentUser = await _data.Users.Include(a => a.Addresses).FirstAsync(u => u.Id == userId);
             Address userAddress = new Address();
 
@@ -73,6 +78,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task GenerateOrder(Guid userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
         {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new InvalidOperationException("This user does not exist!");
+            }
+
             Address address = new Address();
 
             if (!hasAddress)
@@ -128,9 +138,17 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task<OrderDetailServiceModel> GetOrderDetails(string orderId)
         {
+            if (!_data.Orders.Any(u => u.Id == Guid.Parse(orderId)))
+            {
+                throw new InvalidOperationException("This order does not exist!");
+            }
+
             Order order = await _data.Orders.FirstAsync(p => p.Id.ToString() == orderId);
 
-            //Address address = await _data.Addresses.FirstAsync(p => p.CustomerId == order.CustomerId);
+            if (!_data.Users.Any(u => u.Id == order.CustomerId))
+            {
+                throw new InvalidOperationException("This user does not exist!");
+            }
 
             List<ProductOrder> productOrders = await _data.ProductOrders
                 .Include(p => p.Product)
@@ -174,6 +192,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task DeliverORders(Guid orderId)
         {
+            if (!_data.Orders.Any(u => u.Id == orderId))
+            {
+                throw new InvalidOperationException("This order does not exist!");
+            }
+
             Order order = await _data.Orders.FindAsync(orderId);
 
             order.ShippingDate = DateTime.UtcNow;

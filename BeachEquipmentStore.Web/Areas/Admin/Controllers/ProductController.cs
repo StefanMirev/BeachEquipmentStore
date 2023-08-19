@@ -23,28 +23,46 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Restock()
         {
-            List<ProductServiceModel> allProducts = await _products.GetAllProductsAsync();
-
-            return View(new RestockProductsViewModel
+            try
             {
-                Products = allProducts.Select(p => new ProductViewModel
+                List<ProductServiceModel> allProducts = await _products.GetAllProductsAsync();
+
+                return View(new RestockProductsViewModel
                 {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Quantity = p.Quantity,
-                    Price = 0,
-                    ImageUrl = ""
-                })
-                .ToList()
-            });
+                    Products = allProducts.Select(p => new ProductViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Quantity = p.Quantity,
+                        Price = 0,
+                        ImageUrl = ""
+                    })
+                    .ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> FinishRestock(Guid productId, int quantity)
         {
-            await _products.RestockProduct(productId, quantity);
+            try
+            {
+                await _products.RestockProduct(productId, quantity);
 
-            return RedirectToAction("Restock", "Product", new { Area = AdminAreaName });
+                return RedirectToAction("Restock", "Product", new { Area = AdminAreaName });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
     }

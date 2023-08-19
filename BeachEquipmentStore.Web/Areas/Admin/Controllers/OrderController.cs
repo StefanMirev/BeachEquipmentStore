@@ -16,15 +16,33 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Deliver()
         {
-            return View(await _orders.GetUndeliveredOrders());
+            try
+            {
+                return View(await _orders.GetUndeliveredOrders());
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CompleteDelivery(Guid orderId)
         {
-            await _orders.DeliverORders(orderId);
+            try
+            {
+                await _orders.DeliverORders(orderId);
 
-            return RedirectToAction("Deliver", "Order", new { Area = AdminAreaName });
+                return RedirectToAction("Deliver", "Order", new { Area = AdminAreaName });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

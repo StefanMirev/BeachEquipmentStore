@@ -27,6 +27,11 @@
 
         public async Task<ExtendedProductServiceModel> GetProductById(Guid productId)
         {
+            if (!await _data.Products.AnyAsync(a => a.Id == productId))
+            {
+                throw new InvalidOperationException("This product doesn't exist!");
+            }
+
             Product product = await _data.Products
                 .Include(p => p.Manufacturer)
                 .Include(p => p.Category)
@@ -146,6 +151,11 @@
 
         public async Task<bool> IsInStock(Guid productId, int quantity)
         {
+            if (!await _data.Products.AnyAsync(a => a.Id == productId))
+            {
+                throw new InvalidOperationException("This product doesn't exist!");
+            }
+
             Product product = await _data.Products
                 .FirstAsync(p => p.Id == productId);
 
@@ -212,6 +222,11 @@
 
         public async Task RestockProduct(Guid productId, int quantity)
         {
+            if (!await _data.Products.AnyAsync(a => a.Id == productId))
+            {
+                throw new InvalidOperationException("This product doesn't exist!");
+            }
+
             var product = _data.Products.Find(productId);
 
             product.Stock += quantity;

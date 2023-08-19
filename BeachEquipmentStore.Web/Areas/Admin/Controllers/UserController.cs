@@ -15,14 +15,32 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> MakeAdmin()
         {
-            return View(await _users.GetAllNotAdminUsers());
+            try
+            {
+                return View(await _users.GetAllNotAdminUsers());
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public async Task<IActionResult> UpdateUserRole(Guid userId)
         {
-            await _users.MakeAdmin(userId);
+            try
+            {
+                await _users.MakeAdmin(userId);
 
-            return RedirectToAction("MakeAdmin", "User", new { Area = AdminAreaName});
+                return RedirectToAction("MakeAdmin", "User", new { Area = AdminAreaName });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

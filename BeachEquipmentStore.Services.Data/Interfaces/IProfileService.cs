@@ -1,4 +1,5 @@
 ﻿using BeachEquipmentStore.Services.Data.Models.Profile;
+using BeachEquipmentStore.Web.ViewModels.Profile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace BeachEquipmentStore.Services.Data.Interfaces
     {
         Task<UserInfoServiceModel> GetUserInfo (Guid userId);
 
-        Task ChangeUserInfo(Guid userId, string firstName, string lastName, string email, string phoneNumber);
+        Task ChangeUserInfo(Guid userId, UserInfoViewModel infoModel);
 
         Task<AddressServiceModel> GetAllAddressInfo (Guid userId);
 

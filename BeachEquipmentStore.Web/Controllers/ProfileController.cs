@@ -27,37 +27,64 @@ namespace BeachEquipmentStore.Web.Controllers
 
         public async Task<IActionResult> MyProfile(Guid userId)
         {
-            var userInfo = await _profiles.GetUserInfo(userId);
-
-            return View(new UserInfoViewModel
+            try
             {
-                FirstName = userInfo.FirstName,
-                LastName = userInfo.LastName,
-                Email = userInfo.Email,
-                PhoneNumber = userInfo.PhoneNumber
-            });
+                var userInfo = await _profiles.GetUserInfo(userId);
+
+                return View(new UserInfoViewModel
+                {
+                    FirstName = userInfo.FirstName,
+                    LastName = userInfo.LastName,
+                    Email = userInfo.Email,
+                    PhoneNumber = userInfo.PhoneNumber
+                });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> EditProfile(Guid userId)
         {
-            var userInfo = await _profiles.GetUserInfo(userId);
-
-            return View(new UserInfoViewModel
+            try
             {
-                FirstName = userInfo.FirstName,
-                LastName = userInfo.LastName,
-                Email = userInfo.Email,
-                PhoneNumber = userInfo.PhoneNumber
-            });
+                var userInfo = await _profiles.GetUserInfo(userId);
+
+                return View(new UserInfoViewModel
+                {
+                    FirstName = userInfo.FirstName,
+                    LastName = userInfo.LastName,
+                    Email = userInfo.Email,
+                    PhoneNumber = userInfo.PhoneNumber
+                });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditProfile(Guid userId, string firstName, string lastName, string email, string phoneNumber)
+        public async Task<IActionResult> EditProfile(Guid userId, UserInfoViewModel infoModel)
         {
-            await _profiles.ChangeUserInfo(userId, firstName, lastName, email, phoneNumber);
+            try
+            {
+                await _profiles.ChangeUserInfo(userId, infoModel);
 
-            return RedirectToAction("MyProfile", "Profile", new { userId = userId });
+                return RedirectToAction("MyProfile", "Profile", new { userId = userId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
@@ -69,28 +96,39 @@ namespace BeachEquipmentStore.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(model);
-            }
 
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound();
-            }
 
-            var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-            if (!changePasswordResult.Succeeded)
-            {
-                foreach (var error in changePasswordResult.Errors)
+                if (!ModelState.IsValid)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    return View(model);
                 }
-                return View(model);
-            }
 
-            return RedirectToAction("MyProfile", "Profile", new {userId = Guid.Parse(User.GetId())});
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                if (!changePasswordResult.Succeeded)
+                {
+                    foreach (var error in changePasswordResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View(model);
+                }
+
+                return RedirectToAction("MyProfile", "Profile", new { userId = Guid.Parse(User.GetId()) });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
@@ -124,55 +162,100 @@ namespace BeachEquipmentStore.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAddress(Guid userId, string name, string town, int zipCode)
         {
-            await _profiles.AddAddress(userId, name, town, zipCode);
+            try
+            {
+                await _profiles.AddAddress(userId, name, town, zipCode);
 
-            return RedirectToAction("GetAddress", "Profile", new { userId = userId });
+                return RedirectToAction("GetAddress", "Profile", new { userId = userId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> EditAddress(string addressId)
         {
-            var addresses = await _profiles.GetAddressInfo(addressId);
-
-            return View(new AddressViewModel
+            try
             {
-                Id = addresses.Id,
-                Name = addresses.Name,
-                Town = addresses.Town,
-                ZipCode = addresses.ZipCode
-            });
+                var addresses = await _profiles.GetAddressInfo(addressId);
+
+                return View(new AddressViewModel
+                {
+                    Id = addresses.Id,
+                    Name = addresses.Name,
+                    Town = addresses.Town,
+                    ZipCode = addresses.ZipCode
+                });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> EditAddress(Guid userId, Guid addressId, string name, string town, int zipCode)
         {
-            await _profiles.ChangeAddressInfo(addressId, name, town, zipCode);
+            try
+            {
+                await _profiles.ChangeAddressInfo(addressId, name, town, zipCode);
 
-            return RedirectToAction("GetAddress", "Profile", new { userId = userId });
+                return RedirectToAction("GetAddress", "Profile", new { userId = userId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public async Task<IActionResult> DeleteAddress(Guid addressId, Guid userId)
         {
-            await _profiles.DeleteAddress(addressId);
+            try
+            {
+                await _profiles.DeleteAddress(addressId);
 
-            return RedirectToAction("MyProfile", "Profile", new { userId = userId });
+                return RedirectToAction("MyProfile", "Profile", new { userId = userId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> OrderHistory(Guid userId)
         {
-            List<OrderHistoryServiceModel> orderHistory = await _profiles.GetOrderHistory(userId);
+            try
+            {
+                List<OrderHistoryServiceModel> orderHistory = await _profiles.GetOrderHistory(userId);
 
-            return View(orderHistory
-                .Select(o => new OrderHistoryViewModel
-                {
-                    Id = o.Id,
-                    DeliveryStatus = o.DeliveryStatus,
-                    OrderDate = o.OrderDate,
-                    TotalPrice = o.TotalPrice
-                })
-                .OrderByDescending(oh => oh.OrderDate)
-                .ToList());
+                return View(orderHistory
+                    .Select(o => new OrderHistoryViewModel
+                    {
+                        Id = o.Id,
+                        DeliveryStatus = o.DeliveryStatus,
+                        OrderDate = o.OrderDate,
+                        TotalPrice = o.TotalPrice
+                    })
+                    .OrderByDescending(oh => oh.OrderDate)
+                    .ToList());
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

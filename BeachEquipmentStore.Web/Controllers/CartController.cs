@@ -19,60 +19,96 @@ namespace BeachEquipmentStore.Web.Controllers
 
         public async Task<IActionResult> GoToCart(Guid userId)
         {
-            var cartItems = await _cartItems.GetItemsInCart(userId);
+            try
+            {
+                var cartItems = await _cartItems.GetItemsInCart(userId);
 
-            var resultQuery = await _products.GetProductsInCart(cartItems);
+                var resultQuery = await _products.GetProductsInCart(cartItems);
 
-            List<ProductViewModel> productsInCart = resultQuery
-                .Select(p => new ProductViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    ImageUrl = p.ImageUrl,
-                    Price = p.Price,
-                    Quantity = p.Quantity
-                })
-                .ToList();
+                List<ProductViewModel> productsInCart = resultQuery
+                    .Select(p => new ProductViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        ImageUrl = p.ImageUrl,
+                        Price = p.Price,
+                        Quantity = p.Quantity
+                    })
+                    .ToList();
 
-            return View(productsInCart);
+                return View(productsInCart);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Add(Guid userId, Guid productId, int quantity)
         {
-            string refererUrl = Request.Headers["Referer"].ToString();
-
-            if (quantity <= 0)
+            try
             {
-                throw new ArgumentOutOfRangeException("Can't add less than one product in cart!");
-            }
+                string refererUrl = Request.Headers["Referer"].ToString();
 
-            if (await _products.IsInStock(productId, quantity))
+                if (quantity <= 0)
+                {
+                    throw new ArgumentOutOfRangeException("Can't add less than one product in cart!");
+                }
+
+                if (await _products.IsInStock(productId, quantity))
+                {
+                    await _cartItems.AddItemToCart(userId, productId, quantity);
+
+                    TempData["Message"] = "Продуктът бе успешно добавен!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Продуктът не е в наличност!";
+                }
+
+                return Redirect(refererUrl);
+            }
+            catch (Exception ex)
             {
-                await _cartItems.AddItemToCart(userId, productId, quantity);
+                TempData["ErrorMessage"] = ex.Message;
 
-                TempData["Message"] = "Продуктът бе успешно добавен!";
+                return RedirectToAction("Index", "Home");
             }
-            else
-            {
-                TempData["ErrorMessage"] = "Продуктът не е в наличност!";
-            }
-
-            return Redirect(refererUrl);
         }
 
         public async Task<IActionResult> ClearCart(Guid userId)
         {
-            await _cartItems.RemoveAllItemsFromCart(userId);
+            try
+            {
+                await _cartItems.RemoveAllItemsFromCart(userId);
 
-            return RedirectToAction("All", "Product");
+                return RedirectToAction("All", "Product");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public async Task<IActionResult> Remove(Guid userId, Guid productId)
         {
-            await _cartItems.RemoveItemFromCart(userId, productId);
+            try
+            {
+                await _cartItems.RemoveItemFromCart(userId, productId);
 
-            return RedirectToAction("GoToCart", "Cart", new { userId = userId});
+                return RedirectToAction("GoToCart", "Cart", new { userId = userId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }
