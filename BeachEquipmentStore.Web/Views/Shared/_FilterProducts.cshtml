@@ -4,7 +4,7 @@
         <input type="text" id="keyword" name="keyword" value="@Model.Keyword" />
     </div>
     <div>
-        <label for="category">Категория:</label>
+        <label for="category-dropdown">Категория:</label>
         <select id="category-dropdown" name="categoryId" value="@Model.CategoryId">
             <option value="">Всички категории</option>
             @foreach (var category in Model.FilteredProducts.Categories)
@@ -14,7 +14,7 @@
         </select>
     </div>
     <div>
-        <label for="manufacturer">Марка:</label>
+        <label for="manufacturer-dropdown">Марка:</label>
         <select id="manufacturer-dropdown" name="manufacturerId" value="@Model.ManufacturerId">
             <option value="">Всички марки</option>
             @foreach (var manufacturer in Model.FilteredProducts.Manufacturers)
@@ -27,4 +27,10 @@
         <button type="button" id="clear-filters-button">Премахни филтрите</button>
         <button type="submit">Приложи филтрите</button>
     </div>
-</form> 
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        filterBehaviour();
+    });
+</script>

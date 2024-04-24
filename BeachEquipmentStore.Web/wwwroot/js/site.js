@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+﻿function filterBehaviour() {
     const categoryDropdown = document.getElementById("category-dropdown");
     const manufacturerDropdown = document.getElementById("manufacturer-dropdown");
 
@@ -34,7 +34,7 @@
         console.log('Clear Filters button clicked');
         document.getElementById('filter-form').submit();
     });
-});
+}
 
 const preloader = document.querySelector('#preloader');
 if (preloader) {

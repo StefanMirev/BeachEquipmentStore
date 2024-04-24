@@ -60,11 +60,21 @@ namespace BeachEquipmentStore.Web
                 {
                     options.Cookie.HttpOnly = true;
                     options.Cookie.Expiration = TimeSpan.FromDays(30);
+                    options.SlidingExpiration = true;
+                    options.Cookie.SameSite = SameSiteMode.None;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.LoginPath = $"/Identity/Account/Login";
                 });
 
-            builder.Services.AddMemoryCache();
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins("http://localhost").AllowAnyMethod();
+                });
+            });
 
-            builder.Services.ConfigureApplicationCookie(options => options.LoginPath = $"/Identity/Account/Login");
+            builder.Services.AddMemoryCache();
 
             builder.Services.AddAuthorization(options =>
             {
