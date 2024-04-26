@@ -4,6 +4,7 @@ using static BeachEquipmentStore.Common.GeneralApplicationConstants;
 
 namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class UserController : BaseAdminController
     {
         private readonly IUserService _users;

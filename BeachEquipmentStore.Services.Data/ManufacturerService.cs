@@ -17,6 +17,11 @@
 
         public async Task<List<ManufacturerServiceModel>> GetAllManufacturersAsync()
         {
+            if (!_data.Manufacturers.Any())
+            {
+                throw new InvalidOperationException("Няма въведени производители!");
+            }
+
             return await _data.Manufacturers
                 .Select(manufacturer => new ManufacturerServiceModel
                 {

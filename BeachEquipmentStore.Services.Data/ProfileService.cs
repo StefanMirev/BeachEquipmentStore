@@ -26,7 +26,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new ArgumentNullException("This user does not exist!");
+                throw new ArgumentNullException("Потребителят не съществува!");
             }
 
             ApplicationUser currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
@@ -44,7 +44,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new ArgumentNullException("This user does not exist!");
+                throw new ArgumentNullException("Потребителят не съществува!");
             }
 
             var currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
@@ -61,12 +61,12 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!await _data.Users.AnyAsync(a => a.Id == userId))
             {
-                throw new InvalidOperationException("This user doesn't exist!");
+                throw new InvalidOperationException("Потребителят не съществува!");
             }
 
             if (!await _data.Addresses.AnyAsync(a => a.CustomerId == userId))
             {
-                throw new InvalidOperationException("You don't have an address yet!");
+                throw new InvalidOperationException("Все още нямате адрес!");
             }
 
             Address userAddress = await _data.Addresses.FirstAsync(a => a.CustomerId == userId);
@@ -84,7 +84,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!await _data.Addresses.AnyAsync(a => a.Id == Guid.Parse(addressId)))
             {
-                throw new InvalidOperationException("You don't have an address yet!");
+                throw new InvalidOperationException("Все още нямате адрес!");
             }
 
             var address = await _data.Addresses.FirstAsync(a => a.Id.ToString() == addressId);
@@ -102,7 +102,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new ArgumentNullException("This user does not exist!");
+                throw new ArgumentNullException("Потребителят не съществува!");
             }
 
             Address address = new Address()
@@ -122,7 +122,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!await _data.Addresses.AnyAsync(a => a.Id == addressId))
             {
-                throw new InvalidOperationException("You don't have an address yet!");
+                throw new InvalidOperationException("Все още нямате адрес!!");
             }
 
             var addressToChange = await _data.Addresses.FirstAsync(a => a.Id == addressId);
@@ -140,7 +140,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Addresses.Any(u => u.Id == addressId))
             {
-                throw new InvalidOperationException("This address does not exist!");
+                throw new InvalidOperationException("Адресът не съществува!");
             }
 
             Address address = await _data.Addresses.FirstAsync(a => a.Id == addressId);
@@ -152,7 +152,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new ArgumentNullException("This user does not exist!");
+                throw new ArgumentNullException("Потребителят не съществува!");
             }
 
             return await _data.Orders

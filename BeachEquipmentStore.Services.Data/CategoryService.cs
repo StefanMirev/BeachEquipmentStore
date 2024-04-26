@@ -1,6 +1,7 @@
 ﻿using BeachEquipmentStore.Data;
 using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Services.Data.Models.Category;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,11 @@ namespace BeachEquipmentStore.Services.Data
 
         public async Task<List<CategoryServiceModel>> GetAllCategoriesAsync()
         {
+            if (!_data.Categories.Any())
+            {
+                throw new InvalidOperationException("Няма валидни категории!");
+            }
+
             return await _data.Categories
                 .Select(c => new CategoryServiceModel
                 {

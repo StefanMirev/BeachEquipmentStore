@@ -136,4 +136,5 @@
     <div class="row justify-content-center">
         <button style="width: 800px" type="submit" class="btn btn-primary" asp-route-userId="@User.GetId()" asp-route-hasAddress="@ViewBag.HasAddress" asp-route-totalSum="@finalSum">Завърши поръчката</button>
     </div>
+    @Html.AntiForgeryToken()
 </form>

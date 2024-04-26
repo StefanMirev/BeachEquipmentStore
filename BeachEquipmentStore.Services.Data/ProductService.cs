@@ -29,7 +29,7 @@
         {
             if (!await _data.Products.AnyAsync(a => a.Id == productId))
             {
-                throw new InvalidOperationException("This product doesn't exist!");
+                throw new InvalidOperationException("Продуктът не съществува!");
             }
 
             Product product = await _data.Products
@@ -62,9 +62,6 @@
         public async Task<List<ProductServiceModel>> GetAllProductsAsync()
         {
             return await _data.Products
-                .OrderBy(p => p.Stock)
-                 .ThenBy(p => p.CategoryId)
-                 .ThenBy(p => p.Id)
                  .Select(p => new ProductServiceModel
                  {
                      Id = p.Id,
@@ -82,7 +79,7 @@
 
             if (productsInStock <= 0)
             {
-                throw new InvalidOperationException("There are currently no products in stock!");
+                throw new InvalidOperationException("В момента няма наличност от избрания продукт!");
             }
 
             return await _data.Products
@@ -97,34 +94,6 @@
                      Price = p.Price
                  })
                  .ToListAsync();
-        }
-
-        public async Task<List<ProductServiceModel>> GetProductsByCategoryAsync(int categoryId)
-        {
-            return await _data.Products
-                .Where(p => p.CategoryId == categoryId)
-                .Select(p => new ProductServiceModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    ImageUrl = p.ImageUrl,
-                    Price = p.Price
-                })
-                .ToListAsync();
-        }
-
-        public async Task<List<ProductServiceModel>> GetProductsByManufacturerAsync(int manufacturerId)
-        {
-            return await _data.Products
-                .Where(p => p.ManufacturerId == manufacturerId)
-                .Select(p => new ProductServiceModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    ImageUrl = p.ImageUrl,
-                    Price = p.Price
-                })
-                .ToListAsync();
         }
 
         public async Task<List<ProductServiceModel>> GetProductsInCart(List<CartServiceModel> cartItems)
@@ -153,7 +122,7 @@
         {
             if (!await _data.Products.AnyAsync(a => a.Id == productId))
             {
-                throw new InvalidOperationException("This product doesn't exist!");
+                throw new InvalidOperationException("Продуктът не съществува!");
             }
 
             Product product = await _data.Products
@@ -169,12 +138,14 @@
             List<Manufacturer> allManufacturers = await _data.Manufacturers.ToListAsync();
 
             if (!string.IsNullOrEmpty(keyword))
-            {   
+            {
+                string escapedKeyword = keyword.Replace("%", "\\%");
+
                 filteredProducts = filteredProducts
-                    .Where(p => EF.Functions.Like(p.Name, $"%{keyword}%") ||
-                    EF.Functions.Like(p.Manufacturer.Name, $"%{keyword}%") ||
-                    EF.Functions.Like(p.Description, $"%{keyword}%") ||
-                    EF.Functions.Like(p.Category.Name, $"%{keyword}%"));
+                    .Where(p => EF.Functions.Like(p.Name, $"%{escapedKeyword}%") ||
+                    EF.Functions.Like(p.Manufacturer.Name, $"%{escapedKeyword}%") ||
+                    EF.Functions.Like(p.Description, $"%{escapedKeyword}%") ||
+                    EF.Functions.Like(p.Category.Name, $"%{escapedKeyword}%"));
             }
 
             if (categoryId > 0)
@@ -224,7 +195,7 @@
         {
             if (!await _data.Products.AnyAsync(a => a.Id == productId))
             {
-                throw new InvalidOperationException("This product doesn't exist!");
+                throw new InvalidOperationException("Продуктът не съществува!");
             }
 
             var product = _data.Products.Find(productId);

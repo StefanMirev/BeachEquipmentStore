@@ -1,7 +1,4 @@
-﻿@using System.Security.Claims
-@using Microsoft.AspNetCore.Identity
-
-@model List<ProductViewModel>
+﻿@model List<ProductViewModel>
 
 @{
     ViewData["Title"] = "Home Page";
@@ -32,6 +29,7 @@
                     <input type="hidden" name="userId" value="@User.GetId()" />
                     <input type="number" name="quantity" value="1" required>
                     <button type="submit">Добави в количката</button>
+                    @Html.AntiForgeryToken()
                 </form>
             </div>
 

@@ -71,6 +71,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProfile(Guid userId, UserInfoViewModel infoModel)
         {
             try
@@ -94,6 +95,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             try
@@ -148,6 +150,7 @@ namespace BeachEquipmentStore.Web.Controllers
             }
             catch (Exception ex)
             {
+                TempData["ErrorMessage"] = ex.Message;
 
                 return View();
             }
@@ -160,6 +163,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddAddress(Guid userId, string name, string town, int zipCode)
         {
             try
@@ -200,6 +204,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditAddress(Guid userId, Guid addressId, string name, string town, int zipCode)
         {
             try

@@ -32,7 +32,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new InvalidOperationException("This user does not exist!");
+                throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
             ApplicationUser currentUser = await _data.Users.Include(a => a.Addresses).FirstAsync(u => u.Id == userId);
@@ -80,7 +80,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new InvalidOperationException("This user does not exist!");
+                throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
             Address address = new Address();
@@ -140,14 +140,14 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Orders.Any(u => u.Id == Guid.Parse(orderId)))
             {
-                throw new InvalidOperationException("This order does not exist!");
+                throw new InvalidOperationException("Такава поръчка не съществува!");
             }
 
             Order order = await _data.Orders.FirstAsync(p => p.Id.ToString() == orderId);
 
             if (!_data.Users.Any(u => u.Id == order.CustomerId))
             {
-                throw new InvalidOperationException("This user does not exist!");
+                throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
             List<ProductOrder> productOrders = await _data.ProductOrders
@@ -190,11 +190,11 @@ namespace BeachEquipmentStore.Services.Data
         }
 
 
-        public async Task DeliverORders(Guid orderId)
+        public async Task DeliverOrders(Guid orderId)
         {
             if (!_data.Orders.Any(u => u.Id == orderId))
             {
-                throw new InvalidOperationException("This order does not exist!");
+                throw new InvalidOperationException("Такава поръчка не съществува!");
             }
 
             Order order = await _data.Orders.FindAsync(orderId);

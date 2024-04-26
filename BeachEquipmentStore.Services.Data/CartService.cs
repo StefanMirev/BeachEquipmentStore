@@ -2,6 +2,7 @@
 using BeachEquipmentStore.Data.Models;
 using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Services.Data.Models.Cart;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BeachEquipmentStore.Services.Data
@@ -18,7 +19,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new InvalidOperationException("This user does not exist!");
+                throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
             if (await _data.CartItems.AnyAsync(ci => ci.CustomerId == userId && ci.ProductId == productId))
@@ -45,7 +46,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new InvalidOperationException("This user does not exist!");
+                throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
             return await _data.CartItems
@@ -62,7 +63,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new InvalidOperationException("This user does not exist!");
+                throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
             var productsToRemove = await this._data.CartItems
@@ -83,12 +84,12 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new InvalidOperationException("This user does not exist!");
+                throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
             if (!_data.Products.Any(u => u.Id == productId))
             {
-                throw new InvalidOperationException("This product does not exist!");
+                throw new InvalidOperationException("Продуктът не съществува!");
             }
 
             var cartItem = await _data.CartItems.FirstAsync(ci => ci.CustomerId == userId && ci.ProductId == productId);
@@ -104,7 +105,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new InvalidOperationException("This user does not exist!");
+                throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
             var productsToRemove = await this._data.CartItems

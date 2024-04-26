@@ -7,6 +7,7 @@ using static BeachEquipmentStore.Common.GeneralApplicationConstants;
 
 namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class ProductController : BaseAdminController
     {
         private readonly IProductService _products;
@@ -49,6 +50,7 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> FinishRestock(Guid productId, int quantity)
         {
             try

@@ -4,6 +4,7 @@ using static BeachEquipmentStore.Common.GeneralApplicationConstants;
 
 namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class OrderController : BaseAdminController
     {
         private readonly IOrderService _orders;
@@ -33,7 +34,7 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
         {
             try
             {
-                await _orders.DeliverORders(orderId);
+                await _orders.DeliverOrders(orderId);
 
                 return RedirectToAction("Deliver", "Order", new { Area = AdminAreaName });
             }

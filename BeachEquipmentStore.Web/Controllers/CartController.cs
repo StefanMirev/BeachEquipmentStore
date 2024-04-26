@@ -47,6 +47,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(Guid userId, Guid productId, int quantity)
         {
             try
@@ -55,7 +56,7 @@ namespace BeachEquipmentStore.Web.Controllers
 
                 if (quantity <= 0)
                 {
-                    throw new ArgumentOutOfRangeException("Can't add less than one product in cart!");
+                    throw new ArgumentOutOfRangeException("Трябва да добавите поне една бройка от дадения продукт!");
                 }
 
                 if (await _products.IsInStock(productId, quantity))
@@ -66,7 +67,7 @@ namespace BeachEquipmentStore.Web.Controllers
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Продуктът не е в наличност!";
+                    TempData["ErrorMessage"] = "Недостатъчна наличност!";
                 }
 
                 return Redirect(refererUrl);
@@ -79,6 +80,7 @@ namespace BeachEquipmentStore.Web.Controllers
             }
         }
 
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearCart(Guid userId)
         {
             try
@@ -95,6 +97,7 @@ namespace BeachEquipmentStore.Web.Controllers
             }
         }
 
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Remove(Guid userId, Guid productId)
         {
             try

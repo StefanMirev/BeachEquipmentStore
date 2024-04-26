@@ -13,6 +13,6 @@ namespace BeachEquipmentStore.Services.Data.Interfaces
 
         Task<List<CompleteOrderViewModel>> GetUndeliveredOrders();
 
-        Task DeliverORders(Guid orderId);
+        Task DeliverOrders(Guid orderId);
     }
 }

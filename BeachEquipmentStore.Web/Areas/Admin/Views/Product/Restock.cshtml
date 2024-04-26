@@ -20,6 +20,7 @@
                         <form method="post" asp-controller="Product" asp-action="FinishRestock" asp-route-productId="@product.Id">
                             <input type="number" name="quantity" required>
                             <button type="submit">Поръчай</button>
+                            @Html.AntiForgeryToken()
                         </form>
                     </td>
                 </tr>

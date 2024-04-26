@@ -17,7 +17,7 @@ namespace BeachEquipmentStore.Web
     using Microsoft.AspNetCore.Mvc;
 
     using static BeachEquipmentStore.Common.GeneralApplicationConstants;
-
+    using Microsoft.AspNetCore.Antiforgery;
 
     public class Program
     {
@@ -52,19 +52,15 @@ namespace BeachEquipmentStore.Web
                     options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
                 });
 
+            builder.Services.AddMemoryCache();
             builder.Services.AddRazorPages();
             builder.Services.AddApplicationServices(typeof(IProductService));
 
-            builder.Services.AddAuthentication()
-                .AddCookie(options =>
-                {
-                    options.Cookie.HttpOnly = true;
-                    options.Cookie.Expiration = TimeSpan.FromDays(30);
-                    options.SlidingExpiration = true;
-                    options.Cookie.SameSite = SameSiteMode.None;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                    options.LoginPath = $"/Identity/Account/Login";
-                });
+            builder.Services.AddAntiforgery(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
 
             builder.Services.AddCors(options =>
             {
@@ -74,7 +70,26 @@ namespace BeachEquipmentStore.Web
                 });
             });
 
-            builder.Services.AddMemoryCache();
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Login";
+            });
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignOutScheme = IdentityConstants.ApplicationScheme;
+            })
+                .AddCookie(options =>
+                    {
+                        options.Cookie.HttpOnly = true;
+                        options.Cookie.Expiration = TimeSpan.FromDays(30);
+                        options.SlidingExpiration = true;
+                        options.Cookie.SameSite = SameSiteMode.None;
+                        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                        options.LoginPath = "/Login";
+                    });
 
             builder.Services.AddAuthorization(options =>
             {
@@ -109,13 +124,19 @@ namespace BeachEquipmentStore.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                  name: "areas",
-                  pattern: "/{area:exists}/{controller=Home}/{action=Index}/{id?}"
-                );
+                  name: "admin",
+                  pattern: "Admin");
+
                 endpoints.MapControllerRoute(
-                  name: "default",
-                  pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapDefaultControllerRoute();
+                    name: "login",
+                    pattern: "Login",
+                    defaults: new { area = "Identity", controller = "Account", action = "Login" });
+
+                endpoints.MapControllerRoute(
+                    name: "admin",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}",
+                    defaults: new { area = "Admin" });
+                    endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
 

@@ -27,6 +27,7 @@
             </div>
             <button style="margin-top: 5px;" type="submit" class="btn btn-primary" asp-route-userId="@User.GetId()" asp-route-addressId="@Model.Id">Запази промените</button>
             <a style="margin-left: 10px;"  asp-controller="Profile" asp-action="GetAddress" asp-route-userId="@User.GetId()">Откажи промените</a>
+            @Html.AntiForgeryToken()
         </form>
     </div>
 </div>

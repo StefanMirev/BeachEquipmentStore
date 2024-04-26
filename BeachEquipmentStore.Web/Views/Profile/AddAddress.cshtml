@@ -25,6 +25,7 @@
             </div>
             <button style="margin-top: 5px;" type="submit" class="btn btn-primary" asp-route-userId="@User.GetId()">Добави адрес</button>
             <a style="margin-left: 10px;" asp-controller="Profile" asp-action="MyProfile" asp-route-userId="@User.GetId()">Обратно към профил</a>
+            @Html.AntiForgeryToken()
         </form>
         
     </div>

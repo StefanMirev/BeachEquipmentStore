@@ -29,6 +29,7 @@
                 <input type="text" asp-for="PhoneNumber" name="PhoneNumber" class="form-control" value="@Model.PhoneNumber" required>
             </div>
             <button style="margin-top: 5px;" type=" submit" class="btn btn-primary" asp-route-userId="@User.GetId()">Запази промените</button>
+            @Html.AntiForgeryToken()
         </form>
     </div>
 </div>

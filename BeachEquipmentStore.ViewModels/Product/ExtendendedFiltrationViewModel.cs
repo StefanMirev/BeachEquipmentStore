@@ -8,7 +8,7 @@ namespace BeachEquipmentStore.Web.ViewModels.Product
 {
     public class ExtendendedFiltrationViewModel
     {
-        public string Keyword { get; set; }
+        public string Keyword { get; set; } = null!;
 
         public int CategoryId { get; set; }
 
