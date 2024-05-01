@@ -27,6 +27,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
+        [Route("Create-Order")]
         public async Task<IActionResult> CreateOrder(Guid userId)
         {
             try

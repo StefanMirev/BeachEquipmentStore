@@ -15,6 +15,7 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Route("Delivery-Status")]
         public async Task<IActionResult> Deliver()
         {
             try

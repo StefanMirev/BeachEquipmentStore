@@ -18,6 +18,8 @@ namespace BeachEquipmentStore.Web
 
     using static BeachEquipmentStore.Common.GeneralApplicationConstants;
     using Microsoft.AspNetCore.Antiforgery;
+    using BeachEquipmentStore.Web.Infrastructure.Extensions;
+    using Microsoft.AspNetCore.Authorization;
 
     public class Program
     {
@@ -52,7 +54,19 @@ namespace BeachEquipmentStore.Web
                     options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
                 });
 
-            builder.Services.AddMemoryCache();
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Login";
+            });
+
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             builder.Services.AddRazorPages();
             builder.Services.AddApplicationServices(typeof(IProductService));
 
@@ -70,11 +84,6 @@ namespace BeachEquipmentStore.Web
                 });
             });
 
-            builder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Login";
-            });
-
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
@@ -84,6 +93,7 @@ namespace BeachEquipmentStore.Web
                 .AddCookie(options =>
                     {
                         options.Cookie.HttpOnly = true;
+                        options.ExpireTimeSpan = TimeSpan.FromDays(30);
                         options.Cookie.Expiration = TimeSpan.FromDays(30);
                         options.SlidingExpiration = true;
                         options.Cookie.SameSite = SameSiteMode.None;
@@ -119,28 +129,35 @@ namespace BeachEquipmentStore.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseSession();
+
             app.SeedAdministrator(AdminEmailAddress);
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                  name: "admin",
-                  pattern: "Admin");
+                    name: "areaRoute",
+                    pattern: "{area:exists}/{controller}/{action}/{id?}",
+                    defaults: new { controller = "Home", action = "Index" });
 
                 endpoints.MapControllerRoute(
-                    name: "login",
-                    pattern: "Login",
-                    defaults: new { area = "Identity", controller = "Account", action = "Login" });
+                    name: "Register",
+                    pattern: "/Register",
+                    defaults: new { area = "Identity", page = "/Account/Register" });
 
                 endpoints.MapControllerRoute(
-                    name: "admin",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}",
-                    defaults: new { area = "Admin" });
-                    endpoints.MapDefaultControllerRoute();
+                    name: "Login",
+                    pattern: "/Login",
+                    defaults: new { area = "Identity", page = "/Account/Login" });
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller}/{action}/{id?}",
+                    defaults: new { controller = "Home", action = "Index" });
+
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
-
-
 
             app.Run();
         }

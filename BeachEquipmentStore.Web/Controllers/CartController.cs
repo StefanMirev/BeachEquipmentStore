@@ -1,7 +1,10 @@
 ﻿using BeachEquipmentStore.Services.Data.Interfaces;
+using BeachEquipmentStore.Web.Infrastructure.Extensions;
 using BeachEquipmentStore.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BeachEquipmentStore.Web.Controllers
 {
@@ -17,6 +20,8 @@ namespace BeachEquipmentStore.Web.Controllers
             this._products = products;
         }
 
+        [HttpGet]
+        [Route("Cart")]
         public async Task<IActionResult> GoToCart(Guid userId)
         {
             try
@@ -47,13 +52,14 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
+        [Route("Add")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(Guid userId, Guid productId, int quantity)
         {
             try
             {
-                string refererUrl = Request.Headers["Referer"].ToString();
-
+                var refererUrl = Request.Headers["Referer"].ToString();
+                    
                 if (quantity <= 0)
                 {
                     throw new ArgumentOutOfRangeException("Трябва да добавите поне една бройка от дадения продукт!");
@@ -80,6 +86,7 @@ namespace BeachEquipmentStore.Web.Controllers
             }
         }
 
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearCart(Guid userId)
         {
@@ -97,6 +104,7 @@ namespace BeachEquipmentStore.Web.Controllers
             }
         }
 
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Remove(Guid userId, Guid productId)
         {

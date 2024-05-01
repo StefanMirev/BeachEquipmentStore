@@ -22,6 +22,8 @@ namespace BeachEquipmentStore.Web.Controllers
             _cache = cache;
 
         }
+
+        [Route("All")]
         public async Task<IActionResult> All()
         {
             try
@@ -68,6 +70,7 @@ namespace BeachEquipmentStore.Web.Controllers
             }
         }
 
+        [Route("Product")]
         public async Task<IActionResult> GetSelectedProduct(Guid productId)
         {
             try

@@ -13,6 +13,7 @@ namespace BeachEquipmentStore.Web.Controllers
             _categories = categories;
         }
 
+        [Route("Categories")]
         public async Task<IActionResult> AllCategories()
         {
             var allCategories = await _categories.GetAllCategoriesAsync();

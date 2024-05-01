@@ -13,6 +13,7 @@ namespace BeachEquipmentStore.Web.Controllers
             this._manufacturers = manufacturers;
         }
 
+        [Route("Manufacturers")]
         public async Task<IActionResult> AllManufacturers()
         {
             var allManufacturers = await _manufacturers.GetAllManufacturersAsync();

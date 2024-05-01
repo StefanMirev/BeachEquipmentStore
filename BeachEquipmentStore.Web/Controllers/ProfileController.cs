@@ -25,6 +25,7 @@ namespace BeachEquipmentStore.Web.Controllers
             _userManager = userManager;
         }
 
+        [Route("Profile")]
         public async Task<IActionResult> MyProfile(Guid userId)
         {
             try
@@ -48,6 +49,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
+        [Route("Edit-Profile")]
         public async Task<IActionResult> EditProfile(Guid userId)
         {
             try
@@ -89,6 +91,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
+        [Route("Change-Password")]
         public IActionResult ChangePassword()
         {
             return View();
@@ -134,6 +137,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
+        [Route("My-Address")]
         public async Task<IActionResult> GetAddress(Guid userId)
         {
             try
@@ -157,6 +161,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
+        [Route("Add-Address")]
         public IActionResult AddAddress()
         {
             return View();
@@ -181,6 +186,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
+        [Route("Edit-Address")]
         public async Task<IActionResult> EditAddress(string addressId)
         {
             try
@@ -238,6 +244,7 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
+        [Route("Order-History")]
         public async Task<IActionResult> OrderHistory(Guid userId)
         {
             try

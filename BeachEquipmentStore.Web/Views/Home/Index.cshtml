@@ -25,16 +25,8 @@
                     </div>
 
                 </a>
-                <form method="post" asp-controller="Cart" asp-action="Add" asp-route-productId="@product.Id">
-                    <input type="hidden" name="userId" value="@User.GetId()" />
-                    <input type="number" name="quantity" value="1" required>
-                    <button type="submit">Добави в количката</button>
-                    @Html.AntiForgeryToken()
-                </form>
-            </div>
-
-
-            
+                <partial name="_AddToCartPartial" model="@product" />
+            </div>   
         }
     </div>
 </div>
