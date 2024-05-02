@@ -15,11 +15,9 @@ namespace BeachEquipmentStore.Web
     using BeachEquipmentStore.Services.Data.Interfaces;
     using BeachEquipmentStore.Web.Infrastructure.ModelBinders;
     using Microsoft.AspNetCore.Mvc;
-
     using static BeachEquipmentStore.Common.GeneralApplicationConstants;
-    using Microsoft.AspNetCore.Antiforgery;
     using BeachEquipmentStore.Web.Infrastructure.Extensions;
-    using Microsoft.AspNetCore.Authorization;
+    using OwaspHeaders.Core.Extensions;
 
     public class Program
     {
@@ -76,14 +74,6 @@ namespace BeachEquipmentStore.Web
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(policy =>
-                {
-                    policy.WithOrigins("http://localhost").AllowAnyMethod();
-                });
-            });
-
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
@@ -114,6 +104,7 @@ namespace BeachEquipmentStore.Web
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
+                app.UseHsts();
             }
             else
             {
@@ -122,6 +113,7 @@ namespace BeachEquipmentStore.Web
             }
 
             app.UseHttpsRedirection();
+            app.UseSecureHeadersMiddleware();
             app.UseStaticFiles();
 
             app.UseRouting();

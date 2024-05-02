@@ -15,7 +15,7 @@ namespace BeachEquipmentStore.Web.ViewModels.Order
             this.Products = new List<ProductViewModel>();    
         }
 
-        public  UserInfoViewModel UserInfo { get; set; }
+        public UserInfoViewModel UserInfo { get; set; } = null!;
         
         public AddressViewModel? UserAddress { get; set; }
 

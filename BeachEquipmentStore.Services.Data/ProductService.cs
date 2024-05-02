@@ -198,9 +198,9 @@
                 throw new InvalidOperationException("Продуктът не съществува!");
             }
 
-            var product = _data.Products.Find(productId);
+            var product = await _data.Products.FindAsync(productId);
 
-            product.Stock += quantity;
+            product!.Stock += quantity;
 
             await _data.SaveChangesAsync();
         }

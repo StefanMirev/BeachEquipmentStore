@@ -1,4 +1,4 @@
-﻿<form id="filter-form" method="get" asp-controller="Product" asp-action="FilterProducts">
+﻿<form id="filter-form" method="get" asp-controller="Product">
     <div>
         <label for="keyword">Ключова дума:</label>
         <input type="text" id="keyword" name="keyword" value="@Model.Keyword" />
@@ -25,7 +25,7 @@
     </div>
     <div>
         <button type="button" id="clear-filters-button">Премахни филтрите</button>
-        <button type="submit">Приложи филтрите</button>
+        <button type="submit" asp-action="All" asp-route-keyword="@(Model.Keyword ?? "")" asp-route-categoryId="@(Model.CategoryId ?? "")" asp-route-manufacturerId="@(Model.ManufacturerId ?? "")">Приложи филтрите</button>
     </div>
     @Html.AntiForgeryToken()
 </form>

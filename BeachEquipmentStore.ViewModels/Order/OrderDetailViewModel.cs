@@ -29,9 +29,9 @@ namespace BeachEquipmentStore.Web.ViewModels.Order
 
         public decimal OverallPrice { get; set; }
 
-        public string AddressName { get;set; }
+        public string? AddressName { get;set; }
 
-        public string TownName { get; set; }
+        public string? TownName { get; set; }
 
         public int ZipCode { get; set; }
 

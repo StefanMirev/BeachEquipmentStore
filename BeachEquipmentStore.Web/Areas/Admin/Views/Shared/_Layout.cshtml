@@ -2,29 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 </head>
+<body>
+    <header>
+        <div class="row" style="margin-inline:auto; margin-block-start: 10px">
+            <div class="col" style="display: flex; justify-content: center">
+                <a type="button" asp-area="Admin" asp-controller="User" asp-action="MakeAdmin" class="btn btn-outline-primary btn-lg">Добави админ</a>
+            </div>
+            <div class="col" style="display: flex; justify-content: center">
+                <a asp-area="Admin" asp-controller="Order" asp-action="Deliver" class="btn btn-outline-primary btn-lg">Завърши доставка</a>
+            </div>
+            <div class="col" style="display: flex; justify-content: center">
+                <a asp-area="Admin" asp-controller="Product" asp-action="Restock" class="btn btn-outline-primary btn-lg">Възстанови запасите</a>
+            </div>
+            <div class="col" style="display: flex; justify-content: center">
+                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button type="submit" class="nav-link btn btn-lg btn-outline-primary">Изход</button>
+                </form>
+            </div>
+        </div>
+        <hr class="my-4">
+    </header>
 
-<h1>Административен панел</h1>
-<div class="row">
-    <a asp-area="Admin" asp-controller="User" asp-action="MakeAdmin"
-       class="btn btn-primary btn-lg">Добави админ</a>
-    <span> | </span>
-    <a asp-area="Admin" asp-controller="Order" asp-action="Deliver"
-       class="btn btn-primary btn-lg">Завърши доставка</a>
-    <span> | </span>
-    <a asp-area="Admin" asp-controller="Product" asp-action="Restock"
-       class="btn btn-primary btn-lg">Възстанови запасите</a>
-    <span> | </span>
-    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-        <button type="submit" class="nav-link btn btn-link text-dark">Изход</button>
-    </form>
-</div>
-
-<hr class="my-4">
-
-@RenderBody()
-
+    @RenderBody()
+</body>
+</html>
 <script src="/_framework/aspnetcore-browser-refresh.js"></script>
 

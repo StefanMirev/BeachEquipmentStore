@@ -23,52 +23,52 @@ namespace BeachEquipmentStore.Web.Controllers
 
         }
 
-        [Route("All")]
-        public async Task<IActionResult> All()
-        {
-            try
-            {
-                var categories = await _categories.GetAllCategoriesAsync();
-                var manufacturers = await _manufacturers.GetAllManufacturersAsync();
-                var queryResult = await this._products.GetAllProductsAsync();
+        //[Route("Alll")]
+        //public async Task<IActionResult> All()
+        //{
+        //    try
+        //    {
+        //        var categories = await _categories.GetAllCategoriesAsync();
+        //        var manufacturers = await _manufacturers.GetAllManufacturersAsync();
+        //        var queryResult = await this._products.GetAllProductsAsync();
 
 
-                FilterProductsViewModel allProducts = new FilterProductsViewModel()
-                {
-                    Products = queryResult.Select(p => new ProductViewModel
-                    {
+        //        FilterProductsViewModel allProducts = new FilterProductsViewModel()
+        //        {
+        //            Products = queryResult.Select(p => new ProductViewModel
+        //            {
 
-                        Id = p.Id,
-                        Name = p.Name,
-                        ImageUrl = p.ImageUrl,
-                        Price = p.Price,
-                    }).ToList(),
-                    Categories = categories.Select(p => new CategoryViewModel
-                    {
-                        Id = p.Id,
-                        Name = p.Name
-                    }).ToList(),
-                    Manufacturers = manufacturers.Select(p => new ManufacturerViewModel
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                    }).ToList()
-                };
+        //                Id = p.Id,
+        //                Name = p.Name,
+        //                ImageUrl = p.ImageUrl,
+        //                Price = p.Price,
+        //            }).ToList(),
+        //            Categories = categories.Select(p => new CategoryViewModel
+        //            {
+        //                Id = p.Id,
+        //                Name = p.Name
+        //            }).ToList(),
+        //            Manufacturers = manufacturers.Select(p => new ManufacturerViewModel
+        //            {
+        //                Id = p.Id,
+        //                Name = p.Name,
+        //            }).ToList()
+        //        };
 
-                ExtendendedFiltrationViewModel model = new ExtendendedFiltrationViewModel()
-                {
-                    FilteredProducts = allProducts
-                };
+        //        ExtendendedFiltrationViewModel model = new ExtendendedFiltrationViewModel()
+        //        {
+        //            FilteredProducts = allProducts
+        //        };
 
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Index", "Home");
-            }
-        }
+        //        return RedirectToAction("Index", "Home");
+        //    }
+        //}
 
         [Route("Product")]
         public async Task<IActionResult> GetSelectedProduct(Guid productId)
@@ -106,7 +106,8 @@ namespace BeachEquipmentStore.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> FilterProducts(string keyword, int categoryId, int manufacturerId)
+        [Route("All")]
+        public async Task<IActionResult> All(string keyword, int categoryId, int manufacturerId)
         {
             try
             {
