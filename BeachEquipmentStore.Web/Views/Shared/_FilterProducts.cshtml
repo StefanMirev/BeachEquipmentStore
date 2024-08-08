@@ -1,31 +1,38 @@
-﻿<form id="filter-form" method="get" asp-controller="Product">
-    <div>
-        <label for="keyword">Ключова дума:</label>
-        <input type="text" id="keyword" name="keyword" value="@Model.Keyword" />
-    </div>
-    <div>
-        <label for="category-dropdown">Категория:</label>
-        <select id="category-dropdown" name="categoryId" value="@Model.CategoryId">
-            <option value="">Всички категории</option>
-            @foreach (var category in Model.FilteredProducts.Categories)
-            {
-                <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">@category.Name</option>
-            }
-        </select>
-    </div>
-    <div>
-        <label for="manufacturer-dropdown">Марка:</label>
-        <select id="manufacturer-dropdown" name="manufacturerId" value="@Model.ManufacturerId">
-            <option value="">Всички марки</option>
-            @foreach (var manufacturer in Model.FilteredProducts.Manufacturers)
-            {
-                <option value="@manufacturer.Id" selected="@(Model.ManufacturerId == manufacturer.Id)">@manufacturer.Name</option>
-            }
-        </select>
-    </div>
-    <div>
-        <button type="button" id="clear-filters-button">Премахни филтрите</button>
-        <button type="submit" asp-action="All" asp-route-keyword="@(Model.Keyword ?? "")" asp-route-categoryId="@(Model.CategoryId ?? "")" asp-route-manufacturerId="@(Model.ManufacturerId ?? "")">Приложи филтрите</button>
-    </div>
-    @Html.AntiForgeryToken()
-</form>
+﻿<div>
+    <form id="filter-form" method="get" asp-controller="Product">
+        <div style="justify-content">
+            <span class="">
+                <label for="keyword">Ключова дума:</label>
+                <input type="text" id="keyword" name="keyword" value="@Model.Keyword" />
+            </span>
+            <span>
+                <label for="category-dropdown">Категория:</label>
+                <select id="category-dropdown" name="categoryId" value="@Model.CategoryId">
+                    <option value="">Всички категории</option>
+                    @foreach (var category in Model.FilteredProducts.Categories)
+                    {
+                        <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">@category.Name</option>
+                    }
+                </select>
+            </span>
+            <span>
+                <label for="manufacturer-dropdown">Марка:</label>
+                <select id="manufacturer-dropdown" name="manufacturerId" value="@Model.ManufacturerId">
+                    <option value="">Всички марки</option>
+                    @foreach (var manufacturer in Model.FilteredProducts.Manufacturers)
+                    {
+                        <option value="@manufacturer.Id" selected="@(Model.ManufacturerId == manufacturer.Id)">@manufacturer.Name</option>
+                    }
+                </select>
+            </span>
+            <span>
+                <button type="button" id="clear-filters-button" style="color:white; background-color:#f50a10">Премахни филтрите</button>
+                <button type="submit" style="color:white; background-color:#2317c3"
+                        asp-action="All" asp-route-keyword="@(Model.Keyword ?? "")" asp-route-categoryId="@(Model.CategoryId ?? "")" asp-route-manufacturerId="@(Model.ManufacturerId ?? "")">
+                    Приложи филтрите
+                </button>
+            </span>
+        </div>
+        @Html.AntiForgeryToken()
+    </form>
+</div>

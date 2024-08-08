@@ -31,7 +31,10 @@ body {
     min-height: 50px;
 }
 
-
+a, a:hover{
+    text-decoration: none;
+    color: black;
+}   
 
 .page-footer {
     position: relative;

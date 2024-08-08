@@ -78,17 +78,17 @@ namespace BeachEquipmentStore.Web.Areas.Identity.Pages.Account
             [Required]
             [Unicode]
             [StringLength(FirstNameMaxLength, MinimumLength = FirstNameMinLength)]
-            [Display(Name ="First Name")]
+            [Display(Name ="Име")]
             public string FirstName { get; set; } = null!;
 
             [Required]
             [Unicode]
             [StringLength(LastNameMaxLength, MinimumLength = LastNameMinLength)]
-            [Display(Name = "Last Name")]
+            [Display(Name = "Фамилия")]
             public string LastName { get; set; } = null!;
 
             [Required]
-            [Display(Name = "Phone Number")]
+            [Display(Name = "Телефон")]
             public string PhoneNumber { get; set; } = null!;
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -96,7 +96,7 @@ namespace BeachEquipmentStore.Web.Areas.Identity.Pages.Account
             /// </summary>
             [Required]
             [EmailAddress]
-            [Display(Name = "Email")]
+            [Display(Name = "Електронна поща")]
             public string Email { get; set; }
 
             /// <summary>
@@ -104,9 +104,9 @@ namespace BeachEquipmentStore.Web.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "{0} трябва да бъде поне {2} и не повече от {1} символа.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Парола")]
             public string Password { get; set; }
 
             /// <summary>
@@ -114,8 +114,8 @@ namespace BeachEquipmentStore.Web.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Потвърди парола")]
+            [Compare("Password", ErrorMessage = "Полетата за парола не съотвестват.")]
             public string ConfirmPassword { get; set; }
         }
 

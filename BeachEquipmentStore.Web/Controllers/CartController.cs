@@ -57,9 +57,7 @@ namespace BeachEquipmentStore.Web.Controllers
         public async Task<IActionResult> Add(Guid userId, Guid productId, int quantity)
         {
             try
-            {
-                var refererUrl = Request.Headers["Referer"].ToString();
-                    
+            {    
                 if (quantity <= 0)
                 {
                     throw new ArgumentOutOfRangeException("Трябва да добавите поне една бройка от дадения продукт!");
@@ -76,7 +74,7 @@ namespace BeachEquipmentStore.Web.Controllers
                     TempData["ErrorMessage"] = "Недостатъчна наличност!";
                 }
 
-                return Redirect(refererUrl);
+                return RedirectToAction("All", "Product");
             }
             catch (Exception ex)
             {

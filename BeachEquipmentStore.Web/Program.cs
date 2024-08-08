@@ -81,15 +81,15 @@ namespace BeachEquipmentStore.Web
                 options.DefaultSignOutScheme = IdentityConstants.ApplicationScheme;
             })
                 .AddCookie(options =>
-                    {
-                        options.Cookie.HttpOnly = true;
-                        options.ExpireTimeSpan = TimeSpan.FromDays(30);
-                        options.Cookie.Expiration = TimeSpan.FromDays(30);
-                        options.SlidingExpiration = true;
-                        options.Cookie.SameSite = SameSiteMode.None;
-                        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                        options.LoginPath = "/Login";
-                    });
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                    options.Cookie.Expiration = TimeSpan.FromDays(30);
+                    options.SlidingExpiration = true;
+                    options.Cookie.SameSite = SameSiteMode.None;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.LoginPath = "/Login";
+                });
 
             builder.Services.AddAuthorization(options =>
             {

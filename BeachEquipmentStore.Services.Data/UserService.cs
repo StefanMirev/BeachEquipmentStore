@@ -1,5 +1,6 @@
 ﻿using BeachEquipmentStore.Data;
 using BeachEquipmentStore.Data.Models;
+using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Web.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 using static BeachEquipmentStore.Common.GeneralApplicationConstants;
 
-namespace BeachEquipmentStore.Services.Data.Interfaces
+namespace BeachEquipmentStore.Services.Data
 {
     public class UserService : IUserService
     {
