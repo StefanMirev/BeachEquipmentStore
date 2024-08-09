@@ -1,4 +1,4 @@
-﻿@model List<ProductViewModel>
+﻿@model ExtendendedFiltrationViewModel
 
 @{
     ViewData["Title"] = "Добре дошли! - Ицо Бийч";
@@ -10,23 +10,4 @@
 </div>
 <hr />
 
-<div class="container mt-5">
-    <div class="row">
-        @foreach (var product in Model)
-        {
-            <div class="col-md-4 mb-4">
-                <a asp-controller="Product" asp-action="GetSelectedProduct" asp-route-productId="@product.Id">
-                    <div class="card product-card">
-                        <img src="@Url.Content(product.ImageUrl)" class="card-img-top product-image" alt="@product.Name">
-                        <div class="card-body product-card-body">
-                            <h5 class="card-title">@product.Name</h5>
-                            <p class="card-text">@product.Price.ToString("C")</p>
-                        </div>
-                    </div>
-
-                </a>
-                <partial name="_AddToCartPartial" model="@product" />
-            </div>   
-        }
-    </div>
-</div>
+<partial name="_GetProductsPartial"/>

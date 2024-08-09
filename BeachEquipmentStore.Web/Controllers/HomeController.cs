@@ -3,7 +3,7 @@
     using System.Diagnostics;
 
     using Microsoft.AspNetCore.Mvc;
-    
+
     using BeachEquipmentStore.Web.ViewModels.Home;
     using BeachEquipmentStore.Services.Data.Interfaces;
     using Microsoft.AspNetCore.Authorization;
@@ -24,27 +24,33 @@
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            try { 
-            if (User.IsInRole(AdminRoleName))
+            try
             {
-                var adminUrl = Url.Action("Index", "Home", new { area = AdminAreaName });
-                return Redirect(adminUrl);
-            }
+                if (User.IsInRole(AdminRoleName))
+                {
+                    var adminUrl = Url.Action("Index", "Home", new { area = AdminAreaName });
+                    return Redirect(adminUrl);
+                }
 
-            List<ProductViewModel> resultsetOfProducts = new List<ProductViewModel>();
+                ExtendendedFiltrationViewModel resultsetOfProducts = new ExtendendedFiltrationViewModel()
+                {
+                    FilteredProducts = new FilterProductsViewModel()
+                    {
+                        Products = new List<ProductViewModel>()
+                    }
+                };
 
-            var randomisedProducs = await this._products.GetRandomProductsInStockAsync();
+                var randomisedProducs = await this._products.GetRandomProductsInStockAsync();
 
-            resultsetOfProducts.AddRange(randomisedProducs.Select(p => new ProductViewModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                ImageUrl = p.ImageUrl,
-                Price = p.Price
+                resultsetOfProducts.FilteredProducts.Products.AddRange(randomisedProducs.Select(p => new ProductViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    Price = p.Price
+                }));
 
-            }));
-
-            return View(resultsetOfProducts);
+                return View(resultsetOfProducts);
             }
             catch (Exception ex)
             {
@@ -55,17 +61,17 @@
         }
 
         [AllowAnonymous]
-        public  IActionResult About()
+        public IActionResult About()
         {
             return View();
         }
 
         [AllowAnonymous]
-        public  IActionResult Contact()
+        public IActionResult Contact()
         {
             return View();
         }
-        
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

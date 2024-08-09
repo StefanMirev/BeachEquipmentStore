@@ -101,6 +101,8 @@ namespace BeachEquipmentStore.Web
 
             var app = builder.Build();
 
+            app.UseSecureHeadersMiddleware();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
@@ -113,7 +115,6 @@ namespace BeachEquipmentStore.Web
             }
 
             app.UseHttpsRedirection();
-            app.UseSecureHeadersMiddleware();
             app.UseStaticFiles();
 
             app.UseRouting();
