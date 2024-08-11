@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OwaspHeaders.Core" Version="8.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BeachEquipmentStore.Common\BeachEquipmentStore.Common.csproj" />
   </ItemGroup>
 

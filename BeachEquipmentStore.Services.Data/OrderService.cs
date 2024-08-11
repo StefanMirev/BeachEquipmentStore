@@ -197,10 +197,10 @@ namespace BeachEquipmentStore.Services.Data
                 throw new InvalidOperationException("Такава поръчка не съществува!");
             }
 
-            Order order = await _data.Orders.FindAsync(orderId);
+            Order? order = await _data.Orders.FindAsync(orderId);
 
-            order.ShippingDate = DateTime.UtcNow;
-            order.DeliveryStatus += 1;
+            order!.ShippingDate = DateTime.UtcNow;
+            order!.DeliveryStatus += 1;
 
             await _data.SaveChangesAsync();
         }

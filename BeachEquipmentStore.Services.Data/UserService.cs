@@ -47,7 +47,12 @@ namespace BeachEquipmentStore.Services.Data
         {
             var user = _data.Users.FirstOrDefault(u => u.Id == userId);
 
-            await _users.AddToRoleAsync(user, AdminRoleName);
+            if(user == null)
+            {
+                throw new ArgumentException("Не е намерен такъв потребител!");
+            }
+
+            await _users.AddToRoleAsync(user!, AdminRoleName);
             await _data.SaveChangesAsync();
         }
     }

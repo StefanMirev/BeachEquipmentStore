@@ -29,7 +29,7 @@
                 if (User.IsInRole(AdminRoleName))
                 {
                     var adminUrl = Url.Action("Index", "Home", new { area = AdminAreaName });
-                    return Redirect(adminUrl);
+                    return Redirect(adminUrl!);
                 }
 
                 ExtendendedFiltrationViewModel resultsetOfProducts = new ExtendendedFiltrationViewModel()
