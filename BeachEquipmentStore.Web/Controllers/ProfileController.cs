@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Text;
 
 namespace BeachEquipmentStore.Web.Controllers
 {
@@ -26,11 +27,11 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [Route("Profile")]
-        public async Task<IActionResult> MyProfile(Guid userId)
+        public async Task<IActionResult> MyProfile()
         {
             try
             {
-                var userInfo = await _profiles.GetUserInfo(userId);
+                var userInfo = await _profiles.GetUserInfo(Guid.Parse(User.GetId()));
 
                 return View(new UserInfoViewModel
                 {
@@ -40,9 +41,9 @@ namespace BeachEquipmentStore.Web.Controllers
                     PhoneNumber = userInfo.PhoneNumber
                 });
             }
-            catch (Exception ex)
+            catch (ArgumentNullException ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                TempData["ErrorMessage"] = ex.ParamName;
 
                 return RedirectToAction("Index", "Home");
             }
@@ -50,11 +51,11 @@ namespace BeachEquipmentStore.Web.Controllers
 
         [HttpGet]
         [Route("Edit-Profile")]
-        public async Task<IActionResult> EditProfile(Guid userId)
+        public async Task<IActionResult> EditProfile()
         {
             try
             {
-                var userInfo = await _profiles.GetUserInfo(userId);
+                var userInfo = await _profiles.GetUserInfo(Guid.Parse(User.GetId()));
 
                 return View(new UserInfoViewModel
                 {
@@ -64,29 +65,30 @@ namespace BeachEquipmentStore.Web.Controllers
                     PhoneNumber = userInfo.PhoneNumber
                 });
             }
-            catch (Exception ex)
+            catch (ArgumentNullException ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                TempData["ErrorMessage"] = ex.ParamName;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("MyProfile", "Profile");
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(Guid userId, UserInfoViewModel infoModel)
+        [Route("Edit-Profile")]
+        public async Task<IActionResult> EditProfile(UserInfoViewModel infoModel)
         {
             try
             {
-                await _profiles.ChangeUserInfo(userId, infoModel);
+                await _profiles.ChangeUserInfo(Guid.Parse(User.GetId()), infoModel);
 
-                return RedirectToAction("MyProfile", "Profile", new { userId = userId });
+                return RedirectToAction("MyProfile", "Profile");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("EditProfile", "Profile");
             }
         }
 
@@ -94,26 +96,41 @@ namespace BeachEquipmentStore.Web.Controllers
         [Route("Change-Password")]
         public IActionResult ChangePassword()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+
+                return RedirectToAction("MyProfile", "Profile");
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("Change-Password")]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             try
             {
-
-
-                if (!ModelState.IsValid)
-                {
-                    return View(model);
-                }
-
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {
                     return NotFound();
+                }
+
+                var sb = new StringBuilder();
+
+                if (!ModelState.IsValid)
+                {
+                    foreach(var error in ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        sb.AppendLine(error.ErrorMessage);
+                    }
+
+                    throw new ArgumentException($"{sb.ToString()}");
                 }
 
                 var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
@@ -121,28 +138,38 @@ namespace BeachEquipmentStore.Web.Controllers
                 {
                     foreach (var error in changePasswordResult.Errors)
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
+                        if(error.Description == "Incorrect password.")
+                        {
+                            sb.AppendLine("Въведената парола не е вярна!");
+                        }
+                        else
+                        {
+                            sb.AppendLine(error.Description);
+                        }
                     }
-                    return View(model);
+
+                    throw new Exception(sb.ToString());
                 }
 
-                return RedirectToAction("MyProfile", "Profile", new { userId = Guid.Parse(User.GetId()) });
+                TempData["Message"] = "Успешно променихте паролата си!";
+
+                return RedirectToAction("ChangePassword", "Profile");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("ChangePassword", "Profile");
             }
         }
 
         [HttpGet]
         [Route("My-Address")]
-        public async Task<IActionResult> GetAddress(Guid userId)
+        public async Task<IActionResult> GetAddress()
         {
             try
             {
-                var address = await _profiles.GetAllAddressInfo(userId);
+                var address = await _profiles.GetAllAddressInfo(Guid.Parse(User.GetId()));
 
                 return View(new AddressViewModel
                 {
@@ -156,6 +183,7 @@ namespace BeachEquipmentStore.Web.Controllers
             {
                 TempData["ErrorMessage"] = ex.Message;
 
+                //TODO: Change it to where it direcly links to add address.
                 return View();
             }
         }
@@ -168,20 +196,21 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpPost]
+        [Route("Add-Address")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddAddress(Guid userId, string name, string town, int zipCode)
+        public async Task<IActionResult> AddAddress(string name, string town, string zipCode)
         {
             try
             {
-                await _profiles.AddAddress(userId, name, town, zipCode);
+                await _profiles.AddAddress(Guid.Parse(User.GetId()), name, town, zipCode);
 
-                return RedirectToAction("GetAddress", "Profile", new { userId = userId });
+                return RedirectToAction("GetAddress", "Profile");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("GetAddress", "Profile");
             }
         }
 
@@ -205,51 +234,52 @@ namespace BeachEquipmentStore.Web.Controllers
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("MyProfile", "Profile");
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAddress(Guid userId, Guid addressId, string name, string town, int zipCode)
+        [Route("Edit-Address")]
+        public async Task<IActionResult> EditAddress(Guid addressId, string name, string town, int zipCode)
         {
             try
             {
                 await _profiles.ChangeAddressInfo(addressId, name, town, zipCode);
 
-                return RedirectToAction("GetAddress", "Profile", new { userId = userId });
+                return RedirectToAction("GetAddress", "Profile");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("MyProfile", "Profile");
             }
         }
 
-        public async Task<IActionResult> DeleteAddress(Guid addressId, Guid userId)
+        public async Task<IActionResult> DeleteAddress(Guid addressId)
         {
             try
             {
                 await _profiles.DeleteAddress(addressId);
 
-                return RedirectToAction("MyProfile", "Profile", new { userId = userId });
+                return RedirectToAction("MyProfile", "Profile");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("MyProfile", "Profile");
             }
         }
 
         [HttpGet]
         [Route("Order-History")]
-        public async Task<IActionResult> OrderHistory(Guid userId)
+        public async Task<IActionResult> OrderHistory()
         {
             try
             {
-                List<OrderHistoryServiceModel> orderHistory = await _profiles.GetOrderHistory(userId);
+                List<OrderHistoryServiceModel> orderHistory = await _profiles.GetOrderHistory(Guid.Parse(User.GetId()));
 
                 return View(orderHistory
                     .Select(o => new OrderHistoryViewModel
@@ -266,7 +296,7 @@ namespace BeachEquipmentStore.Web.Controllers
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("MyProfile", "Profile");
             }
         }
     }

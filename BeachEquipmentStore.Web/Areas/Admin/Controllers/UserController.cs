@@ -40,7 +40,7 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("MakeAdmin", "User", new { Area = AdminAreaName });
             }
         }
     }

@@ -49,6 +49,12 @@
                     </div>
                     <button id="registerSubmit" type="submit" class="col w-100 btn btn-lg btn-primary" style="margin-bottom:10px;">Регистрация</button>
                 </div>
+                <div>
+                    <p>
+                        <span>Имаш профил? </span>
+                        <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" style="text-decoration:underline; color: blue;">Влез в своя профил!</a>
+                    </p>
+                </div>
                 @Html.AntiForgeryToken()
             </form>
         </div>

@@ -3,6 +3,7 @@ using BeachEquipmentStore.Services.Data;
 using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Services.Data.Models.Product;
 using BeachEquipmentStore.Services.Data.Models.Profile;
+using BeachEquipmentStore.Web.Infrastructure.Extensions;
 using BeachEquipmentStore.Web.ViewModels.Order;
 using BeachEquipmentStore.Web.ViewModels.Product;
 using BeachEquipmentStore.Web.ViewModels.Profile;
@@ -28,11 +29,11 @@ namespace BeachEquipmentStore.Web.Controllers
 
         [HttpGet]
         [Route("Create-Order")]
-        public async Task<IActionResult> CreateOrder(Guid userId)
+        public async Task<IActionResult> CreateOrder()
         {
             try
             {
-                var orderServiceData = await _orders.GetDataRequiredForOrder(userId);
+                var orderServiceData = await _orders.GetDataRequiredForOrder(Guid.Parse(User.GetId()));
 
                 bool hasAddress = !string.IsNullOrEmpty(orderServiceData.UserAddress?.Name);
                 ViewBag.HasAddress = hasAddress;
@@ -75,13 +76,16 @@ namespace BeachEquipmentStore.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrder(Guid userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
+        [Route("Create-Order")]
+        public async Task<IActionResult> CreateOrder(bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
         {
             try
             {
+                var userId = Guid.Parse(User.GetId());
+
                 await _orders.GenerateOrder(userId, hasAddress, addressName, town, zipCode, totalSum);
                 await _cart.ClearCartAfterOrder(userId);
-                return RedirectToAction("OrderHistory", "Profile", new { userId = userId });
+                return RedirectToAction("OrderHistory", "Profile");
             }
             catch (Exception ex)
             {

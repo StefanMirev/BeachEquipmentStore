@@ -98,11 +98,16 @@ namespace BeachEquipmentStore.Services.Data
             };
         }
 
-        public async Task AddAddress(Guid userId, string name, string town, int zipCode)
+        public async Task AddAddress(Guid userId, string name, string town, string zipCode)
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
                 throw new ArgumentNullException("Потребителят не съществува!");
+            }
+
+            if (!int.TryParse(zipCode, out int result))
+            {
+                throw new ArgumentException("Моля въведете валиден пощенски код!");
             }
 
             Address address = new Address()
@@ -110,7 +115,7 @@ namespace BeachEquipmentStore.Services.Data
                 Id = Guid.NewGuid(),
                 Name = name,
                 Town = town,
-                ZipCode = zipCode,
+                ZipCode = int.Parse(zipCode),
                 CustomerId = userId
             };
 
@@ -132,8 +137,6 @@ namespace BeachEquipmentStore.Services.Data
             addressToChange.ZipCode = zipCode;
 
             await _data.SaveChangesAsync();
-
-
         }
 
         public async Task DeleteAddress(Guid addressId)

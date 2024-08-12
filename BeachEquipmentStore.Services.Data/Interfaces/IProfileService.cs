@@ -18,7 +18,7 @@ namespace BeachEquipmentStore.Services.Data.Interfaces
 
         Task<AddressServiceModel> GetAddressInfo (string addressId);
 
-        Task AddAddress(Guid userId, string name, string town, int zipCode);
+        Task AddAddress(Guid userId, string name, string town, string zipCode);
 
         Task ChangeAddressInfo(Guid addressId, string address, string town, int zipCode);
 

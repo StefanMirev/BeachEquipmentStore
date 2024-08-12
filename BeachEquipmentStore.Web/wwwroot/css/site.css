@@ -36,6 +36,10 @@ a, a:hover{
     color: black;
 }   
 
+h2{
+    margin-top: 10px;
+}
+
 .page-footer {
     position: relative;
     width: 100%;

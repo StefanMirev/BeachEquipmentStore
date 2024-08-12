@@ -11,14 +11,18 @@
 
     using static BeachEquipmentStore.Common.GeneralApplicationConstants;
     using BeachEquipmentStore.Web.Infrastructure.Extensions;
+    using Microsoft.AspNetCore.Identity;
+    using BeachEquipmentStore.Data.Models;
 
     public class HomeController : Controller
     {
         private readonly IProductService _products;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(IProductService products)
+        public HomeController(IProductService products, UserManager<ApplicationUser> userManager)
         {
             _products = products;
+            _userManager = userManager;
         }
 
         [AllowAnonymous]
@@ -26,7 +30,7 @@
         {
             try
             {
-                if (User.IsInRole(AdminRoleName))
+                if (User.IsAdmin())
                 {
                     var adminUrl = Url.Action("Index", "Home", new { area = AdminAreaName });
                     return Redirect(adminUrl!);

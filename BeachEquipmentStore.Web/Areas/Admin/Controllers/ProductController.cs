@@ -55,6 +55,11 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
         {
             try
             {
+                if (quantity <1)
+                {
+                    throw new ArgumentException("Трябва да добавите поне една бройка от продукта!");
+                }
+
                 await _products.RestockProduct(productId, quantity);
 
                 return RedirectToAction("Restock", "Product", new { Area = AdminAreaName });
@@ -63,7 +68,7 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Restock", "Product", new { Area = AdminAreaName });
             }
         }
 

@@ -27,7 +27,27 @@
         <hr class="my-4">
     </header>
 
-    @RenderBody()
+    <div class="content-container">
+        <main role="main" class="pb-0 mb-0">
+            <div class="mx-4 px-4 my-1 py-1">
+                @if (TempData.ContainsKey("Message"))
+                {
+                    <div class="alert alert-success" style="margin-top: 30px;">
+                        @TempData["Message"]
+                    </div>
+                }
+
+                @if (TempData.ContainsKey("ErrorMessage"))
+                {
+                    <div class="alert alert-danger" style="margin-top: 30px;">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+
+                @RenderBody()   
+            </div>
+        </main>
+    </div>
 </body>
 </html>
 <script src="/_framework/aspnetcore-browser-refresh.js"></script>

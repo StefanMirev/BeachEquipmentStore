@@ -47,7 +47,7 @@ else
                             </td>
                             <td class="text-center align-middle">
                                 <span>
-                                    <form method="post" asp-controller="Cart" asp-action="Remove" asp-route-userId="@User.GetId()">
+                                    <form method="post" asp-controller="Cart" asp-action="Remove">
                                         <input type="hidden" name="productId" value="@product.Id" />
                                         <button type="submit">Премахни</button>
                                     </form>
@@ -81,12 +81,12 @@ else
         </div>
         <div class="col-md-4 justify-content-end" style="right: -425px; position:relative">
             <form asp-action="ClearCart" asp-controller="Cart" method="post">
-                <input type="hidden" name="userId" value="@User.GetId()" />
                 <button type="submit">ИЗЧИСТИ КОЛИЧКАТА</button>
+                @Html.AntiForgeryToken()
             </form>
         </div>
         <div class="col-md-4 justify-content-end" style="right:-200px; position:relative">
-            <a asp-action="CreateOrder" asp-controller="Order" asp-route-userId="@User.GetId()">ПРИКЛЮЧИ ПОРЪЧКАТА</a>
+            <a asp-action="CreateOrder" asp-controller="Order">ПРИКЛЮЧИ ПОРЪЧКАТА</a>
         </div>
     </div>
 }

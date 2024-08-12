@@ -22,11 +22,11 @@ namespace BeachEquipmentStore.Web.Controllers
 
         [HttpGet]
         [Route("Cart")]
-        public async Task<IActionResult> GoToCart(Guid userId)
+        public async Task<IActionResult> GoToCart()
         {
             try
             {
-                var cartItems = await _cartItems.GetItemsInCart(userId);
+                var cartItems = await _cartItems.GetItemsInCart(Guid.Parse(User.GetId()));
 
                 var resultQuery = await _products.GetProductsInCart(cartItems);
 
@@ -54,7 +54,7 @@ namespace BeachEquipmentStore.Web.Controllers
         [HttpPost]
         [Route("Add")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(Guid userId, Guid productId, int quantity)
+        public async Task<IActionResult> Add(Guid productId, int quantity)
         {
             try
             {    
@@ -65,7 +65,7 @@ namespace BeachEquipmentStore.Web.Controllers
 
                 if (await _products.IsInStock(productId, quantity))
                 {
-                    await _cartItems.AddItemToCart(userId, productId, quantity);
+                    await _cartItems.AddItemToCart(Guid.Parse(User.GetId()), productId, quantity);
 
                     TempData["Message"] = "Продуктът бе успешно добавен!";
                 }
@@ -86,11 +86,11 @@ namespace BeachEquipmentStore.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ClearCart(Guid userId)
+        public async Task<IActionResult> ClearCart()
         {
             try
             {
-                await _cartItems.RemoveAllItemsFromCart(userId);
+                await _cartItems.RemoveAllItemsFromCart(Guid.Parse(User.GetId()));
 
                 return RedirectToAction("All", "Product");
             }
@@ -104,13 +104,13 @@ namespace BeachEquipmentStore.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Remove(Guid userId, Guid productId)
+        public async Task<IActionResult> Remove(Guid productId)
         {
             try
             {
-                await _cartItems.RemoveItemFromCart(userId, productId);
+                await _cartItems.RemoveItemFromCart(Guid.Parse(User.GetId()), productId);
 
-                return RedirectToAction("GoToCart", "Cart", new { userId = userId });
+                return RedirectToAction("GoToCart", "Cart");
             }
             catch (Exception ex)
             {
