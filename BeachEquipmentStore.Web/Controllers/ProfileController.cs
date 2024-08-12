@@ -6,10 +6,6 @@ using BeachEquipmentStore.Web.ViewModels.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Text;
 
 namespace BeachEquipmentStore.Web.Controllers
@@ -125,7 +121,7 @@ namespace BeachEquipmentStore.Web.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    foreach(var error in ModelState.Values.SelectMany(v => v.Errors))
+                    foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                     {
                         sb.AppendLine(error.ErrorMessage);
                     }
@@ -138,7 +134,7 @@ namespace BeachEquipmentStore.Web.Controllers
                 {
                     foreach (var error in changePasswordResult.Errors)
                     {
-                        if(error.Description == "Incorrect password.")
+                        if (error.Description == "Incorrect password.")
                         {
                             sb.AppendLine("Въведената парола не е вярна!");
                         }
@@ -179,12 +175,15 @@ namespace BeachEquipmentStore.Web.Controllers
                     ZipCode = address.ZipCode
                 });
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                //TODO: Change it to where it direcly links to add address.
-                return View();
+                return RedirectToAction("AddAddress", "Profile");
+            }
+            catch (InvalidOperationException)
+            {
+                return RedirectToAction("AddAddress", "Profile");
             }
         }
 
@@ -263,7 +262,7 @@ namespace BeachEquipmentStore.Web.Controllers
             {
                 await _profiles.DeleteAddress(addressId);
 
-                return RedirectToAction("MyProfile", "Profile");
+                return RedirectToAction("AddAddress", "Profile");
             }
             catch (Exception ex)
             {

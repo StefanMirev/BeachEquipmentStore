@@ -1,12 +1,9 @@
 ﻿namespace BeachEquipmentStore.Data.Models
 {
-    using System.ComponentModel;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Diagnostics.CodeAnalysis;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
-    
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
     using static BeachEquipmentStore.Common.EntityValidationConstants.ApplicationUser;
 
     public class ApplicationUser : IdentityUser<Guid>

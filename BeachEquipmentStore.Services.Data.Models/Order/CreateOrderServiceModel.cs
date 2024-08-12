@@ -1,10 +1,5 @@
 ﻿using BeachEquipmentStore.Services.Data.Models.Product;
 using BeachEquipmentStore.Services.Data.Models.Profile;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BeachEquipmentStore.Services.Data.Models.Order
 {
@@ -17,8 +12,8 @@ namespace BeachEquipmentStore.Services.Data.Models.Order
 
         public UserInfoServiceModel UserInfo { get; set; } = null!;
 
-       public AddressServiceModel? UserAddress { get; set; }
+        public AddressServiceModel? UserAddress { get; set; }
 
-        public List<ProductServiceModel> Products { get; set; } 
+        public List<ProductServiceModel> Products { get; set; }
     }
 }

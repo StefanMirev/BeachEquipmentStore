@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BeachEquipmentStore.Web.Infrastructure.ModelBinders
 {
@@ -12,7 +7,7 @@ namespace BeachEquipmentStore.Web.Infrastructure.ModelBinders
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            if(bindingContext == null)
+            if (bindingContext == null)
             {
                 throw new ArgumentNullException(nameof(bindingContext));
             }
@@ -20,7 +15,7 @@ namespace BeachEquipmentStore.Web.Infrastructure.ModelBinders
             ValueProviderResult valueResult = bindingContext.ValueProvider
                 .GetValue(bindingContext.ModelName);
 
-            if(valueResult != ValueProviderResult.None && !string.IsNullOrEmpty(valueResult.FirstValue))
+            if (valueResult != ValueProviderResult.None && !string.IsNullOrEmpty(valueResult.FirstValue))
             {
                 decimal parsedValue = 0m;
                 bool binderSucceeded = false;

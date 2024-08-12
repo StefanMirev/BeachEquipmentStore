@@ -3,7 +3,7 @@ using BeachEquipmentStore.Services.Data.Models.Manufacturer;
 
 namespace BeachEquipmentStore.Services.Data.Models.Product
 {
-    
+
     public class ExtendedProductServiceModel
     {
         public Guid Id { get; set; }

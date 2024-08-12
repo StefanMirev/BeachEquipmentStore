@@ -1,10 +1,7 @@
 ﻿namespace BeachEquipmentStore.Data.Models
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-
     using Microsoft.EntityFrameworkCore;
-
+    using System.ComponentModel.DataAnnotations;
     using static BeachEquipmentStore.Common.EntityValidationConstants.Category;
 
     public class Category

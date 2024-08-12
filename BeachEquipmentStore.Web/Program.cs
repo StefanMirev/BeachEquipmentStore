@@ -1,23 +1,17 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using BeachEquipmentStore.Data;
-
 namespace BeachEquipmentStore.Web
 {
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.DependencyInjection;
-
-
     using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Data.Models;
-    using static BeachEquipmentStore.Web.Infrastructure.Extensions.WebApplicationBuilderExtensions;
     using BeachEquipmentStore.Services.Data.Interfaces;
-    using BeachEquipmentStore.Web.Infrastructure.ModelBinders;
-    using Microsoft.AspNetCore.Mvc;
-    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
     using BeachEquipmentStore.Web.Infrastructure.Extensions;
+    using BeachEquipmentStore.Web.Infrastructure.ModelBinders;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.DependencyInjection;
     using OwaspHeaders.Core.Extensions;
+    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
+    using static BeachEquipmentStore.Web.Infrastructure.Extensions.WebApplicationBuilderExtensions;
 
     public class Program
     {

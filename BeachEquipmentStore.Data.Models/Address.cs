@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
-using static BeachEquipmentStore.Common.EntityValidationConstants.Address;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static BeachEquipmentStore.Common.EntityValidationConstants.Address;
 
 namespace BeachEquipmentStore.Data.Models
 {
@@ -10,7 +10,7 @@ namespace BeachEquipmentStore.Data.Models
     {
         public Address()
         {
-            this.Id = Guid.NewGuid();  
+            this.Id = Guid.NewGuid();
         }
 
         [Key]

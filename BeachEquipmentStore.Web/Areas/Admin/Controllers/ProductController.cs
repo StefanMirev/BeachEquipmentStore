@@ -55,7 +55,7 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
         {
             try
             {
-                if (quantity <1)
+                if (quantity < 1)
                 {
                     throw new ArgumentException("Трябва да добавите поне една бройка от продукта!");
                 }

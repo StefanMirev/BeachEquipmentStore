@@ -20,11 +20,11 @@ namespace BeachEquipmentStore.Web.Controllers
 
             List<CategoryViewModel> resultCategories = allCategories
                 .Select(c => new CategoryViewModel
-            {
-                Id = c.Id,
-                Name = c.Name,
-                ImageUrl = c.ImageUrl
-            })
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    ImageUrl = c.ImageUrl
+                })
                 .ToList();
 
             return View(resultCategories);

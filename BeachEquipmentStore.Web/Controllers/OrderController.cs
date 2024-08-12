@@ -1,15 +1,10 @@
-﻿using BeachEquipmentStore.Data.Models;
-using BeachEquipmentStore.Services.Data;
-using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Services.Data.Models.Product;
-using BeachEquipmentStore.Services.Data.Models.Profile;
+﻿using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Web.Infrastructure.Extensions;
 using BeachEquipmentStore.Web.ViewModels.Order;
 using BeachEquipmentStore.Web.ViewModels.Product;
 using BeachEquipmentStore.Web.ViewModels.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static BeachEquipmentStore.Common.EntityValidationConstants;
 
 namespace BeachEquipmentStore.Web.Controllers
 {

@@ -3,10 +3,7 @@ using BeachEquipmentStore.Data.Models;
 using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Web.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Security.Claims;
 using static BeachEquipmentStore.Common.GeneralApplicationConstants;
 
 namespace BeachEquipmentStore.Services.Data
@@ -47,7 +44,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             var user = _data.Users.FirstOrDefault(u => u.Id == userId);
 
-            if(user == null)
+            if (user == null)
             {
                 throw new ArgumentException("Не е намерен такъв потребител!");
             }

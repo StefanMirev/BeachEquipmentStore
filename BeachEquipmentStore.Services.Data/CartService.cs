@@ -2,7 +2,6 @@
 using BeachEquipmentStore.Data.Models;
 using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Services.Data.Models.Cart;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BeachEquipmentStore.Services.Data

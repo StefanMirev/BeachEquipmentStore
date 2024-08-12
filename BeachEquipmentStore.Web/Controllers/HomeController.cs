@@ -1,18 +1,15 @@
 ﻿namespace BeachEquipmentStore.Web.Controllers
 {
-    using System.Diagnostics;
-
-    using Microsoft.AspNetCore.Mvc;
-
-    using BeachEquipmentStore.Web.ViewModels.Home;
-    using BeachEquipmentStore.Services.Data.Interfaces;
-    using Microsoft.AspNetCore.Authorization;
-    using BeachEquipmentStore.Web.ViewModels.Product;
-
-    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
-    using BeachEquipmentStore.Web.Infrastructure.Extensions;
-    using Microsoft.AspNetCore.Identity;
     using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Services.Data.Interfaces;
+    using BeachEquipmentStore.Web.Infrastructure.Extensions;
+    using BeachEquipmentStore.Web.ViewModels.Home;
+    using BeachEquipmentStore.Web.ViewModels.Product;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Diagnostics;
+    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
 
     public class HomeController : Controller
     {

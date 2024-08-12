@@ -1,21 +1,13 @@
 ﻿using BeachEquipmentStore.Data;
 using BeachEquipmentStore.Data.Models;
-
 using BeachEquipmentStore.Services.Data.Interfaces;
-
 using BeachEquipmentStore.Services.Data.Models.Order;
 using BeachEquipmentStore.Services.Data.Models.Product;
 using BeachEquipmentStore.Services.Data.Models.Profile;
-
-using Microsoft.EntityFrameworkCore;
-
-using ApplicationUser = BeachEquipmentStore.Data.Models.ApplicationUser;
-using Address = BeachEquipmentStore.Data.Models.Address;
-using Product = BeachEquipmentStore.Data.Models.Product;
-using static BeachEquipmentStore.Common.EntityValidationConstants;
 using BeachEquipmentStore.Web.ViewModels.Order;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using BeachEquipmentStore.Data.Models.Enums;
+using Microsoft.EntityFrameworkCore;
+using Address = BeachEquipmentStore.Data.Models.Address;
+using ApplicationUser = BeachEquipmentStore.Data.Models.ApplicationUser;
 
 namespace BeachEquipmentStore.Services.Data
 {
@@ -130,8 +122,8 @@ namespace BeachEquipmentStore.Services.Data
                 productOrders.Add(productOrder);
             }
 
-            _data.ProductOrders.AddRange(productOrders);
-            _data.Orders.Add(order);
+            await _data.ProductOrders.AddRangeAsync(productOrders);
+            await _data.Orders.AddRangeAsync(order);
 
             await _data.SaveChangesAsync();
         }

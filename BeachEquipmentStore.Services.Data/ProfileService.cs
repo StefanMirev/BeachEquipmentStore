@@ -4,10 +4,7 @@ using BeachEquipmentStore.Services.Data.Interfaces;
 using BeachEquipmentStore.Services.Data.Models.Profile;
 using BeachEquipmentStore.Web.ViewModels.Profile;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Linq;
 
 namespace BeachEquipmentStore.Services.Data
 {
@@ -61,7 +58,7 @@ namespace BeachEquipmentStore.Services.Data
         {
             if (!await _data.Users.AnyAsync(a => a.Id == userId))
             {
-                throw new InvalidOperationException("Потребителят не съществува!");
+                throw new ArgumentException("Потребителят не съществува!");
             }
 
             if (!await _data.Addresses.AnyAsync(a => a.CustomerId == userId))

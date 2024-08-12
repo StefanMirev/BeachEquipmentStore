@@ -1,14 +1,11 @@
 ﻿namespace BeachEquipmentStore.Data
 {
+    using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Data.Models.Extensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
-
     using System.Reflection;
-
-    using BeachEquipmentStore.Data.Models;
-    using BeachEquipmentStore.Data.Models.Extensions;
-    using Microsoft.EntityFrameworkCore.Infrastructure;
 
     public class EquipmentStoreDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {

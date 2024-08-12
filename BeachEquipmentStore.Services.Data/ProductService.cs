@@ -1,20 +1,16 @@
 ﻿namespace BeachEquipmentStore.Services.Data
 {
-    using Microsoft.EntityFrameworkCore;
-
     using BeachEquipmentStore.Data;
-    using BeachEquipmentStore.Services.Data.Interfaces;
-    using System.Linq;
-    using BeachEquipmentStore.Services.Data.Models.Product;
-    using BeachEquipmentStore.Services.Data.Models.Cart;
-    using System.Collections.Generic;
-    using BeachEquipmentStore.Services.Data.Models.Manufacturer;
-    using BeachEquipmentStore.Services.Data.Models.Category;
-    using Product = BeachEquipmentStore.Data.Models.Product;
     using BeachEquipmentStore.Data.Models;
-    using System.Data.Common;
-    using Microsoft.Data.SqlClient;
-    using System.Runtime.CompilerServices;
+    using BeachEquipmentStore.Services.Data.Interfaces;
+    using BeachEquipmentStore.Services.Data.Models.Cart;
+    using BeachEquipmentStore.Services.Data.Models.Category;
+    using BeachEquipmentStore.Services.Data.Models.Manufacturer;
+    using BeachEquipmentStore.Services.Data.Models.Product;
+    using Microsoft.EntityFrameworkCore;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Product = BeachEquipmentStore.Data.Models.Product;
 
     public class ProductService : IProductService
     {

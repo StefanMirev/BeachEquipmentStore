@@ -1,11 +1,9 @@
 ﻿namespace BeachEquipmentStore.Data.Models
 {
+    using Microsoft.EntityFrameworkCore;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-
-    using Microsoft.EntityFrameworkCore;
-
     using static BeachEquipmentStore.Common.EntityValidationConstants.Product;
 
     public class Product
@@ -42,7 +40,7 @@
 
         [Required]
         [Precision(18, 2)]
-        [Range(typeof(decimal),PriceMinValue, PriceMaxValue)]
+        [Range(typeof(decimal), PriceMinValue, PriceMaxValue)]
         public decimal Price { get; set; }
 
         [Required]
@@ -62,7 +60,5 @@
         public ICollection<CartItem> CartItems { get; set; }
 
         public ICollection<ProductOrder> ProductsOrders { get; set; }
-
-
     }
 }

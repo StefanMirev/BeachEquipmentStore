@@ -1,10 +1,9 @@
 ﻿namespace BeachEquipmentStore.Services.Data
 {
-    using Microsoft.EntityFrameworkCore;
-
     using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Services.Data.Interfaces;
     using BeachEquipmentStore.Services.Data.Models.Manufacturer;
+    using Microsoft.EntityFrameworkCore;
 
     public class ManufacturerService : IManufacturerService
     {

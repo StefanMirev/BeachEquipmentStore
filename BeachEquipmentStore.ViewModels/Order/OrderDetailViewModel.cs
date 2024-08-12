@@ -1,10 +1,5 @@
 ﻿using BeachEquipmentStore.Web.ViewModels.Product;
 using BeachEquipmentStore.Web.ViewModels.Profile;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BeachEquipmentStore.Web.ViewModels.Order
 {
@@ -29,7 +24,7 @@ namespace BeachEquipmentStore.Web.ViewModels.Order
 
         public decimal OverallPrice { get; set; }
 
-        public string? AddressName { get;set; }
+        public string? AddressName { get; set; }
 
         public string? TownName { get; set; }
 

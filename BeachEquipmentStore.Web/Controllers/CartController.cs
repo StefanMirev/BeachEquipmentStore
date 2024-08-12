@@ -2,9 +2,7 @@
 using BeachEquipmentStore.Web.Infrastructure.Extensions;
 using BeachEquipmentStore.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace BeachEquipmentStore.Web.Controllers
 {
@@ -57,7 +55,7 @@ namespace BeachEquipmentStore.Web.Controllers
         public async Task<IActionResult> Add(Guid productId, int quantity)
         {
             try
-            {    
+            {
                 if (quantity <= 0)
                 {
                     throw new ArgumentOutOfRangeException("Трябва да добавите поне една бройка от дадения продукт!");

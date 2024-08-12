@@ -1,10 +1,5 @@
 ﻿using BeachEquipmentStore.Web.ViewModels.Category;
 using BeachEquipmentStore.Web.ViewModels.Manufacturer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BeachEquipmentStore.Web.ViewModels.Product
 {

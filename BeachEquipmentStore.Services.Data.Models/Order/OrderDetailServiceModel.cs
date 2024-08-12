@@ -1,8 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-using BeachEquipmentStore.Data.Models.Enums;
+﻿using BeachEquipmentStore.Services.Data.Models.Product;
 using BeachEquipmentStore.Services.Data.Models.Profile;
-using BeachEquipmentStore.Services.Data.Models.Product;
 
 namespace BeachEquipmentStore.Services.Data.Models.Order
 {
@@ -26,7 +23,7 @@ namespace BeachEquipmentStore.Services.Data.Models.Order
 
         public decimal DeliveryPrice { get; set; }
 
-        public decimal OverallPrice {get;set;} 
+        public decimal OverallPrice { get; set; }
 
         public string? AddressName { get; set; }
 

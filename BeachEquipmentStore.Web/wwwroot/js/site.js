@@ -23,9 +23,12 @@
                 }
             });
 
-            const queryString = newUrlParams.toString();
-            const newUrl = `${window.location.origin}${window.location.pathname}?${queryString}`;
-            window.history.replaceState(null, '', newUrl);
+            if (newUrlParams.size > 0) {
+                const queryString = newUrlParams.toString();
+                const newUrl = `${window.location.origin}${window.location.pathname}?${queryString}`;
+
+                window.history.replaceState(null, '', newUrl);
+            }
         }
 
         checkUrl();
@@ -39,9 +42,12 @@
             if (categoryId !== 'All') urlParams.set('categoryId', categoryId);
             if (manufacturerId !== 'All') urlParams.set('manufacturerId', manufacturerId);
 
-            const queryString = urlParams.toString();
-            const newUrl = `${window.location.origin}${window.location.pathname}?${queryString}`;
-            window.history.replaceState(null, '', newUrl);
+            if (newUrlParams.size > 0) {
+                const queryString = urlParams.toString();
+                const newUrl = `${window.location.origin}${window.location.pathname}?${queryString}`;
+
+                window.history.replaceState(null, '', newUrl);
+            }
         }
 
         const clearFiltersButton = document.getElementById('clear-filters-button');

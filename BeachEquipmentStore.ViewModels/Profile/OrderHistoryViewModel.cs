@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BeachEquipmentStore.Web.ViewModels.Profile
+﻿namespace BeachEquipmentStore.Web.ViewModels.Profile
 {
     public class OrderHistoryViewModel
     {

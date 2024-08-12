@@ -1,9 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BeachEquipmentStore.Web.Infrastructure.ModelBinders
 {
@@ -16,7 +11,7 @@ namespace BeachEquipmentStore.Web.Infrastructure.ModelBinders
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if(context.Metadata.ModelType == typeof(decimal) ||
+            if (context.Metadata.ModelType == typeof(decimal) ||
                 context.Metadata.ModelType == typeof(decimal?))
             {
                 return new DecimalModelBinder();

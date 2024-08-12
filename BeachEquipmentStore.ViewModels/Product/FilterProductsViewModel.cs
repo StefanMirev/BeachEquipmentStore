@@ -10,5 +10,5 @@ namespace BeachEquipmentStore.Web.ViewModels.Product
         public List<CategoryViewModel> Categories { get; set; } = null!;
 
         public List<ManufacturerViewModel> Manufacturers { get; set; } = null!;
-     }
+    }
 }
