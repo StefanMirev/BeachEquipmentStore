@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Web.ViewModels.Profile
+﻿namespace BeachEquipmentStore.ViewModels.Profile
 {
     public class AddressDetailsViewModel
     {
@@ -7,7 +7,7 @@
 
         public string Town { get; set; } = null!;
 
-        public int ZipCode { get; set; }
+        public string ZipCode { get; set; } = null!;
 
         public bool IsPrimaryAddress { get; set; }
 

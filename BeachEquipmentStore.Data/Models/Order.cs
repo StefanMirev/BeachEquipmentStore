@@ -48,9 +48,9 @@
         public string TownName { get; set; } = null!;
 
         [Required]
-        [Range(ZipCodeMinValue, ZipCodeMaxValue)]
+        [Range(ZipCodeMinLength, ZipCodeMaxLength)]
         [DisplayName("Zip Code")]
-        public int ZipCode { get; set; }
+        public string ZipCode { get; set; } = null!;
 
         [Required]
         public Guid CustomerId { get; set; }

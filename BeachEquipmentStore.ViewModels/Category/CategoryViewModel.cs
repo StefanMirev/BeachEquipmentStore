@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Web.ViewModels.Category
+﻿namespace BeachEquipmentStore.ViewModels.Category
 {
     public class CategoryViewModel
     {

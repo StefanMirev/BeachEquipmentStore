@@ -1,15 +1,17 @@
-﻿using BeachEquipmentStore.Services.Data.Models.Order;
-using BeachEquipmentStore.Web.ViewModels.Order;
-
-namespace BeachEquipmentStore.Services.Data.Interfaces
+﻿namespace BeachEquipmentStore.Services.Interfaces
 {
+    using BeachEquipmentStore.ViewModels.Order;
+    using BeachEquipmentStore.ViewModels.Profile;
+
     public interface IOrderService
     {
-        Task<CreateOrderServiceModel> GetDataRequiredForOrder(Guid userId);
+        Task<List<OrderHistoryViewModel>> GetOrderHistory(Guid userId);
 
-        Task GenerateOrder(Guid userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum);
+        Task<CreateOrderViewModel> GetDataRequiredForOrder(Guid userId);
 
-        Task<OrderDetailServiceModel> GetOrderDetails(string orderId);
+        Task GenerateOrder(Guid userId, bool hasAddress, string? addressName, string? town, string zipCode, decimal totalSum);
+
+        Task<OrderDetailViewModel> GetOrderDetails(string orderId);
 
         Task<List<CompleteOrderViewModel>> GetUndeliveredOrders();
 

@@ -1,9 +1,9 @@
-﻿using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Web.ViewModels.Category;
-using Microsoft.AspNetCore.Mvc;
-
-namespace BeachEquipmentStore.Web.Controllers
+﻿namespace BeachEquipmentStore.Web.Controllers
 {
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.ViewModels.Category;
+    using Microsoft.AspNetCore.Mvc;
+
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categories;

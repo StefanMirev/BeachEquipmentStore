@@ -10,8 +10,8 @@
             public const int TownNameMaxLength = 25;
             public const int TownNameMinLength = 4;
 
-            public const int ZipCodeMaxValue = 9974;
-            public const int ZipCodeMinValue = 1000;
+            public const int ZipCodeMaxLength = 10;
+            public const int ZipCodeMinLength = 3;
         }
 
         public static class ApplicationUser
@@ -33,6 +33,11 @@
         {
             public const int NameMaxLength = 70;
             public const int NameMinLength = 5;
+        }
+
+        public static class Order
+        {
+            public const decimal DeliveryPrice = 5.50m;
         }
 
         public static class Product

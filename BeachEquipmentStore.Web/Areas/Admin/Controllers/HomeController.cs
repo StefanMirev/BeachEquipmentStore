@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
+﻿namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
+    using Microsoft.AspNetCore.Mvc;
+
     public class HomeController : BaseAdminController
     {
         [Area("Admin")]

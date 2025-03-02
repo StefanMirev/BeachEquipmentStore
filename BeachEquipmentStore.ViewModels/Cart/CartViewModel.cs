@@ -1,6 +1,6 @@
-﻿namespace BeachEquipmentStore.Services.Data.Models.Cart
+﻿namespace BeachEquipmentStore.ViewModels.Cart
 {
-    public class CartServiceModel
+    public class CartViewModel
     {
         public Guid ProductId { get; set; }
 

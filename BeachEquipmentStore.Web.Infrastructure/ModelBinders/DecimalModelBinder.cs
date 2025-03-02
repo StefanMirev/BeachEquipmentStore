@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Globalization;
-
-namespace BeachEquipmentStore.Web.Infrastructure.ModelBinders
+﻿namespace BeachEquipmentStore.Infrastructure.ModelBinders
 {
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using System.Globalization;
     public class DecimalModelBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)

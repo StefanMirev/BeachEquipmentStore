@@ -1,15 +1,16 @@
 ﻿@using BeachEquipmentStore.Web
-@using BeachEquipmentStore.Web.ViewModels.Home
-@using BeachEquipmentStore.Web.ViewModels.Category
-@using BeachEquipmentStore.Web.ViewModels.Product;
-@using BeachEquipmentStore.Web.ViewModels.Manufacturer;
-@using BeachEquipmentStore.Data.Models;
-@using Microsoft.AspNetCore.Identity
+@using BeachEquipmentStore.ViewModels.Home
+@using BeachEquipmentStore.ViewModels.Category
+@using BeachEquipmentStore.ViewModels.Product;
+@using BeachEquipmentStore.ViewModels.Manufacturer;
+@using Microsoft.AspNetCore.Identity;
+@using BeachEquipmentStore.Services.Interfaces
+@using BeachEquipmentStore.ViewModels.User
 @using System.Security.Claims;
-@using BeachEquipmentStore.Web.ViewModels.Profile;
-@using BeachEquipmentStore.Web.ViewModels;
-@using BeachEquipmentStore.Web.ViewModels.Order;
-@using static BeachEquipmentStore.Web.Infrastructure.Extensions.ClaimsPrincipalExtensions;
+@using BeachEquipmentStore.ViewModels.Profile;
+@using BeachEquipmentStore.ViewModels;
+@using BeachEquipmentStore.ViewModels.Order;
+@using static BeachEquipmentStore.Infrastructure.Extensions.ClaimsPrincipalExtensions;
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 

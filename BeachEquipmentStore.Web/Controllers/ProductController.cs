@@ -1,12 +1,12 @@
-﻿using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Web.ViewModels.Category;
-using BeachEquipmentStore.Web.ViewModels.Manufacturer;
-using BeachEquipmentStore.Web.ViewModels.Product;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-
-namespace BeachEquipmentStore.Web.Controllers
+﻿namespace BeachEquipmentStore.Web.Controllers
 {
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.ViewModels.Category;
+    using BeachEquipmentStore.ViewModels.Manufacturer;
+    using BeachEquipmentStore.ViewModels.Product;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Caching.Memory;
+
     public class ProductController : Controller
     {
         private readonly ICategoryService _categories;

@@ -1,6 +1,6 @@
 ﻿namespace BeachEquipmentStore.ViewModels.Product
 {
-    public class ExtendendedFiltrationViewModel
+    public class ExtendedFiltrationViewModel
     {
         public string Keyword { get; set; } = null!;
 

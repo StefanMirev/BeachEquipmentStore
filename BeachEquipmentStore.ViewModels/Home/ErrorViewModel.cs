@@ -1,4 +1,4 @@
-namespace BeachEquipmentStore.Web.ViewModels.Home
+namespace BeachEquipmentStore.ViewModels.Home
 {
     public class ErrorViewModel
     {

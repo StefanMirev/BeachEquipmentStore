@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TypeScriptTarget>ES5</TypeScriptTarget>
@@ -31,12 +31,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BeachEquipmentStore.Common\BeachEquipmentStore.Common.csproj" />
-    <ProjectReference Include="..\BeachEquipmentStore.Data.Models\BeachEquipmentStore.Data.Models.csproj" />
     <ProjectReference Include="..\BeachEquipmentStore.Data\BeachEquipmentStore.Data.csproj" />
-    <ProjectReference Include="..\BeachEquipmentStore.Services.Data.Models\BeachEquipmentStore.Services.Data.Models.csproj" />
-    <ProjectReference Include="..\BeachEquipmentStore.Services.Data\BeachEquipmentStore.Services.Data.csproj" />
-    <ProjectReference Include="..\BeachEquipmentStore.ViewModels\BeachEquipmentStore.Web.ViewModels.csproj" />
-    <ProjectReference Include="..\BeachEquipmentStore.Web.Infrastructure\BeachEquipmentStore.Web.Infrastructure.csproj" />
+    <ProjectReference Include="..\BeachEquipmentStore.Services.Data\BeachEquipmentStore.Services.csproj" />
+    <ProjectReference Include="..\BeachEquipmentStore.ViewModels\BeachEquipmentStore.ViewModels.csproj" />
+    <ProjectReference Include="..\BeachEquipmentStore.Web.Infrastructure\BeachEquipmentStore.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Web.Infrastructure.Extensions
+﻿namespace BeachEquipmentStore.Infrastructure.Extensions
 {
     using BeachEquipmentStore.Data.Models;
     using Microsoft.AspNetCore.Builder;

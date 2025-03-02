@@ -1,8 +1,8 @@
-﻿using System.Security.Claims;
-using static BeachEquipmentStore.Common.GeneralApplicationConstants;
-
-namespace BeachEquipmentStore.Web.Infrastructure.Extensions
+﻿namespace BeachEquipmentStore.Infrastructure.Extensions
 {
+    using System.Security.Claims;
+    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
+
     public static class ClaimsPrincipalExtensions
     {
         public static string GetId(this ClaimsPrincipal user)

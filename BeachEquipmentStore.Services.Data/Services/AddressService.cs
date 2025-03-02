@@ -1,57 +1,19 @@
-﻿using BeachEquipmentStore.Data;
-using BeachEquipmentStore.Data.Models;
-using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Services.Data.Models.Profile;
-using BeachEquipmentStore.Web.ViewModels.Profile;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-
-namespace BeachEquipmentStore.Services.Data
+﻿namespace BeachEquipmentStore.Services.Services
 {
-    public class ProfileService : IProfileService
+    using BeachEquipmentStore.Data;
+    using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.ViewModels.Profile;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
+
+    public class AddressService : IAddressService
     {
         private readonly EquipmentStoreDbContext _data;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProfileService(EquipmentStoreDbContext data, UserManager<ApplicationUser> userManager)
+        public AddressService(EquipmentStoreDbContext data, UserManager<ApplicationUser> userManager)
         {
-            _data = data;
-            _userManager = userManager;
-        }
-
-        public async Task<UserDetailsServiceModel> GetUserDetails(Guid userId)
-        {
-            if (!_data.Users.Any(u => u.Id == userId))
-            {
-                throw new ArgumentNullException("Потребителят не съществува!");
-            }
-
-            ApplicationUser currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
-
-            return new UserDetailsServiceModel()
-            {
-                FirstName = currentUser.FirstName,
-                LastName = currentUser.LastName,
-                Email = currentUser.Email,
-                PhoneNumber = currentUser.PhoneNumber
-            };
-        }
-
-        public async Task ChangeUserDetails(Guid userId, UserDetailsViewModel DetailsModel)
-        {
-            if (!_data.Users.Any(u => u.Id == userId))
-            {
-                throw new ArgumentNullException("Потребителят не съществува!");
-            }
-
-            var currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
-
-            currentUser.FirstName = DetailsModel.FirstName;
-            currentUser.LastName = DetailsModel.LastName;
-            currentUser.Email = DetailsModel.Email;
-            currentUser.PhoneNumber = DetailsModel.PhoneNumber;
-
-            await _data.SaveChangesAsync();
+            this._data= data;
         }
 
         public async Task<List<AddressDetailsViewModel>> GetAllAddresses(Guid userId)
@@ -69,14 +31,14 @@ namespace BeachEquipmentStore.Services.Data
             var userAddresses = await _data.Addresses
                 .Where(a => a.CustomerId == userId)
                 .Select(a => new AddressDetailsViewModel
-                    {
-                        Id = a.Id,
-                        Name = a.Name,
-                        Town = a.Town,
-                        ZipCode = a.ZipCode,
-                        IsPrimaryAddress = a.IsPrimaryAddress,
-                        CreatedAt = a.CreatedAt
-                    })
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Town = a.Town,
+                    ZipCode = a.ZipCode,
+                    IsPrimaryAddress = a.IsPrimaryAddress,
+                    CreatedAt = a.CreatedAt
+                })
                 .OrderByDescending(a => a.IsPrimaryAddress)
                 .ThenBy(a => a.CreatedAt)
                 .ToListAsync();
@@ -132,12 +94,12 @@ namespace BeachEquipmentStore.Services.Data
                 }
             }
 
-            Address address = new Address()
+            var address = new Address()
             {
                 Id = Guid.NewGuid(),
                 Name = name,
                 Town = town,
-                ZipCode = int.Parse(zipCode),
+                ZipCode = zipCode,
                 IsPrimaryAddress = isPrimary,
                 CreatedAt = DateTime.Now,
                 CustomerId = userId
@@ -147,7 +109,7 @@ namespace BeachEquipmentStore.Services.Data
             await _data.SaveChangesAsync();
         }
 
-        public async Task ChangeAddressDetails(Guid addressId, string name, string town, int zipCode)
+        public async Task ChangeAddressDetails(Guid addressId, string name, string town, string zipCode)
         {
             if (!await _data.Addresses.AnyAsync(a => a.Id == addressId))
             {
@@ -171,13 +133,13 @@ namespace BeachEquipmentStore.Services.Data
             }
 
             var addresses = await _data.Addresses
-                .Where(a => a.CustomerId == userId)
-                .ToListAsync();
+            .Where(a => a.CustomerId == userId)
+            .ToListAsync();
 
-            _data.Addresses.Remove(addresses.SingleOrDefault(a => a.Id == addressId));
+            _data.Addresses.Remove(addresses.SingleOrDefault(a => a.Id == addressId)!);
             await _data.SaveChangesAsync();
 
-            addresses.Remove(addresses.SingleOrDefault(a => a.Id == addressId));
+            addresses.Remove(addresses.SingleOrDefault(a => a.Id == addressId)!);
 
             return addresses.Select(a => new AddressDetailsViewModel
             {
@@ -187,25 +149,6 @@ namespace BeachEquipmentStore.Services.Data
                 ZipCode = a.ZipCode,
                 IsPrimaryAddress = a.IsPrimaryAddress
             }).ToList();
-        }
-
-        public async Task<List<OrderHistoryServiceModel>> GetOrderHistory(Guid userId)
-        {
-            if (!_data.Users.Any(u => u.Id == userId))
-            {
-                throw new ArgumentNullException("Потребителят не съществува!");
-            }
-
-            return await _data.Orders
-                .Where(o => o.CustomerId == userId)
-                .Select(o => new OrderHistoryServiceModel
-                {
-                    Id = o.Id,
-                    DeliveryStatus = o.DeliveryStatus.ToString(),
-                    OrderDate = o.CreatedAt,
-                    TotalPrice = o.TotalPrice
-                })
-                .ToListAsync();
         }
     }
 }

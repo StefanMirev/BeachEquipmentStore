@@ -1,16 +1,15 @@
-﻿namespace BeachEquipmentStore.Services.Data
+﻿namespace BeachEquipmentStore.Services.Services
 {
     using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Data.Models;
-    using BeachEquipmentStore.Services.Data.Interfaces;
-    using BeachEquipmentStore.Services.Data.Models.Cart;
-    using BeachEquipmentStore.Services.Data.Models.Category;
-    using BeachEquipmentStore.Services.Data.Models.Manufacturer;
-    using BeachEquipmentStore.Services.Data.Models.Product;
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.ViewModels.Cart;
+    using BeachEquipmentStore.ViewModels.Category;
+    using BeachEquipmentStore.ViewModels.Manufacturer;
+    using BeachEquipmentStore.ViewModels.Product;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Linq;
-    using Product = BeachEquipmentStore.Data.Models.Product;
 
     public class ProductService : IProductService
     {
@@ -21,7 +20,7 @@
             _data = data;
         }
 
-        public async Task<ExtendedProductServiceModel> GetProductById(Guid productId)
+        public async Task<ExtendedProductViewModel> GetProductById(Guid productId)
         {
             if (!await _data.Products.AnyAsync(a => a.Id == productId))
             {
@@ -33,7 +32,7 @@
                 .Include(p => p.Category)
                 .FirstAsync(p => p.Id.ToString() == productId.ToString());
 
-            return new ExtendedProductServiceModel
+            return new ExtendedProductViewModel
             {
                 Id = product.Id,
                 Name = product.Name,
@@ -42,12 +41,12 @@
                 Barcode = product.Barcode,
                 Price = product.Price,
                 Stock = product.Stock,
-                Manufacturer = new ManufacturerServiceModel
+                Manufacturer = new ManufacturerViewModel
                 {
                     Id = product.Manufacturer.Id,
                     Name = product.Manufacturer.Name
                 },
-                Category = new CategoryServiceModel
+                Category = new CategoryViewModel
                 {
                     Id = product.Category.Id,
                     Name = product.Category.Name
@@ -55,10 +54,10 @@
             };
         }
 
-        public async Task<List<ProductServiceModel>> GetAllProductsAsync()
+        public async Task<List<ProductViewModel>> GetAllProductsAsync()
         {
             return await _data.Products
-                 .Select(p => new ProductServiceModel
+                 .Select(p => new ProductViewModel
                  {
                      Id = p.Id,
                      Name = p.Name,
@@ -69,7 +68,7 @@
                  .ToListAsync();
         }
 
-        public async Task<List<ProductServiceModel>> GetRandomProductsInStockAsync()
+        public async Task<List<ProductViewModel>> GetRandomProductsInStockAsync()
         {
             int productsInStock = await _data.Products.Where(p => p.Stock > 0).CountAsync();
 
@@ -82,7 +81,7 @@
                  .Where(p => p.Stock > 0)
                  .OrderBy(p => Guid.NewGuid())
                  .Take(productsInStock > 9 ? 9 : productsInStock)
-                 .Select(p => new ProductServiceModel
+                 .Select(p => new ProductViewModel
                  {
                      Id = p.Id,
                      Name = p.Name,
@@ -92,15 +91,15 @@
                  .ToListAsync();
         }
 
-        public async Task<List<ProductServiceModel>> GetProductsInCart(List<CartServiceModel> cartItems)
+        public async Task<List<ProductViewModel>> GetProductsInCart(List<CartViewModel> cartItems)
         {
-            List<ProductServiceModel> productsInCart = new List<ProductServiceModel>();
+            List<ProductViewModel> productsInCart = new List<ProductViewModel>();
 
-            foreach (CartServiceModel cartItem in cartItems)
+            foreach (CartViewModel cartItem in cartItems)
             {
                 productsInCart.AddRange(await _data.Products
                     .Where(p => p.Id == cartItem.ProductId)
-                    .Select(p => new ProductServiceModel
+                    .Select(p => new ProductViewModel
                     {
                         Id = p.Id,
                         Name = p.Name,
@@ -127,7 +126,7 @@
             return product.Stock >= quantity ? true : false;
         }
 
-        public async Task<ExtendedFiltrationServiceModel> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId)
+        public async Task<ExtendedFiltrationViewModel> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId)
         {
             var filteredProducts = _data.Products.AsQueryable();
             List<Category> allCategories = await _data.Categories.ToListAsync();
@@ -154,26 +153,26 @@
                 filteredProducts = filteredProducts.Where(p => p.Manufacturer.Id == manufacturerId);
             }
 
-            var filteredModel = new ExtendedFiltrationServiceModel
+            var filteredModel = new ExtendedFiltrationViewModel
             {
                 Keyword = keyword,
                 CategoryId = categoryId,
                 ManufacturerId = manufacturerId,
-                FilteredProducts = new FilterProductsServiceModel
+                FilteredProducts = new FilterProductsViewModel
                 {
-                    Categories = allCategories.Select(c => new CategoryServiceModel
+                    Categories = allCategories.Select(c => new CategoryViewModel
                     {
                         Id = c.Id,
                         Name = c.Name
                     })
                 .ToList(),
-                    Manufacturers = allManufacturers.Select(m => new ManufacturerServiceModel
+                    Manufacturers = allManufacturers.Select(m => new ManufacturerViewModel
                     {
                         Id = m.Id,
                         Name = m.Name
                     })
                 .ToList(),
-                    Products = filteredProducts.Select(p => new ProductServiceModel
+                    Products = filteredProducts.Select(p => new ProductViewModel
                     {
                         Id = p.Id,
                         Name = p.Name,

@@ -2,16 +2,16 @@ namespace BeachEquipmentStore.Web
 {
     using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Data.Models;
-    using BeachEquipmentStore.Services.Data.Interfaces;
-    using BeachEquipmentStore.Web.Infrastructure.Extensions;
-    using BeachEquipmentStore.Web.Infrastructure.ModelBinders;
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.Infrastructure.Extensions;
+    using BeachEquipmentStore.Infrastructure.ModelBinders;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using OwaspHeaders.Core.Extensions;
     using static BeachEquipmentStore.Common.GeneralApplicationConstants;
-    using static BeachEquipmentStore.Web.Infrastructure.Extensions.WebApplicationBuilderExtensions;
+    using static BeachEquipmentStore.Infrastructure.Extensions.WebApplicationBuilderExtensions;
 
     public class Program
     {
@@ -26,13 +26,13 @@ namespace BeachEquipmentStore.Web
             builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 6;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 10;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                options.Lockout.MaxFailedAccessAttempts = 10;
                 options.Lockout.AllowedForNewUsers = true;
             })
                 .AddRoles<IdentityRole<Guid>>()

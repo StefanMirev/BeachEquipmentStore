@@ -1,12 +1,11 @@
-﻿using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Services.Data.Models.Product;
-using BeachEquipmentStore.Web.Areas.Admin.ViewModels.Product;
-using BeachEquipmentStore.Web.ViewModels.Product;
-using Microsoft.AspNetCore.Mvc;
-using static BeachEquipmentStore.Common.GeneralApplicationConstants;
-
-namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
+﻿namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.Web.Areas.Admin.ViewModels.Product;
+    using BeachEquipmentStore.ViewModels.Product;
+    using Microsoft.AspNetCore.Mvc;
+    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
+
     [Area("Admin")]
     public class ProductController : BaseAdminController
     {
@@ -26,7 +25,7 @@ namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
         {
             try
             {
-                List<ProductServiceModel> allProducts = await _products.GetAllProductsAsync();
+                List<ProductViewModel> allProducts = await _products.GetAllProductsAsync();
 
                 return View(new RestockProductsViewModel
                 {

@@ -1,9 +1,9 @@
-﻿using BeachEquipmentStore.Services.Data.Models.Manufacturer;
-
-namespace BeachEquipmentStore.Services.Data.Interfaces
+﻿namespace BeachEquipmentStore.Services.Interfaces
 {
+    using BeachEquipmentStore.ViewModels.Manufacturer;
+
     public interface IManufacturerService
     {
-        Task<List<ManufacturerServiceModel>> GetAllManufacturersAsync();
+        Task<List<ManufacturerViewModel>> GetAllManufacturersAsync();
     }
 }

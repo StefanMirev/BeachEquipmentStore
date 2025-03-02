@@ -1,8 +1,8 @@
-﻿using BeachEquipmentStore.Web.ViewModels.Category;
-using BeachEquipmentStore.Web.ViewModels.Manufacturer;
-
-namespace BeachEquipmentStore.Web.ViewModels.Product
+﻿namespace BeachEquipmentStore.ViewModels.Product
 {
+    using BeachEquipmentStore.ViewModels.Category;
+    using BeachEquipmentStore.ViewModels.Manufacturer;
+
     public class ProductViewModel
     {
         public ProductViewModel()

@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Web.ViewModels.Order
+﻿namespace BeachEquipmentStore.ViewModels.Order
 {
     public class CompleteOrderViewModel
     {

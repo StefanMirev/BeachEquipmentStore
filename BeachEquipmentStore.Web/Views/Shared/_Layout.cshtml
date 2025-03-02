@@ -1,7 +1,7 @@
-﻿@inject UserManager<ApplicationUser> userManager
+﻿@inject IUserService UserService
 
 @{
-    var user = await userManager.GetUserAsync(User);
+    var user = await UserService.GetCurrentUserAsync(User);
 }
 
 <!DOCTYPE html>

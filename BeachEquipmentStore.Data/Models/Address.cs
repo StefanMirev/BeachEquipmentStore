@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using static BeachEquipmentStore.Common.EntityValidationConstants.Address;
-
-namespace BeachEquipmentStore.Data.Models
+﻿namespace BeachEquipmentStore.Data.Models
 {
+    using Microsoft.EntityFrameworkCore;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using static BeachEquipmentStore.Common.EntityValidationConstants.Address;
+
     public class Address
     {
         public Address()
@@ -27,9 +27,9 @@ namespace BeachEquipmentStore.Data.Models
         public string Town { get; set; } = null!;
 
         [Required]
-        [Range(ZipCodeMinValue, ZipCodeMaxValue)]
+        [Range(ZipCodeMinLength, ZipCodeMaxLength)]
         [DisplayName("Zip Code")]
-        public int ZipCode { get; set; }
+        public string ZipCode { get; set; } = null!;
 
         [Required]
         [DisplayName("Is Primary Address")]

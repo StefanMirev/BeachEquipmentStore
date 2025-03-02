@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Web.ViewModels.Manufacturer
+﻿namespace BeachEquipmentStore.ViewModels.Manufacturer
 {
     public class ManufacturerViewModel
     {

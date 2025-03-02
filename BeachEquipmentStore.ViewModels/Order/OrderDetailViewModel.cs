@@ -1,13 +1,15 @@
-﻿using BeachEquipmentStore.Web.ViewModels.Product;
-using BeachEquipmentStore.Web.ViewModels.Profile;
-
-namespace BeachEquipmentStore.Web.ViewModels.Order
+﻿namespace BeachEquipmentStore.ViewModels.Order
 {
+    using BeachEquipmentStore.Common;
+    using BeachEquipmentStore.ViewModels.Product;
+    using BeachEquipmentStore.ViewModels.Profile;
+
     public class OrderDetailViewModel
     {
         public OrderDetailViewModel()
         {
             this.Products = new List<ExtendedProductViewModel>();
+            this.DeliveryPrice = EntityValidationConstants.Order.DeliveryPrice;
         }
 
         public Guid Id { get; set; }
@@ -28,7 +30,7 @@ namespace BeachEquipmentStore.Web.ViewModels.Order
 
         public string? TownName { get; set; }
 
-        public int ZipCode { get; set; }
+        public string? ZipCode { get; set; }
 
         public AddressDetailsViewModel Address { get; set; } = null!;
 

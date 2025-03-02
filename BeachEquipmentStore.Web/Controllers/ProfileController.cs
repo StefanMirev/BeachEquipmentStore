@@ -1,25 +1,25 @@
-﻿using BeachEquipmentStore.Data.Models;
-using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Services.Data.Models.Profile;
-using BeachEquipmentStore.Web.Infrastructure.Extensions;
-using BeachEquipmentStore.Web.ViewModels.Profile;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System.Text;
-
-namespace BeachEquipmentStore.Web.Controllers
+﻿namespace BeachEquipmentStore.Web.Controllers
 {
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.Infrastructure.Extensions;
+    using BeachEquipmentStore.ViewModels.Profile;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Text;
+
     [Authorize(Policy = "RequireAuthenticatedUser")]
     public class ProfileController : Controller
     {
-        private readonly IProfileService _profileService;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAddressService _addressService;
+        private readonly IOrderService _orderService;
+        private readonly IUserService _userService;
 
-        public ProfileController(IProfileService profiles, UserManager<ApplicationUser> userManager)
+        public ProfileController(IAddressService addressService, IOrderService orderService, IUserService userService)
         {
-            _profileService = profiles;
-            _userManager = userManager;
+            _addressService = addressService;
+            _orderService = orderService;
+            _userService = userService;
         }
 
         [Route("Profile")]
@@ -27,7 +27,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                var userDetails = await _profileService.GetUserDetails(Guid.Parse(User.GetId()));
+                var userDetails = await _userService.GetUserDetails(Guid.Parse(User.GetId()));
 
                 return View(new UserDetailsViewModel
                 {
@@ -51,7 +51,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                var userDetails = await _profileService.GetUserDetails(Guid.Parse(User.GetId()));
+                var userDetails = await _userService.GetUserDetails(Guid.Parse(User.GetId()));
 
                 return View(new UserDetailsViewModel
                 {
@@ -76,7 +76,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                await _profileService.ChangeUserDetails(Guid.Parse(User.GetId()), userDetails);
+                await _userService.ChangeUserDetails(Guid.Parse(User.GetId()), userDetails);
 
                 return RedirectToAction("MyProfile", "Profile");
             }
@@ -111,7 +111,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                var user = await _userManager.GetUserAsync(User);
+                var user = await _userService.GetCurrentUserAsync(User);
                 if (user == null)
                 {
                     return NotFound();
@@ -129,7 +129,8 @@ namespace BeachEquipmentStore.Web.Controllers
                     throw new ArgumentException($"{sb.ToString()}");
                 }
 
-                var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                var changePasswordResult = await _userService.ChangeUserPasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
                 if (!changePasswordResult.Succeeded)
                 {
                     foreach (var error in changePasswordResult.Errors)
@@ -165,7 +166,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                var addresses = await _profileService.GetAllAddresses(Guid.Parse(User.GetId()));
+                var addresses = await _addressService.GetAllAddresses(Guid.Parse(User.GetId()));
                 
                 return View(addresses);
             }
@@ -195,7 +196,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                await _profileService.AddAddress(Guid.Parse(User.GetId()), name, town, zipCode, isPrimaryAddress);
+                await _addressService.AddAddress(Guid.Parse(User.GetId()), name, town, zipCode, isPrimaryAddress);
 
                 return RedirectToAction("GetAddresses", "Profile");
             }
@@ -213,7 +214,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                var addresses = await _profileService.GetAddressDetails(addressId);
+                var addresses = await _addressService.GetAddressDetails(addressId);
 
                 return View(new AddressDetailsViewModel
                 {
@@ -235,11 +236,11 @@ namespace BeachEquipmentStore.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Edit-Address")]
-        public async Task<IActionResult> EditAddress(Guid addressId, string name, string town, int zipCode)
+        public async Task<IActionResult> EditAddress(Guid addressId, string name, string town, string zipCode)
         {
             try
             {
-                await _profileService.ChangeAddressDetails(addressId, name, town, zipCode);
+                await _addressService.ChangeAddressDetails(addressId, name, town, zipCode);
 
                 return RedirectToAction("GetAddresses", "Profile");
             }
@@ -255,7 +256,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                var addresses = await _profileService.DeleteAddress(Guid.Parse(User.GetId()), addressId);
+                var addresses = await _addressService.DeleteAddress(Guid.Parse(User.GetId()), addressId);
 
                 if (addresses.Any())
                 {
@@ -278,7 +279,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                List<OrderHistoryServiceModel> orderHistory = await _profileService.GetOrderHistory(Guid.Parse(User.GetId()));
+                List<OrderHistoryViewModel> orderHistory = await _orderService.GetOrderHistory(Guid.Parse(User.GetId()));
 
                 return View(orderHistory
                     .Select(o => new OrderHistoryViewModel

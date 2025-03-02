@@ -1,9 +1,9 @@
-﻿using BeachEquipmentStore.Services.Data.Models.Category;
-
-namespace BeachEquipmentStore.Services.Data.Interfaces
+﻿namespace BeachEquipmentStore.Services.Interfaces
 {
+    using BeachEquipmentStore.ViewModels.Category;
+
     public interface ICategoryService
     {
-        Task<List<CategoryServiceModel>> GetAllCategoriesAsync();
+        Task<List<CategoryViewModel>> GetAllCategoriesAsync();
     }
 }

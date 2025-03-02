@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-
-namespace BeachEquipmentStore.Web.Infrastructure.ModelBinders
+﻿namespace BeachEquipmentStore.Infrastructure.ModelBinders
 {
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
+
     public class DecimalModelBinderProvider : IModelBinderProvider
     {
         public IModelBinder GetBinder(ModelBinderProviderContext context)

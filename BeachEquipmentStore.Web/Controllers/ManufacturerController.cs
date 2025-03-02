@@ -1,9 +1,9 @@
-﻿using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Web.ViewModels.Manufacturer;
-using Microsoft.AspNetCore.Mvc;
-
-namespace BeachEquipmentStore.Web.Controllers
+﻿namespace BeachEquipmentStore.Web.Controllers
 {
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.ViewModels.Manufacturer;
+    using Microsoft.AspNetCore.Mvc;
+
     public class ManufacturerController : Controller
     {
         private readonly IManufacturerService _manufacturers;

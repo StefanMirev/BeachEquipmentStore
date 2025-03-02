@@ -1,8 +1,8 @@
-﻿namespace BeachEquipmentStore.Services.Data
+﻿namespace BeachEquipmentStore.Services.Services
 {
     using BeachEquipmentStore.Data;
-    using BeachEquipmentStore.Services.Data.Interfaces;
-    using BeachEquipmentStore.Services.Data.Models.Manufacturer;
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.ViewModels.Manufacturer;
     using Microsoft.EntityFrameworkCore;
 
     public class ManufacturerService : IManufacturerService
@@ -11,10 +11,10 @@
 
         public ManufacturerService(EquipmentStoreDbContext data)
         {
-            this._data = data;
+            _data = data;
         }
 
-        public async Task<List<ManufacturerServiceModel>> GetAllManufacturersAsync()
+        public async Task<List<ManufacturerViewModel>> GetAllManufacturersAsync()
         {
             if (!_data.Manufacturers.Any())
             {
@@ -22,7 +22,7 @@
             }
 
             return await _data.Manufacturers
-                .Select(manufacturer => new ManufacturerServiceModel
+                .Select(manufacturer => new ManufacturerViewModel
                 {
                     Id = manufacturer.Id,
                     Name = manufacturer.Name,

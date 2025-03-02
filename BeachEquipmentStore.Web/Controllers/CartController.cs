@@ -1,21 +1,21 @@
-﻿using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Web.Infrastructure.Extensions;
-using BeachEquipmentStore.Web.ViewModels.Product;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace BeachEquipmentStore.Web.Controllers
+﻿namespace BeachEquipmentStore.Web.Controllers
 {
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.Infrastructure.Extensions;
+    using BeachEquipmentStore.ViewModels.Product;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+
     [Authorize(Policy = "RequireAuthenticatedUser")]
     public class CartController : Controller
     {
         private readonly ICartService _cartItems;
-        private readonly IProductService _products;
+        private readonly IProductService _productService;
 
         public CartController(ICartService cartItems, IProductService products)
         {
             this._cartItems = cartItems;
-            this._products = products;
+            this._productService = products;
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace BeachEquipmentStore.Web.Controllers
             {
                 var cartItems = await _cartItems.GetItemsInCart(Guid.Parse(User.GetId()));
 
-                var resultQuery = await _products.GetProductsInCart(cartItems);
+                var resultQuery = await _productService.GetProductsInCart(cartItems);
 
                 List<ProductViewModel> productsInCart = resultQuery
                     .Select(p => new ProductViewModel
@@ -61,7 +61,7 @@ namespace BeachEquipmentStore.Web.Controllers
                     throw new ArgumentOutOfRangeException("Трябва да добавите поне една бройка от дадения продукт!");
                 }
 
-                if (await _products.IsInStock(productId, quantity))
+                if (await _productService.IsInStock(productId, quantity))
                 {
                     await _cartItems.AddItemToCart(Guid.Parse(User.GetId()), productId, quantity);
 

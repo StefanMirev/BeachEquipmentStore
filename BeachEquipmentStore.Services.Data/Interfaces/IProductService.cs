@@ -1,21 +1,21 @@
-﻿namespace BeachEquipmentStore.Services.Data.Interfaces
+﻿namespace BeachEquipmentStore.Services.Interfaces
 {
-    using BeachEquipmentStore.Services.Data.Models.Cart;
-    using BeachEquipmentStore.Services.Data.Models.Product;
+    using BeachEquipmentStore.ViewModels.Cart;
+    using BeachEquipmentStore.ViewModels.Product;
 
     public interface IProductService
     {
         Task<bool> IsInStock(Guid productId, int quantity);
 
-        Task<List<ProductServiceModel>> GetAllProductsAsync();
+        Task<List<ProductViewModel>> GetAllProductsAsync();
 
-        Task<ExtendedProductServiceModel> GetProductById(Guid productId);
+        Task<ExtendedProductViewModel> GetProductById(Guid productId);
 
-        Task<List<ProductServiceModel>> GetRandomProductsInStockAsync();
+        Task<List<ProductViewModel>> GetRandomProductsInStockAsync();
 
-        Task<List<ProductServiceModel>> GetProductsInCart(List<CartServiceModel> cartItems);
+        Task<List<ProductViewModel>> GetProductsInCart(List<CartViewModel> cartItems);
 
-        Task<ExtendedFiltrationServiceModel> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId);
+        Task<ExtendedFiltrationViewModel> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId);
 
         Task RestockProduct(Guid productId, int quantity);
     }

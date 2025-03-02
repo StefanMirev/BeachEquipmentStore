@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BeachEquipmentStore.Web.ViewModels.Profile
+﻿namespace BeachEquipmentStore.ViewModels.Profile
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class ChangePasswordViewModel
     {
         [Required]

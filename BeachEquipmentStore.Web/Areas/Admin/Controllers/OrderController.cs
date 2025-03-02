@@ -1,9 +1,9 @@
-﻿using BeachEquipmentStore.Services.Data.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using static BeachEquipmentStore.Common.GeneralApplicationConstants;
-
-namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
+﻿namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
+    using BeachEquipmentStore.Services.Interfaces;
+    using Microsoft.AspNetCore.Mvc;
+    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
+
     [Area("Admin")]
     public class OrderController : BaseAdminController
     {

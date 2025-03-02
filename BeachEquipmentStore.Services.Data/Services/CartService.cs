@@ -1,18 +1,18 @@
-﻿using BeachEquipmentStore.Data;
-using BeachEquipmentStore.Data.Models;
-using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Services.Data.Models.Cart;
-using Microsoft.EntityFrameworkCore;
-
-namespace BeachEquipmentStore.Services.Data
+﻿namespace BeachEquipmentStore.Services.Services
 {
+    using BeachEquipmentStore.Data;
+    using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.ViewModels.Cart;
+    using Microsoft.EntityFrameworkCore;
+
     public class CartService : ICartService
     {
         private readonly EquipmentStoreDbContext _data;
 
         public CartService(EquipmentStoreDbContext data)
         {
-            this._data = data;
+            _data = data;
         }
         public async Task AddItemToCart(Guid userId, Guid productId, int quantity)
         {
@@ -41,7 +41,7 @@ namespace BeachEquipmentStore.Services.Data
             await _data.SaveChangesAsync();
         }
 
-        public async Task<List<CartServiceModel>> GetItemsInCart(Guid userId)
+        public async Task<List<CartViewModel>> GetItemsInCart(Guid userId)
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
@@ -50,7 +50,7 @@ namespace BeachEquipmentStore.Services.Data
 
             return await _data.CartItems
                 .Where(ci => ci.CustomerId == userId)
-                .Select(ci => new CartServiceModel
+                .Select(ci => new CartViewModel
                 {
                     ProductId = ci.ProductId,
                     Quantity = ci.Quantity
@@ -65,7 +65,7 @@ namespace BeachEquipmentStore.Services.Data
                 throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
-            var productsToRemove = await this._data.CartItems
+            var productsToRemove = await _data.CartItems
                 .Where(p => p.CustomerId == userId)
             .ToListAsync();
 
@@ -107,7 +107,7 @@ namespace BeachEquipmentStore.Services.Data
                 throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
-            var productsToRemove = await this._data.CartItems
+            var productsToRemove = await _data.CartItems
                .Where(p => p.CustomerId == userId)
                .ToListAsync();
 

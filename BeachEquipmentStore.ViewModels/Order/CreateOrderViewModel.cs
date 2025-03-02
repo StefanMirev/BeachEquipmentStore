@@ -1,8 +1,8 @@
-﻿using BeachEquipmentStore.Web.ViewModels.Product;
-using BeachEquipmentStore.Web.ViewModels.Profile;
-
-namespace BeachEquipmentStore.Web.ViewModels.Order
+﻿namespace BeachEquipmentStore.ViewModels.Order
 {
+    using BeachEquipmentStore.ViewModels.Product;
+    using BeachEquipmentStore.ViewModels.Profile;
+
     public class CreateOrderViewModel
     {
         public CreateOrderViewModel()

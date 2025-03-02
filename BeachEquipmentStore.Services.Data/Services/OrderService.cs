@@ -1,26 +1,44 @@
-﻿using BeachEquipmentStore.Data;
-using BeachEquipmentStore.Data.Models;
-using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Services.Data.Models.Order;
-using BeachEquipmentStore.Services.Data.Models.Product;
-using BeachEquipmentStore.Services.Data.Models.Profile;
-using BeachEquipmentStore.Web.ViewModels.Order;
-using Microsoft.EntityFrameworkCore;
-using Address = BeachEquipmentStore.Data.Models.Address;
-using ApplicationUser = BeachEquipmentStore.Data.Models.ApplicationUser;
-
-namespace BeachEquipmentStore.Services.Data
+﻿namespace BeachEquipmentStore.Services.Services
 {
+    using BeachEquipmentStore.Data;
+    using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.ViewModels.Order;
+    using BeachEquipmentStore.ViewModels.Product;
+    using BeachEquipmentStore.ViewModels.Profile;
+    using Microsoft.EntityFrameworkCore;
+
     public class OrderService : IOrderService
     {
+        private readonly IAddressService _addressService;
         private readonly EquipmentStoreDbContext _data;
 
-        public OrderService(EquipmentStoreDbContext data)
+        public OrderService(IAddressService addressService, EquipmentStoreDbContext data)
         {
-            this._data = data;
+            _addressService = addressService;
+            _data = data;
         }
 
-        public async Task<CreateOrderServiceModel> GetDataRequiredForOrder(Guid userId)
+        public async Task<List<OrderHistoryViewModel>> GetOrderHistory(Guid userId)
+        {
+            if (!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new ArgumentNullException("Потребителят не съществува!");
+            }
+
+            return await _data.Orders
+                .Where(o => o.CustomerId == userId)
+                .Select(o => new OrderHistoryViewModel
+                {
+                    Id = o.Id,
+                    DeliveryStatus = o.DeliveryStatus.ToString(),
+                    OrderDate = o.CreatedAt,
+                    TotalPrice = o.TotalPrice
+                })
+                .ToListAsync();
+        }
+
+        public async Task<CreateOrderViewModel> GetDataRequiredForOrder(Guid userId)
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
@@ -28,7 +46,7 @@ namespace BeachEquipmentStore.Services.Data
             }
 
             ApplicationUser currentUser = await _data.Users.Include(a => a.Addresses).FirstAsync(u => u.Id == userId);
-            Address userAddress = new Address();
+            var userAddress = new Address();
 
             if (currentUser.Addresses.Any() && await _data.Addresses.AnyAsync(a => a.Id == currentUser.Addresses.ElementAt(0).Id))
             {
@@ -39,7 +57,7 @@ namespace BeachEquipmentStore.Services.Data
                 .Where(ci => ci.CustomerId == userId)
                 .ToListAsync();
 
-            List<ProductServiceModel> userProducts = userCartItems.Select(p => new ProductServiceModel
+            List<ProductViewModel> userProducts = userCartItems.Select(p => new ProductViewModel
             {
                 Id = p.ProductId,
                 Name = p.Product.Name,
@@ -49,16 +67,16 @@ namespace BeachEquipmentStore.Services.Data
             })
                 .ToList();
 
-            return new CreateOrderServiceModel
+            return new CreateOrderViewModel
             {
-                UserDetails = new UserDetailsServiceModel
+                UserDetails = new UserDetailsViewModel
                 {
                     FirstName = currentUser.FirstName,
                     LastName = currentUser.LastName,
                     Email = currentUser.Email,
                     PhoneNumber = currentUser.PhoneNumber
                 },
-                UserAddress = new AddressServiceModel
+                UserAddress = new AddressDetailsViewModel
                 {
                     Name = userAddress.Name,
                     Town = userAddress.Town,
@@ -68,28 +86,19 @@ namespace BeachEquipmentStore.Services.Data
             };
         }
 
-        public async Task GenerateOrder(Guid userId, bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
+        public async Task GenerateOrder(Guid userId, bool hasAddress, string? addressName, string? town, string? zipCode, decimal totalSum)
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
                 throw new InvalidOperationException("Такъв потребител не съществува!");
             }
 
-            Address address = new Address();
-
             if (!hasAddress)
             {
-                address.Name = addressName!;
-                address.Town = town!;
-                address.ZipCode = zipCode;
-                address.CustomerId = userId;
+                await _addressService.AddAddress(userId, addressName!, town!, zipCode!, true);
+            }
 
-                _data.Addresses.Add(address);
-            }
-            else
-            {
-                address = await _data.Addresses.FirstAsync(a => a.CustomerId == userId);
-            }
+            var address = await _data.Addresses.FirstAsync(a => a.CustomerId == userId);
 
             Order order = new Order()
             {
@@ -128,7 +137,7 @@ namespace BeachEquipmentStore.Services.Data
             await _data.SaveChangesAsync();
         }
 
-        public async Task<OrderDetailServiceModel> GetOrderDetails(string orderId)
+        public async Task<OrderDetailViewModel> GetOrderDetails(string orderId)
         {
             if (!_data.Orders.Any(u => u.Id == Guid.Parse(orderId)))
             {
@@ -147,7 +156,7 @@ namespace BeachEquipmentStore.Services.Data
                 .Where(p => p.OrderId.ToString() == orderId)
                 .ToListAsync();
 
-            return new OrderDetailServiceModel
+            return new OrderDetailViewModel
             {
                 Id = order.Id,
                 OrderDate = order.CreatedAt,
@@ -157,7 +166,7 @@ namespace BeachEquipmentStore.Services.Data
                 AddressName = order.AddressName,
                 TownName = order.TownName,
                 ZipCode = order.ZipCode,
-                Products = productOrders.Select(po => new ExtendedProductServiceModel
+                Products = productOrders.Select(po => new ExtendedProductViewModel
                 {
                     Name = po.Product.Name,
                     Barcode = po.Product.Barcode,
@@ -171,7 +180,7 @@ namespace BeachEquipmentStore.Services.Data
         public async Task<List<CompleteOrderViewModel>> GetUndeliveredOrders()
         {
             var orders = await _data.Orders
-                .Where(o => (int)o.DeliveryStatus == 0)
+                .Where(o => o.DeliveryStatus == 0)
                 .Select(o => new CompleteOrderViewModel
                 {
                     Id = o.Id

@@ -1,7 +1,7 @@
 ﻿namespace BeachEquipmentStore.Data
 {
     using BeachEquipmentStore.Data.Models;
-    using BeachEquipmentStore.Data.Models.Extensions;
+    using BeachEquipmentStore.Data.Extensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;

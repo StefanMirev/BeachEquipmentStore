@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BeachEquipmentStore.Common\BeachEquipmentStore.Common.csproj" />
-    <ProjectReference Include="..\BeachEquipmentStore.Data.Models\BeachEquipmentStore.Data.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>

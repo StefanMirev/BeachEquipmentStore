@@ -1,10 +1,10 @@
 ﻿namespace BeachEquipmentStore.Web.Controllers
 {
     using BeachEquipmentStore.Data.Models;
-    using BeachEquipmentStore.Services.Data.Interfaces;
-    using BeachEquipmentStore.Web.Infrastructure.Extensions;
-    using BeachEquipmentStore.Web.ViewModels.Home;
-    using BeachEquipmentStore.Web.ViewModels.Product;
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.Infrastructure.Extensions;
+    using BeachEquipmentStore.ViewModels.Home;
+    using BeachEquipmentStore.ViewModels.Product;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;

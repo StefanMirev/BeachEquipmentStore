@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Web.ViewModels.Profile
+﻿namespace BeachEquipmentStore.ViewModels.Profile
 {
     public class OrderHistoryViewModel
     {

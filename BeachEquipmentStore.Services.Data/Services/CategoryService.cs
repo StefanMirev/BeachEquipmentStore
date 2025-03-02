@@ -1,10 +1,10 @@
-﻿using BeachEquipmentStore.Data;
-using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Services.Data.Models.Category;
-using Microsoft.EntityFrameworkCore;
-
-namespace BeachEquipmentStore.Services.Data
+﻿namespace BeachEquipmentStore.Services.Services
 {
+    using BeachEquipmentStore.Data;
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.ViewModels.Category;
+    using Microsoft.EntityFrameworkCore;
+
     public class CategoryService : ICategoryService
     {
         private readonly EquipmentStoreDbContext _data;
@@ -14,7 +14,7 @@ namespace BeachEquipmentStore.Services.Data
             _data = data;
         }
 
-        public async Task<List<CategoryServiceModel>> GetAllCategoriesAsync()
+        public async Task<List<CategoryViewModel>> GetAllCategoriesAsync()
         {
             if (!_data.Categories.Any())
             {
@@ -22,7 +22,7 @@ namespace BeachEquipmentStore.Services.Data
             }
 
             return await _data.Categories
-                .Select(c => new CategoryServiceModel
+                .Select(c => new CategoryViewModel
                 {
                     Id = c.Id,
                     Name = c.Name,

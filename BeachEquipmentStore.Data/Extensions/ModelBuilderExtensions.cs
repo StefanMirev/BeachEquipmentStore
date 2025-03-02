@@ -1,5 +1,6 @@
-﻿namespace BeachEquipmentStore.Data.Models.Extensions
+﻿namespace BeachEquipmentStore.Data.Extensions
 {
+    using BeachEquipmentStore.Data.Models;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
 
@@ -52,7 +53,7 @@
             {
                 Name = "ул. Кракра №3",
                 Town = "София",
-                ZipCode = 1000,
+                ZipCode = "1000",
                 CustomerId = UserOne.Id
             };
 
@@ -60,7 +61,7 @@
             {
                 Name = "кв. Овча Купел, ул. Рачка №9",
                 Town = "София",
-                ZipCode = 1000,
+                ZipCode = "1000",
                 CustomerId = UserTwo.Id
             };
 
@@ -68,7 +69,7 @@
             {
                 Name = "ул. Обзорски Тигър № 33",
                 Town = "Обзор",
-                ZipCode = 1000,
+                ZipCode = "1000",
                 CustomerId = UserTwo.Id
             };
 

@@ -1,25 +1,23 @@
-﻿using BeachEquipmentStore.Services.Data.Interfaces;
-using BeachEquipmentStore.Web.Infrastructure.Extensions;
-using BeachEquipmentStore.Web.ViewModels.Order;
-using BeachEquipmentStore.Web.ViewModels.Product;
-using BeachEquipmentStore.Web.ViewModels.Profile;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace BeachEquipmentStore.Web.Controllers
+﻿namespace BeachEquipmentStore.Web.Controllers
 {
+    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.Infrastructure.Extensions;
+    using BeachEquipmentStore.ViewModels.Order;
+    using BeachEquipmentStore.ViewModels.Product;
+    using BeachEquipmentStore.ViewModels.Profile;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+
     [Authorize(Policy = "RequireAuthenticatedUser")]
     public class OrderController : Controller
     {
         private readonly IOrderService _orders;
         private readonly ICartService _cart;
-        private readonly IProfileService _profile;
 
-        public OrderController(IOrderService orders, ICartService cart, IProfileService profile)
+        public OrderController(IOrderService orders, ICartService cart)
         {
-            _orders = orders;
             _cart = cart;
-            _profile = profile;
+            _orders = orders;
         }
 
         [HttpGet]
@@ -72,7 +70,7 @@ namespace BeachEquipmentStore.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Create-Order")]
-        public async Task<IActionResult> CreateOrder(bool hasAddress, string? addressName, string? town, int zipCode, decimal totalSum)
+        public async Task<IActionResult> CreateOrder(bool hasAddress, string? addressName, string? town, string zipCode, decimal totalSum)
         {
             try
             {
@@ -90,6 +88,7 @@ namespace BeachEquipmentStore.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(string orderId)
         {
             try
