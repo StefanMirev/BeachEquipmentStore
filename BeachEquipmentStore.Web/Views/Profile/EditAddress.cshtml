@@ -1,4 +1,4 @@
-﻿@model AddressViewModel
+﻿@model AddressDetailsViewModel
 
 @{
     ViewBag.Title = "Редакция на адрес";
@@ -26,7 +26,7 @@
                 <input type="text" class="form-control" id="zipCode" name="ZipCode" value="@Model.ZipCode" required>
             </div>
             <button style="margin-top: 5px;" type="submit" class="btn btn-primary" asp-route-addressId="@Model.Id">Запази промените</button>
-            <a style="margin-left: 10px;"  asp-controller="Profile" asp-action="GetAddress">Откажи промените</a>
+            <a style="margin-left: 10px;"  asp-controller="Profile" asp-action="GetAddresses">Откажи промените</a>
             @Html.AntiForgeryToken()
         </form>
     </div>

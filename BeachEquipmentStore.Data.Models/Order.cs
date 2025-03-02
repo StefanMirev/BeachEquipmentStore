@@ -21,7 +21,9 @@
 
         [Required]
         [DisplayName("Order Date")]
-        public DateTime OrderDate { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
 
         [DisplayName("Shipping Date")]
         public DateTime? ShippingDate { get; set; }

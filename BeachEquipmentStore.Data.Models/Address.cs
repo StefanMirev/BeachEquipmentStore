@@ -32,6 +32,15 @@ namespace BeachEquipmentStore.Data.Models
         public int ZipCode { get; set; }
 
         [Required]
+        [DisplayName("Is Primary Address")]
+        public bool IsPrimaryAddress { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [Required]
         public Guid CustomerId { get; set; }
         [ForeignKey(nameof(CustomerId))]
         public ApplicationUser Customer { get; set; } = null!;

@@ -18,6 +18,9 @@
         public int Quantity { get; set; }
 
         [Required]
+        public DateTime CreatedAt { get; set; }
+
+        [Required]
         [Precision(18, 2)]
         public decimal SingularPrice { get; set; }
     }

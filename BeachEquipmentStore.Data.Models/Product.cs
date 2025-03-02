@@ -48,6 +48,11 @@
         public int Stock { get; set; }
 
         [Required]
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [Required]
         public int ManufacturerId { get; set; }
         [ForeignKey(nameof(ManufacturerId))]
         public Manufacturer Manufacturer { get; set; } = null!;

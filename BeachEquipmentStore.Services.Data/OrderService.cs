@@ -51,7 +51,7 @@ namespace BeachEquipmentStore.Services.Data
 
             return new CreateOrderServiceModel
             {
-                UserInfo = new UserInfoServiceModel
+                UserDetails = new UserDetailsServiceModel
                 {
                     FirstName = currentUser.FirstName,
                     LastName = currentUser.LastName,
@@ -95,7 +95,7 @@ namespace BeachEquipmentStore.Services.Data
             {
                 Id = Guid.NewGuid(),
                 DeliveryStatus = 0,
-                OrderDate = DateTime.Now,
+                CreatedAt = DateTime.Now,
                 TotalPrice = totalSum,
                 CustomerId = userId,
                 AddressName = address.Name,
@@ -150,7 +150,7 @@ namespace BeachEquipmentStore.Services.Data
             return new OrderDetailServiceModel
             {
                 Id = order.Id,
-                OrderDate = order.OrderDate,
+                OrderDate = order.CreatedAt,
                 ShippingDate = order.ShippingDate,
                 DeliveryStatus = order.DeliveryStatus.ToString(),
                 TotalPrice = order.TotalPrice,

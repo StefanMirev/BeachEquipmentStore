@@ -23,10 +23,22 @@
                 <label for="zipCode">Пощенски код</label>
                 <input type="text" class="form-control" id="zipCode" name="zipCode" required>
             </div>
-            <button style="margin-top: 5px;" type="submit" class="btn btn-primary">Добави адрес</button>
-            <a style="margin-left: 10px;" asp-controller="Profile" asp-action="MyProfile">Обратно към профил</a>
+            <table style="margin:auto; width: 100%">
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <input type="checkbox" id="isPrimaryAddress" name="isPrimaryAddress" value="true">
+                            <label for="isPrimaryAddress">Маркирай като основен адрес?</label>
+                        </div>
+                    </td>
+                    <td style ="float:right">
+                        <a class="btn btn-secondary" style="margin-top: 5px; margin-right: 10px" asp-controller="Profile" asp-action="MyProfile">Обратно към профил</a>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 5px; margin-left: 10px">Добави адрес</button>
+                    </td>
+                </tr>
+            </table>
             @Html.AntiForgeryToken()
         </form>
-        
+
     </div>
 </div>

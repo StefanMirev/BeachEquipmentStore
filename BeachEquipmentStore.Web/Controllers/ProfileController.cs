@@ -13,12 +13,12 @@ namespace BeachEquipmentStore.Web.Controllers
     [Authorize(Policy = "RequireAuthenticatedUser")]
     public class ProfileController : Controller
     {
-        private readonly IProfileService _profiles;
+        private readonly IProfileService _profileService;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public ProfileController(IProfileService profiles, UserManager<ApplicationUser> userManager)
         {
-            _profiles = profiles;
+            _profileService = profiles;
             _userManager = userManager;
         }
 
@@ -27,14 +27,14 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                var userInfo = await _profiles.GetUserInfo(Guid.Parse(User.GetId()));
+                var userDetails = await _profileService.GetUserDetails(Guid.Parse(User.GetId()));
 
-                return View(new UserInfoViewModel
+                return View(new UserDetailsViewModel
                 {
-                    FirstName = userInfo.FirstName,
-                    LastName = userInfo.LastName,
-                    Email = userInfo.Email,
-                    PhoneNumber = userInfo.PhoneNumber
+                    FirstName = userDetails.FirstName,
+                    LastName = userDetails.LastName,
+                    Email = userDetails.Email,
+                    PhoneNumber = userDetails.PhoneNumber
                 });
             }
             catch (ArgumentNullException ex)
@@ -51,14 +51,14 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                var userInfo = await _profiles.GetUserInfo(Guid.Parse(User.GetId()));
+                var userDetails = await _profileService.GetUserDetails(Guid.Parse(User.GetId()));
 
-                return View(new UserInfoViewModel
+                return View(new UserDetailsViewModel
                 {
-                    FirstName = userInfo.FirstName,
-                    LastName = userInfo.LastName,
-                    Email = userInfo.Email,
-                    PhoneNumber = userInfo.PhoneNumber
+                    FirstName = userDetails.FirstName,
+                    LastName = userDetails.LastName,
+                    Email = userDetails.Email,
+                    PhoneNumber = userDetails.PhoneNumber
                 });
             }
             catch (ArgumentNullException ex)
@@ -72,11 +72,11 @@ namespace BeachEquipmentStore.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Edit-Profile")]
-        public async Task<IActionResult> EditProfile(UserInfoViewModel infoModel)
+        public async Task<IActionResult> EditProfile(UserDetailsViewModel userDetails)
         {
             try
             {
-                await _profiles.ChangeUserInfo(Guid.Parse(User.GetId()), infoModel);
+                await _profileService.ChangeUserDetails(Guid.Parse(User.GetId()), userDetails);
 
                 return RedirectToAction("MyProfile", "Profile");
             }
@@ -160,20 +160,14 @@ namespace BeachEquipmentStore.Web.Controllers
         }
 
         [HttpGet]
-        [Route("My-Address")]
-        public async Task<IActionResult> GetAddress()
+        [Route("My-Addresses")]
+        public async Task<IActionResult> GetAddresses()
         {
             try
             {
-                var address = await _profiles.GetAllAddressInfo(Guid.Parse(User.GetId()));
-
-                return View(new AddressViewModel
-                {
-                    Id = address.Id,
-                    Name = address.Name,
-                    Town = address.Town,
-                    ZipCode = address.ZipCode
-                });
+                var addresses = await _profileService.GetAllAddresses(Guid.Parse(User.GetId()));
+                
+                return View(addresses);
             }
             catch (ArgumentException ex)
             {
@@ -197,19 +191,19 @@ namespace BeachEquipmentStore.Web.Controllers
         [HttpPost]
         [Route("Add-Address")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddAddress(string name, string town, string zipCode)
+        public async Task<IActionResult> AddAddress(string name, string town, string zipCode, bool? isPrimaryAddress)
         {
             try
             {
-                await _profiles.AddAddress(Guid.Parse(User.GetId()), name, town, zipCode);
+                await _profileService.AddAddress(Guid.Parse(User.GetId()), name, town, zipCode, isPrimaryAddress);
 
-                return RedirectToAction("GetAddress", "Profile");
+                return RedirectToAction("GetAddresses", "Profile");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("GetAddress", "Profile");
+                return RedirectToAction("GetAddresses", "Profile");
             }
         }
 
@@ -219,14 +213,15 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                var addresses = await _profiles.GetAddressInfo(addressId);
+                var addresses = await _profileService.GetAddressDetails(addressId);
 
-                return View(new AddressViewModel
+                return View(new AddressDetailsViewModel
                 {
                     Id = addresses.Id,
                     Name = addresses.Name,
                     Town = addresses.Town,
-                    ZipCode = addresses.ZipCode
+                    ZipCode = addresses.ZipCode,
+                    IsPrimaryAddress = addresses.IsPrimaryAddress
                 });
             }
             catch (Exception ex)
@@ -244,9 +239,9 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                await _profiles.ChangeAddressInfo(addressId, name, town, zipCode);
+                await _profileService.ChangeAddressDetails(addressId, name, town, zipCode);
 
-                return RedirectToAction("GetAddress", "Profile");
+                return RedirectToAction("GetAddresses", "Profile");
             }
             catch (Exception ex)
             {
@@ -260,7 +255,12 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                await _profiles.DeleteAddress(addressId);
+                var addresses = await _profileService.DeleteAddress(Guid.Parse(User.GetId()), addressId);
+
+                if (addresses.Any())
+                {
+                    return RedirectToAction("GetAddresses", "Profile");
+                }
 
                 return RedirectToAction("AddAddress", "Profile");
             }
@@ -278,7 +278,7 @@ namespace BeachEquipmentStore.Web.Controllers
         {
             try
             {
-                List<OrderHistoryServiceModel> orderHistory = await _profiles.GetOrderHistory(Guid.Parse(User.GetId()));
+                List<OrderHistoryServiceModel> orderHistory = await _profileService.GetOrderHistory(Guid.Parse(User.GetId()));
 
                 return View(orderHistory
                     .Select(o => new OrderHistoryViewModel

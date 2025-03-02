@@ -5,19 +5,19 @@ namespace BeachEquipmentStore.Services.Data.Interfaces
 {
     public interface IProfileService
     {
-        Task<UserInfoServiceModel> GetUserInfo(Guid userId);
+        Task<UserDetailsServiceModel> GetUserDetails(Guid userId);
 
-        Task ChangeUserInfo(Guid userId, UserInfoViewModel infoModel);
+        Task ChangeUserDetails(Guid userId, UserDetailsViewModel DetailsModel);
 
-        Task<AddressServiceModel> GetAllAddressInfo(Guid userId);
+        Task<List<AddressDetailsViewModel>> GetAllAddresses(Guid userId);
 
-        Task<AddressServiceModel> GetAddressInfo(string addressId);
+        Task<AddressDetailsViewModel> GetAddressDetails(string addressId);
 
-        Task AddAddress(Guid userId, string name, string town, string zipCode);
+        Task AddAddress(Guid userId, string name, string town, string zipCode, bool? isPrimaryAddress);
 
-        Task ChangeAddressInfo(Guid addressId, string address, string town, int zipCode);
+        Task ChangeAddressDetails(Guid addressId, string address, string town, int zipCode);
 
-        Task DeleteAddress(Guid addressId);
+        Task<List<AddressDetailsViewModel>> DeleteAddress(Guid userId, Guid addressId);
 
         Task<List<OrderHistoryServiceModel>> GetOrderHistory(Guid userId);
     }

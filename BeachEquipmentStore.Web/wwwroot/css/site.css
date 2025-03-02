@@ -31,13 +31,18 @@ body {
     min-height: 50px;
 }
 
-a, a:hover{
-    text-decoration: none;
-    color: black;
-}   
+.btn-outline-primary {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: #fff; /* Ensure the text color contrasts well with the background */
+    }
 
 h2{
-    margin-top: 10px;
+    margin-top: 3%;
 }
 
 .page-footer {

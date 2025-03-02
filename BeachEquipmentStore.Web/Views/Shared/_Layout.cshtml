@@ -86,14 +86,14 @@
                     <!-- Grid column -->
                     <div class="col-md-2">
                         <h6 class="text-uppercase font-weight-bold">
-                            <a href="#!" class="text-white">About us</a>
+                            <a asp-controller="Home" asp-action="About" class="text-white">За Нас</a>
                         </h6>
                     </div>
                     <!-- Grid column -->
                     <!-- Grid column -->
                     <div class="col-md-2">
                         <h6 class="text-uppercase font-weight-bold">
-                            <a href="#!" class="text-white">Products</a>
+                            <a asp-controller="Product" asp-action="All" class="text-white">Каталог</a>
                         </h6>
                     </div>
                     <!-- Grid column -->
@@ -114,7 +114,7 @@
                     <!-- Grid column -->
                     <div class="col-md-2">
                         <h6 class="text-uppercase font-weight-bold">
-                            <a href="#!" class="text-white">Contact</a>
+                            <a asp-controller="Home" asp-action="Contact" class="text-white">Контакт</a>
                         </h6>
                     </div>
                     <!-- Grid column -->
@@ -130,10 +130,7 @@
                 <div class="row d-flex justify-content-center">
                     <div class="col-lg-8">
                         <p>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-                            distinctio earum repellat quaerat voluptatibus placeat nam,
-                            commodi optio pariatur est quia magnam eum harum corrupti
-                            dicta, aliquam sequi voluptate quas.
+                            Ицо Бийч е професионална платформа за онлйан търговия. Ние Ви предоставяме широка гама от най-качествените продукти за плаж от множество установили се на пазара производители. Ние сме фокусирани върху осигуряване на възможно най-приятното прекарване на морскоро крайбрежие както за малчуганите, така и за техните родители. Стараем се да сме надеждни и да знаете, че може да разчитате на нас. Искрено се надяваме да останете толкова удовлетворени от нашите услуги, колкото ние сме удовлетворени да Ви ги предоставяме!
                         </p>
                     </div>
                 </div>
@@ -141,22 +138,22 @@
             <!-- Section: Text -->
             <!-- Section: Social -->
             <section class="text-center mb-5">
-                <a href="" class="text-white me-4">
+                <a href="https://www.facebook.com/" class="text-white me-4">
                     <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="" class="text-white me-4">
+                <a href="https://x.com/" class="text-white me-4">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a href="" class="text-white me-4">
+                <a href="https://www.google.com/" class="text-white me-4">
                     <i class="fab fa-google"></i>
                 </a>
-                <a href="" class="text-white me-4">
+                <a href="https://www.instagram.com/" class="text-white me-4">
                     <i class="fab fa-instagram"></i>
                 </a>
-                <a href="" class="text-white me-4">
+                <a href="https://www.linkedin.com/" class="text-white me-4">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="" class="text-white me-4">
+                <a href="https://github.com/" class="text-white me-4">
                     <i class="fab fa-github"></i>
                 </a>
             </section>
@@ -166,8 +163,8 @@
         <!-- Copyright -->
         <div class="text-center p-3"
              style="background-color: rgba(0, 0, 0, 0.2)">
-            © 2020 Copyright:
-            <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+            © @DateTime.Now.Year Copyright:
+            <a class="text-white" href="https://mdbootstrap.com/">Ицо Бийч ЕООД</a>
         </div>
         <!-- Copyright -->
     </footer>

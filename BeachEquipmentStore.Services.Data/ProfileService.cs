@@ -19,7 +19,7 @@ namespace BeachEquipmentStore.Services.Data
             _userManager = userManager;
         }
 
-        public async Task<UserInfoServiceModel> GetUserInfo(Guid userId)
+        public async Task<UserDetailsServiceModel> GetUserDetails(Guid userId)
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
@@ -28,7 +28,7 @@ namespace BeachEquipmentStore.Services.Data
 
             ApplicationUser currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
 
-            return new UserInfoServiceModel()
+            return new UserDetailsServiceModel()
             {
                 FirstName = currentUser.FirstName,
                 LastName = currentUser.LastName,
@@ -37,7 +37,7 @@ namespace BeachEquipmentStore.Services.Data
             };
         }
 
-        public async Task ChangeUserInfo(Guid userId, UserInfoViewModel infoModel)
+        public async Task ChangeUserDetails(Guid userId, UserDetailsViewModel DetailsModel)
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
@@ -46,15 +46,15 @@ namespace BeachEquipmentStore.Services.Data
 
             var currentUser = await _data.Users.FirstAsync(u => u.Id == userId);
 
-            currentUser.FirstName = infoModel.FirstName;
-            currentUser.LastName = infoModel.LastName;
-            currentUser.Email = infoModel.Email;
-            currentUser.PhoneNumber = infoModel.PhoneNumber;
+            currentUser.FirstName = DetailsModel.FirstName;
+            currentUser.LastName = DetailsModel.LastName;
+            currentUser.Email = DetailsModel.Email;
+            currentUser.PhoneNumber = DetailsModel.PhoneNumber;
 
             await _data.SaveChangesAsync();
         }
 
-        public async Task<AddressServiceModel> GetAllAddressInfo(Guid userId)
+        public async Task<List<AddressDetailsViewModel>> GetAllAddresses(Guid userId)
         {
             if (!await _data.Users.AnyAsync(a => a.Id == userId))
             {
@@ -66,18 +66,25 @@ namespace BeachEquipmentStore.Services.Data
                 throw new InvalidOperationException("Все още нямате адрес!");
             }
 
-            Address userAddress = await _data.Addresses.FirstAsync(a => a.CustomerId == userId);
+            var userAddresses = await _data.Addresses
+                .Where(a => a.CustomerId == userId)
+                .Select(a => new AddressDetailsViewModel
+                    {
+                        Id = a.Id,
+                        Name = a.Name,
+                        Town = a.Town,
+                        ZipCode = a.ZipCode,
+                        IsPrimaryAddress = a.IsPrimaryAddress,
+                        CreatedAt = a.CreatedAt
+                    })
+                .OrderByDescending(a => a.IsPrimaryAddress)
+                .ThenBy(a => a.CreatedAt)
+                .ToListAsync();
 
-            return new AddressServiceModel
-            {
-                Id = userAddress.Id,
-                Name = userAddress.Name,
-                Town = userAddress.Town,
-                ZipCode = userAddress.ZipCode
-            };
+            return userAddresses;
         }
 
-        public async Task<AddressServiceModel> GetAddressInfo(string addressId)
+        public async Task<AddressDetailsViewModel> GetAddressDetails(string addressId)
         {
             if (!await _data.Addresses.AnyAsync(a => a.Id == Guid.Parse(addressId)))
             {
@@ -86,25 +93,43 @@ namespace BeachEquipmentStore.Services.Data
 
             var address = await _data.Addresses.FirstAsync(a => a.Id.ToString() == addressId);
 
-            return new AddressServiceModel
+            return new AddressDetailsViewModel
             {
                 Id = address.Id,
                 Name = address.Name,
                 Town = address.Town,
-                ZipCode = address.ZipCode
+                ZipCode = address.ZipCode,
+                IsPrimaryAddress = address.IsPrimaryAddress
             };
         }
 
-        public async Task AddAddress(Guid userId, string name, string town, string zipCode)
+        public async Task AddAddress(Guid userId, string name, string town, string zipCode, bool? isPrimaryAddress)
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
                 throw new ArgumentNullException("Потребителят не съществува!");
             }
 
+            if (_data.Addresses.Where(a => a.CustomerId == userId).Count() >= 10)
+            {
+                throw new InvalidOperationException("Максималният позволен брой адреси е 10. За да добавите друг, моля първо изтрийте един от съществуващите!");
+            }
+
             if (!int.TryParse(zipCode, out int result))
             {
                 throw new ArgumentException("Моля въведете валиден пощенски код!");
+            }
+
+            var isPrimary = isPrimaryAddress ?? false;
+
+            if (isPrimary)
+            {
+                var primaryAddresses = _data.Addresses.Where(a => a.IsPrimaryAddress == true);
+
+                foreach (var primaryAddress in primaryAddresses)
+                {
+                    primaryAddress.IsPrimaryAddress = false;
+                }
             }
 
             Address address = new Address()
@@ -113,6 +138,8 @@ namespace BeachEquipmentStore.Services.Data
                 Name = name,
                 Town = town,
                 ZipCode = int.Parse(zipCode),
+                IsPrimaryAddress = isPrimary,
+                CreatedAt = DateTime.Now,
                 CustomerId = userId
             };
 
@@ -120,7 +147,7 @@ namespace BeachEquipmentStore.Services.Data
             await _data.SaveChangesAsync();
         }
 
-        public async Task ChangeAddressInfo(Guid addressId, string name, string town, int zipCode)
+        public async Task ChangeAddressDetails(Guid addressId, string name, string town, int zipCode)
         {
             if (!await _data.Addresses.AnyAsync(a => a.Id == addressId))
             {
@@ -136,16 +163,30 @@ namespace BeachEquipmentStore.Services.Data
             await _data.SaveChangesAsync();
         }
 
-        public async Task DeleteAddress(Guid addressId)
+        public async Task<List<AddressDetailsViewModel>> DeleteAddress(Guid userId, Guid addressId)
         {
-            if (!_data.Addresses.Any(u => u.Id == addressId))
+            if (!_data.Addresses.Any(a => a.Id == addressId))
             {
                 throw new InvalidOperationException("Адресът не съществува!");
             }
 
-            Address address = await _data.Addresses.FirstAsync(a => a.Id == addressId);
-            _data.Addresses.Remove(address);
+            var addresses = await _data.Addresses
+                .Where(a => a.CustomerId == userId)
+                .ToListAsync();
+
+            _data.Addresses.Remove(addresses.SingleOrDefault(a => a.Id == addressId));
             await _data.SaveChangesAsync();
+
+            addresses.Remove(addresses.SingleOrDefault(a => a.Id == addressId));
+
+            return addresses.Select(a => new AddressDetailsViewModel
+            {
+                Id = a.Id,
+                Name = a.Name,
+                Town = a.Town,
+                ZipCode = a.ZipCode,
+                IsPrimaryAddress = a.IsPrimaryAddress
+            }).ToList();
         }
 
         public async Task<List<OrderHistoryServiceModel>> GetOrderHistory(Guid userId)
@@ -161,7 +202,7 @@ namespace BeachEquipmentStore.Services.Data
                 {
                     Id = o.Id,
                     DeliveryStatus = o.DeliveryStatus.ToString(),
-                    OrderDate = o.OrderDate,
+                    OrderDate = o.CreatedAt,
                     TotalPrice = o.TotalPrice
                 })
                 .ToListAsync();

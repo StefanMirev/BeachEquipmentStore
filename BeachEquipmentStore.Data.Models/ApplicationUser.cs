@@ -28,6 +28,11 @@
         [DisplayName("Last Name")]
         public string LastName { get; set; } = null!;
 
+        [Required]
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
         public ICollection<Address> Addresses { get; set; }
 
         public ICollection<CartItem> CartItems { get; set; }

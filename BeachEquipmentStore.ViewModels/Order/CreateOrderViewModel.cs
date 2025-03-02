@@ -10,9 +10,9 @@ namespace BeachEquipmentStore.Web.ViewModels.Order
             this.Products = new List<ProductViewModel>();
         }
 
-        public UserInfoViewModel UserInfo { get; set; } = null!;
+        public UserDetailsViewModel UserDetails { get; set; } = null!;
 
-        public AddressViewModel? UserAddress { get; set; }
+        public AddressDetailsViewModel? UserAddress { get; set; }
 
         public List<ProductViewModel> Products { get; set; }
     }

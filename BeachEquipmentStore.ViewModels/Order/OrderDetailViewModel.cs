@@ -30,7 +30,7 @@ namespace BeachEquipmentStore.Web.ViewModels.Order
 
         public int ZipCode { get; set; }
 
-        public AddressViewModel Address { get; set; } = null!;
+        public AddressDetailsViewModel Address { get; set; } = null!;
 
         public List<ExtendedProductViewModel> Products { get; set; }
     }

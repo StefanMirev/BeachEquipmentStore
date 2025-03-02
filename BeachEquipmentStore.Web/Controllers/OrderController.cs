@@ -38,14 +38,14 @@ namespace BeachEquipmentStore.Web.Controllers
 
                 return View(new CreateOrderViewModel
                 {
-                    UserInfo = new UserInfoViewModel
+                    UserDetails = new UserDetailsViewModel
                     {
-                        FirstName = orderServiceData.UserInfo.FirstName,
-                        LastName = orderServiceData.UserInfo.LastName,
-                        Email = orderServiceData.UserInfo.Email,
-                        PhoneNumber = orderServiceData.UserInfo.PhoneNumber,
+                        FirstName = orderServiceData.UserDetails.FirstName,
+                        LastName = orderServiceData.UserDetails.LastName,
+                        Email = orderServiceData.UserDetails.Email,
+                        PhoneNumber = orderServiceData.UserDetails.PhoneNumber,
                     },
-                    UserAddress = new AddressViewModel
+                    UserAddress = new AddressDetailsViewModel
                     {
                         Name = orderServiceData.UserAddress!.Name,
                         Town = orderServiceData.UserAddress!.Town,

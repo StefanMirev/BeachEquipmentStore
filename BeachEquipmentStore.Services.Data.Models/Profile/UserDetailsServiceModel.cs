@@ -1,6 +1,6 @@
-﻿namespace BeachEquipmentStore.Web.ViewModels.Profile
+﻿namespace BeachEquipmentStore.Services.Data.Models.Profile
 {
-    public class UserInfoViewModel
+    public class UserDetailsServiceModel
     {
         public string FirstName { get; set; } = null!;
 

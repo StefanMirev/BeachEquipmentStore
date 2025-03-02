@@ -10,7 +10,7 @@ namespace BeachEquipmentStore.Services.Data.Models.Order
             this.Products = new List<ProductServiceModel>();
         }
 
-        public UserInfoServiceModel UserInfo { get; set; } = null!;
+        public UserDetailsServiceModel UserDetails { get; set; } = null!;
 
         public AddressServiceModel? UserAddress { get; set; }
 
