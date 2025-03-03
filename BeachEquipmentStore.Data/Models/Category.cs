@@ -6,6 +6,11 @@
 
     public class Category
     {
+        public Category()
+        {
+            this.CreatedAt = DateTime.Now;
+        }
+
         [Key]
         public int Id { get; set; }
 

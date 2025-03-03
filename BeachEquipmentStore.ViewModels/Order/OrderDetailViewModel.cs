@@ -14,6 +14,8 @@
 
         public Guid Id { get; set; }
 
+        public int Number {  get; set; }
+
         public DateTime OrderDate { get; set; }
 
         public DateTime? ShippingDate { get; set; }

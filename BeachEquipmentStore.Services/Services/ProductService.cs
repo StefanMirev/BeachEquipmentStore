@@ -105,8 +105,9 @@
                         Name = p.Name,
                         ImageUrl = p.ImageUrl,
                         Price = p.Price,
-                        Quantity = cartItem.Quantity
-                    })
+                        Quantity = cartItem.Quantity,
+                        CreatedAt = cartItem.CreatedAt
+                    }).OrderByDescending(p => p.CreatedAt)
                     .ToListAsync());
             }
 
@@ -164,14 +165,12 @@
                     {
                         Id = c.Id,
                         Name = c.Name
-                    })
-                .ToList(),
+                    }).ToList(),
                     Manufacturers = allManufacturers.Select(m => new ManufacturerViewModel
                     {
                         Id = m.Id,
                         Name = m.Name
-                    })
-                .ToList(),
+                    }).ToList(),
                     Products = filteredProducts.Select(p => new ProductViewModel
                     {
                         Id = p.Id,

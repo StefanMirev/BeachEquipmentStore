@@ -32,9 +32,9 @@
   <ItemGroup>
     <ProjectReference Include="..\BeachEquipmentStore.Common\BeachEquipmentStore.Common.csproj" />
     <ProjectReference Include="..\BeachEquipmentStore.Data\BeachEquipmentStore.Data.csproj" />
-    <ProjectReference Include="..\BeachEquipmentStore.Services.Data\BeachEquipmentStore.Services.csproj" />
+    <ProjectReference Include="..\BeachEquipmentStore.Infrastructure\BeachEquipmentStore.Infrastructure.csproj" />
+    <ProjectReference Include="..\BeachEquipmentStore.Services\BeachEquipmentStore.Services.csproj" />
     <ProjectReference Include="..\BeachEquipmentStore.ViewModels\BeachEquipmentStore.ViewModels.csproj" />
-    <ProjectReference Include="..\BeachEquipmentStore.Web.Infrastructure\BeachEquipmentStore.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

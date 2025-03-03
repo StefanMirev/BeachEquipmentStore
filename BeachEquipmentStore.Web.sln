@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeachEquipmentStore.Common"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeachEquipmentStore.ViewModels", "BeachEquipmentStore.ViewModels\BeachEquipmentStore.ViewModels.csproj", "{85C0E010-60EE-4665-A5A6-042754E2E545}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeachEquipmentStore.Services", "BeachEquipmentStore.Services.Data\BeachEquipmentStore.Services.csproj", "{FD1044CD-75D6-43BF-9527-E6610C8A5443}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeachEquipmentStore.Services", "BeachEquipmentStore.Services\BeachEquipmentStore.Services.csproj", "{FD1044CD-75D6-43BF-9527-E6610C8A5443}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeachEquipmentStore.Infrastructure", "BeachEquipmentStore.Web.Infrastructure\BeachEquipmentStore.Infrastructure.csproj", "{4AF154E2-212E-4ED1-BB0A-04974F9D022E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeachEquipmentStore.Infrastructure", "BeachEquipmentStore.Infrastructure\BeachEquipmentStore.Infrastructure.csproj", "{4AF154E2-212E-4ED1-BB0A-04974F9D022E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

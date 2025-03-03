@@ -37,6 +37,7 @@
                         Price = 0,
                         ImageUrl = ""
                     })
+                    .OrderBy(p => p.Quantity)
                     .ToList()
                 });
             }

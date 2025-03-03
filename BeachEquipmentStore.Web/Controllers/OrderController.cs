@@ -11,13 +11,15 @@
     [Authorize(Policy = "RequireAuthenticatedUser")]
     public class OrderController : Controller
     {
-        private readonly IOrderService _orders;
-        private readonly ICartService _cart;
+        private readonly ICartService _cartService;
+        private readonly IOrderService _ordersService;
+        private readonly IUserService _userService;
 
-        public OrderController(IOrderService orders, ICartService cart)
+        public OrderController(ICartService cartService, IOrderService orderService, IUserService userService)
         {
-            _cart = cart;
-            _orders = orders;
+            _cartService = cartService;
+            _ordersService = orderService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -26,7 +28,7 @@
         {
             try
             {
-                var orderServiceData = await _orders.GetDataRequiredForOrder(Guid.Parse(User.GetId()));
+                var orderServiceData = await _ordersService.GetDataRequiredForOrder(Guid.Parse(User.GetId()));
 
                 bool hasAddress = !string.IsNullOrEmpty(orderServiceData.UserAddress?.Name);
                 ViewBag.HasAddress = hasAddress;
@@ -76,8 +78,8 @@
             {
                 var userId = Guid.Parse(User.GetId());
 
-                await _orders.GenerateOrder(userId, hasAddress, addressName, town, zipCode, totalSum);
-                await _cart.ClearCartAfterOrder(userId);
+                await _ordersService.GenerateOrder(userId, hasAddress, addressName, town, zipCode, totalSum);
+                await _cartService.ClearCartAfterOrder(userId);
                 return RedirectToAction("OrderHistory", "Profile");
             }
             catch (Exception ex)
@@ -93,7 +95,9 @@
         {
             try
             {
-                var detailsModel = await _orders.GetOrderDetails(orderId);
+                var user = await _userService.GetCurrentUserAsync(User);
+
+                var detailsModel = await _ordersService.GetOrderDetails(orderId, user!.Id);
 
                 return View(new OrderDetailViewModel
                 {

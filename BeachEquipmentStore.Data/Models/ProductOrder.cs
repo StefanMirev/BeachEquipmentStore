@@ -6,6 +6,11 @@
 
     public class ProductOrder
     {
+        public ProductOrder()
+        {
+            this.CreatedAt = DateTime.Now;
+        }
+
         public Guid ProductId { get; set; }
         [ForeignKey(nameof(ProductId))]
         public Product Product { get; set; } = null!;

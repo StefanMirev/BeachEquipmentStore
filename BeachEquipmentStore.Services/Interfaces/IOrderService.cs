@@ -11,7 +11,7 @@
 
         Task GenerateOrder(Guid userId, bool hasAddress, string? addressName, string? town, string zipCode, decimal totalSum);
 
-        Task<OrderDetailViewModel> GetOrderDetails(string orderId);
+        Task<OrderDetailViewModel> GetOrderDetails(string orderId, Guid userId);
 
         Task<List<CompleteOrderViewModel>> GetUndeliveredOrders();
 

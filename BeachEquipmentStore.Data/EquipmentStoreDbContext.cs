@@ -1,7 +1,6 @@
 ﻿namespace BeachEquipmentStore.Data
 {
     using BeachEquipmentStore.Data.Models;
-    using BeachEquipmentStore.Data.Extensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
@@ -27,6 +26,19 @@
             Assembly configAssembly = Assembly.GetAssembly(typeof(EquipmentStoreDbContext)) ??
             Assembly.GetExecutingAssembly();
 
+            builder.HasSequence<int>("UniqueNumberSeq")
+                .StartsAt(1)
+                .IncrementsBy(1);
+
+            builder.Entity<Order>()
+                .Property(p => p.Number)
+                .HasDefaultValueSql("NEXT VALUE FOR UniqueNumberSeq")
+                .IsRequired();
+
+            builder.Entity<Order>()
+                .HasIndex(p => p.Number)
+                .IsUnique();
+
             builder.Entity<Product>()
                 .HasIndex(b => b.Barcode)
                 .IsUnique();
@@ -36,12 +48,6 @@
 
             builder.Entity<CartItem>()
                 .HasKey(p => new { p.ProductId, p.CustomerId });
-
-            builder.SeedUsers();
-            builder.SeedAddresses();
-            builder.SeedCategories();
-            builder.SeedManufacturers();
-            builder.SeedProducts();
 
             base.OnModelCreating(builder);
         }

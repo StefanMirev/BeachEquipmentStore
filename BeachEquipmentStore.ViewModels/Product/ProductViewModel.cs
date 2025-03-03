@@ -10,6 +10,7 @@
             this.Categories = new List<CategoryViewModel>();
             this.Manufacturers = new List<ManufacturerViewModel>();
         }
+
         public Guid Id { get; set; }
 
         public string Name { get; set; } = null!;
@@ -19,6 +20,8 @@
         public decimal Price { get; set; }
 
         public int Quantity { get; set; }
+
+        public DateTime CreatedAt { get; set; }
 
         public List<CategoryViewModel>? Categories { get; set; }
 

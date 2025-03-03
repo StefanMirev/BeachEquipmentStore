@@ -6,6 +6,11 @@
 
     public class Manufacturer
     {
+        public Manufacturer()
+        {
+            this.CreatedAt = DateTime.Now;
+        }
+
         [Key]
         public int Id { get; set; }
 

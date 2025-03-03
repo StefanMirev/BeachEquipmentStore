@@ -12,7 +12,7 @@ namespace BeachEquipmentStore.Web
     using OwaspHeaders.Core.Extensions;
     using static BeachEquipmentStore.Common.GeneralApplicationConstants;
     using static BeachEquipmentStore.Infrastructure.Extensions.WebApplicationBuilderExtensions;
-
+    using BeachEquipmentStore.Infrastructure.Helpers;
     public class Program
     {
         public static void Main(string[] args)
@@ -61,6 +61,8 @@ namespace BeachEquipmentStore.Web
 
             builder.Services.AddRazorPages();
             builder.Services.AddApplicationServices(typeof(IProductService));
+
+            CultureConfig.ConfigureCulture();
 
             builder.Services.AddAntiforgery(options =>
             {

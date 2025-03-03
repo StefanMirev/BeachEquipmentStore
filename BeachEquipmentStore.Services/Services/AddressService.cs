@@ -4,14 +4,13 @@
     using BeachEquipmentStore.Data.Models;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Profile;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
 
     public class AddressService : IAddressService
     {
         private readonly EquipmentStoreDbContext _data;
 
-        public AddressService(EquipmentStoreDbContext data, UserManager<ApplicationUser> userManager)
+        public AddressService(EquipmentStoreDbContext data)
         {
             this._data= data;
         }
@@ -69,7 +68,7 @@
         {
             if (!_data.Users.Any(u => u.Id == userId))
             {
-                throw new ArgumentNullException("Потребителят не съществува!");
+                throw new ArgumentException("Потребителят не съществува!");
             }
 
             if (_data.Addresses.Where(a => a.CustomerId == userId).Count() >= 10)
@@ -121,6 +120,7 @@
             addressToChange.Name = name;
             addressToChange.Town = town;
             addressToChange.ZipCode = zipCode;
+            addressToChange.UpdatedAt = DateTime.Now;
 
             await _data.SaveChangesAsync();
         }
@@ -129,26 +129,27 @@
         {
             if (!_data.Addresses.Any(a => a.Id == addressId))
             {
-                throw new InvalidOperationException("Адресът не съществува!");
+                throw new ArgumentException("Адресът не съществува!");
             }
 
-            var addresses = await _data.Addresses
-            .Where(a => a.CustomerId == userId)
-            .ToListAsync();
+            if(!_data.Users.Any(u => u.Id == userId))
+            {
+                throw new ArgumentException("Не съществува такъв потребител!");
+            }
 
-            _data.Addresses.Remove(addresses.SingleOrDefault(a => a.Id == addressId)!);
+            var address = await _data.Addresses
+                .Where(a => a.CustomerId == userId && a.Id == addressId)
+                .FirstOrDefaultAsync();
+
+            if (address == null)
+            {
+                throw new ArgumentException("Посоченият потребител няма такъв адрес!");
+            }
+
+            _data.Addresses.Remove(address);
             await _data.SaveChangesAsync();
 
-            addresses.Remove(addresses.SingleOrDefault(a => a.Id == addressId)!);
-
-            return addresses.Select(a => new AddressDetailsViewModel
-            {
-                Id = a.Id,
-                Name = a.Name,
-                Town = a.Town,
-                ZipCode = a.ZipCode,
-                IsPrimaryAddress = a.IsPrimaryAddress
-            }).ToList();
+            return await this.GetAllAddresses(userId);
         }
     }
 }

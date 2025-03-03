@@ -73,6 +73,7 @@
             currentUser.LastName = DetailsModel.LastName;
             currentUser.Email = DetailsModel.Email;
             currentUser.PhoneNumber = DetailsModel.PhoneNumber;
+            currentUser.UpdatedAt = DateTime.Now;
 
             await _data.SaveChangesAsync();
         }
@@ -99,10 +100,10 @@
                 Id = u.Id,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
-                Email = u.Email
-            })
-                .ToList();
-
+                Email = u.Email,
+                CreatedAt = u.CreatedAt
+            }).OrderByDescending(u => u.CreatedAt)
+            .ToList();
         }
 
         public async Task MakeAdmin(Guid userId)

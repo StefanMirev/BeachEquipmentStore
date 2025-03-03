@@ -12,6 +12,7 @@
         {
             this.Id = Guid.NewGuid();
             this.CartItems = new HashSet<CartItem>();
+            this.CreatedAt = DateTime.Now;
             this.ProductsOrders = new HashSet<ProductOrder>();
         }
 

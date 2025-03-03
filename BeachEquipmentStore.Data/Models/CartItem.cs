@@ -5,6 +5,11 @@
 
     public class CartItem
     {
+        public CartItem()
+        {
+            this.CreatedAt = DateTime.Now;
+        }
+
         public Guid CustomerId { get; set; }
         [ForeignKey(nameof(CustomerId))]
         public ApplicationUser Customer { get; set; } = null!;

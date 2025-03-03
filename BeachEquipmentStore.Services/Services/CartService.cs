@@ -53,8 +53,10 @@
                 .Select(ci => new CartViewModel
                 {
                     ProductId = ci.ProductId,
-                    Quantity = ci.Quantity
+                    Quantity = ci.Quantity,
+                    CreatedAt = ci.CreatedAt
                 })
+                .OrderByDescending(ci => ci.CreatedAt)
                 .ToListAsync();
         }
 
@@ -67,7 +69,7 @@
 
             var productsToRemove = await _data.CartItems
                 .Where(p => p.CustomerId == userId)
-            .ToListAsync();
+                .ToListAsync();
 
             foreach (var cartItem in productsToRemove)
             {

@@ -12,12 +12,16 @@
         public Order()
         {
             this.Id = Guid.NewGuid();
+            this.CreatedAt = DateTime.Now;
             this.OrderProducts = new HashSet<ProductOrder>();
             this.ShippingDate = null;
         }
 
         [Key]
         public Guid Id { get; set; }
+
+        [Required]
+        public int Number { get; set; }
 
         [Required]
         [DisplayName("Order Date")]

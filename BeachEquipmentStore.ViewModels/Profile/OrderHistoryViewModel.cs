@@ -4,6 +4,8 @@
     {
         public Guid Id { get; set; }
 
+        public int Number { get; set; }
+
         public string DeliveryStatus { get; set; } = null!;
 
         public DateTime OrderDate { get; set; }

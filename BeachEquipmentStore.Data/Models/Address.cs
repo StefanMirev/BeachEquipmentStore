@@ -11,6 +11,7 @@
         public Address()
         {
             this.Id = Guid.NewGuid();
+            this.CreatedAt = DateTime.Now;
         }
 
         [Key]

@@ -31,6 +31,7 @@
                 .Select(o => new OrderHistoryViewModel
                 {
                     Id = o.Id,
+                    Number = o.Number,
                     DeliveryStatus = o.DeliveryStatus.ToString(),
                     OrderDate = o.CreatedAt,
                     TotalPrice = o.TotalPrice
@@ -63,9 +64,10 @@
                 Name = p.Product.Name,
                 ImageUrl = p.Product.ImageUrl,
                 Price = p.Product.Price,
-                Quantity = p.Quantity
-            })
-                .ToList();
+                Quantity = p.Quantity,
+                CreatedAt = p.CreatedAt
+            }).OrderByDescending(p => p.CreatedAt)
+            .ToList();
 
             return new CreateOrderViewModel
             {
@@ -137,7 +139,7 @@
             await _data.SaveChangesAsync();
         }
 
-        public async Task<OrderDetailViewModel> GetOrderDetails(string orderId)
+        public async Task<OrderDetailViewModel> GetOrderDetails(string orderId, Guid userId)
         {
             if (!_data.Orders.Any(u => u.Id == Guid.Parse(orderId)))
             {
@@ -146,9 +148,9 @@
 
             Order order = await _data.Orders.FirstAsync(p => p.Id.ToString() == orderId);
 
-            if (!_data.Users.Any(u => u.Id == order.CustomerId))
+            if (userId != order.CustomerId)
             {
-                throw new InvalidOperationException("Такъв потребител не съществува!");
+                throw new InvalidOperationException("Такава поръчка не съществува!");
             }
 
             List<ProductOrder> productOrders = await _data.ProductOrders
@@ -159,6 +161,7 @@
             return new OrderDetailViewModel
             {
                 Id = order.Id,
+                Number = order.Number,
                 OrderDate = order.CreatedAt,
                 ShippingDate = order.ShippingDate,
                 DeliveryStatus = order.DeliveryStatus.ToString(),
@@ -171,8 +174,9 @@
                     Name = po.Product.Name,
                     Barcode = po.Product.Barcode,
                     Price = po.Product.Price,
-                    Stock = po.Quantity
-                })
+                    Stock = po.Quantity,
+                    CreatedAt = po.CreatedAt
+                }).OrderByDescending(po => po.CreatedAt)
                 .ToList()
             };
         }
@@ -183,25 +187,27 @@
                 .Where(o => o.DeliveryStatus == 0)
                 .Select(o => new CompleteOrderViewModel
                 {
-                    Id = o.Id
+                    Id = o.Id,
+                    CreatedAt = o.CreatedAt
                 })
+                .OrderBy(o => o.CreatedAt)
                 .ToListAsync();
 
             return orders;
         }
 
-
         public async Task DeliverOrders(Guid orderId)
         {
-            if (!_data.Orders.Any(u => u.Id == orderId))
+            if (!_data.Orders.Any(o => o.Id == orderId))
             {
                 throw new InvalidOperationException("Такава поръчка не съществува!");
             }
 
-            Order? order = await _data.Orders.FindAsync(orderId);
+            var order = await _data.Orders.FirstAsync(o => o.Id == orderId);
 
-            order!.ShippingDate = DateTime.UtcNow;
-            order!.DeliveryStatus += 1;
+            order.ShippingDate = DateTime.Now;
+            order.DeliveryStatus += 1;
+            order.UpdatedAt = DateTime.Now;
 
             await _data.SaveChangesAsync();
         }

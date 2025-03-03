@@ -19,6 +19,8 @@
 
         public int Stock { get; set; }
 
+        public DateTime CreatedAt { get; set; }
+
         public ManufacturerViewModel Manufacturer { get; set; } = null!;
 
         public CategoryViewModel Category { get; set; } = null!;
