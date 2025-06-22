@@ -33,7 +33,7 @@
                     return Redirect(adminUrl!);
                 }
 
-                ExtendendedFiltrationViewModel resultsetOfProducts = new ExtendendedFiltrationViewModel()
+                ExtendedFiltrationViewModel resultsetOfProducts = new ExtendedFiltrationViewModel()
                 {
                     FilteredProducts = new FilterProductsViewModel()
                     {

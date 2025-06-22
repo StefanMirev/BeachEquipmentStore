@@ -99,26 +99,7 @@
 
                 var detailsModel = await _ordersService.GetOrderDetails(orderId, user!.Id);
 
-                return View(new OrderDetailViewModel
-                {
-                    Id = detailsModel.Id,
-                    OrderDate = detailsModel.OrderDate,
-                    ShippingDate = detailsModel.ShippingDate,
-                    DeliveryStatus = detailsModel.DeliveryStatus,
-                    DeliveryPrice = detailsModel.DeliveryPrice,
-                    OverallPrice = detailsModel.TotalPrice,
-                    TotalPrice = detailsModel.TotalPrice - detailsModel.DeliveryPrice,
-                    AddressName = detailsModel.AddressName,
-                    TownName = detailsModel.TownName,
-                    ZipCode = detailsModel.ZipCode,
-                    Products = detailsModel.Products.Select(p => new ExtendedProductViewModel
-                    {
-                        Name = p.Name,
-                        Barcode = p.Barcode,
-                        Price = p.Price,
-                        Stock = p.Stock
-                    }).ToList()
-                });
+                return View(detailsModel);
             }
             catch (Exception ex)
             {

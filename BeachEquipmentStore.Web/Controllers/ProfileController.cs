@@ -4,7 +4,6 @@
     using BeachEquipmentStore.Infrastructure.Extensions;
     using BeachEquipmentStore.ViewModels.Profile;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using System.Text;
 
@@ -29,13 +28,7 @@
             {
                 var userDetails = await _userService.GetUserDetails(Guid.Parse(User.GetId()));
 
-                return View(new UserDetailsViewModel
-                {
-                    FirstName = userDetails.FirstName,
-                    LastName = userDetails.LastName,
-                    Email = userDetails.Email,
-                    PhoneNumber = userDetails.PhoneNumber
-                });
+                return View(userDetails);
             }
             catch (ArgumentNullException ex)
             {
@@ -53,13 +46,7 @@
             {
                 var userDetails = await _userService.GetUserDetails(Guid.Parse(User.GetId()));
 
-                return View(new UserDetailsViewModel
-                {
-                    FirstName = userDetails.FirstName,
-                    LastName = userDetails.LastName,
-                    Email = userDetails.Email,
-                    PhoneNumber = userDetails.PhoneNumber
-                });
+                return View(userDetails);
             }
             catch (ArgumentNullException ex)
             {
@@ -112,6 +99,7 @@
             try
             {
                 var user = await _userService.GetCurrentUserAsync(User);
+
                 if (user == null)
                 {
                     return NotFound();
@@ -216,14 +204,7 @@
             {
                 var addresses = await _addressService.GetAddressDetails(addressId);
 
-                return View(new AddressDetailsViewModel
-                {
-                    Id = addresses.Id,
-                    Name = addresses.Name,
-                    Town = addresses.Town,
-                    ZipCode = addresses.ZipCode,
-                    IsPrimaryAddress = addresses.IsPrimaryAddress
-                });
+                return View(addresses);
             }
             catch (Exception ex)
             {
@@ -285,6 +266,7 @@
                     .Select(o => new OrderHistoryViewModel
                     {
                         Id = o.Id,
+                        Number = o.Number,
                         DeliveryStatus = o.DeliveryStatus,
                         OrderDate = o.OrderDate,
                         TotalPrice = o.TotalPrice

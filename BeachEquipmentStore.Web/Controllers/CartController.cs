@@ -14,8 +14,8 @@
 
         public CartController(ICartService cartItems, IProductService products)
         {
-            this._cartItems = cartItems;
-            this._productService = products;
+            _cartItems = cartItems;
+            _productService = products;
         }
 
         [HttpGet]
@@ -26,18 +26,7 @@
             {
                 var cartItems = await _cartItems.GetItemsInCart(Guid.Parse(User.GetId()));
 
-                var resultQuery = await _productService.GetProductsInCart(cartItems);
-
-                List<ProductViewModel> productsInCart = resultQuery
-                    .Select(p => new ProductViewModel
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        ImageUrl = p.ImageUrl,
-                        Price = p.Price,
-                        Quantity = p.Quantity
-                    })
-                    .ToList();
+                var productsInCart = await _productService.GetProductsInCart(cartItems);
 
                 return View(productsInCart);
             }

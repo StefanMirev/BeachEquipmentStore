@@ -1,7 +1,6 @@
 ﻿namespace BeachEquipmentStore.Web.Controllers
 {
     using BeachEquipmentStore.Services.Interfaces;
-    using BeachEquipmentStore.ViewModels.Manufacturer;
     using Microsoft.AspNetCore.Mvc;
 
     public class ManufacturerController : Controller
@@ -18,16 +17,7 @@
         {
             var allManufacturers = await _manufacturers.GetAllManufacturersAsync();
 
-            List<ManufacturerViewModel> resultManufacturers = allManufacturers
-                .Select(m => new ManufacturerViewModel
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    ImageUrl = m.ImageUrl
-                })
-                .ToList();
-
-            return View(resultManufacturers);
+            return View(allManufacturers);
         }
     }
 }
