@@ -1,9 +1,9 @@
 ﻿namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
+    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
 
     [Area("Admin")]
     [Authorize(Roles = AdminRoleName)]

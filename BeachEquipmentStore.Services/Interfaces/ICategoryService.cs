@@ -1,6 +1,7 @@
-﻿namespace BeachEquipmentStore.Services.Interfaces
+﻿using BeachEquipmentStore.ViewModels.Category;
+
+namespace BeachEquipmentStore.Services.Interfaces
 {
-    using BeachEquipmentStore.ViewModels.Category;
 
     public interface ICategoryService
     {

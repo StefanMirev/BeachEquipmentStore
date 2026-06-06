@@ -7,18 +7,22 @@
 
     public interface IUserService
     {
-        Task<UserViewModel?> GetCurrentUserAsync(ClaimsPrincipal user);
+        Guid GetCurrentLoggedInUserId();
+
+        Task<UserViewModel?> GetCurrentLoggedInUserAsync();
 
         bool IsUserSignedIn(ClaimsPrincipal user);
 
-        Task<UserDetailsViewModel> GetUserDetails(Guid userId);
+        bool IsCurrentLoggedInUserAdmin();
 
-        Task ChangeUserDetails(Guid userId, UserDetailsViewModel DetailsModel);
+        Task<UserDetailsViewModel> GetUserDetailsAsync(Guid userId);
 
-        Task<IdentityResult> ChangeUserPasswordAsync(UserViewModel user, string currentPassword, string newPassword);
+        Task ChangeUserDetailsAsync(UserDetailsViewModel DetailsModel);
 
-        Task<List<UserViewModel>> GetAllNotAdminUsers();
+        Task<IdentityResult> ChangeUserPasswordAsync(string currentPassword, string newPassword);
 
-        Task MakeAdmin(Guid userId);
+        Task<List<UserViewModel>> GetAllNonAdminUsersAsync();
+
+        Task<bool> MakeAdmin(Guid userId);
     }
 }

@@ -1,50 +1,52 @@
 ﻿namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
-    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Interfaces;
     using Microsoft.AspNetCore.Mvc;
-    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
+    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
 
     [Area("Admin")]
     public class OrderController : BaseAdminController
     {
-        private readonly IOrderService _orders;
+        private readonly IOrderControllerService _orderControllerService;
 
-        public OrderController(IOrderService orders)
+        public OrderController(IOrderControllerService orderControllerService)
         {
-            _orders = orders;
+            _orderControllerService = orderControllerService;
         }
 
         [HttpGet]
         [Route("Delivery-Status")]
         public async Task<IActionResult> Deliver()
         {
-            try
+            var result = await _orderControllerService.GetUndeliveredOrdersAsync();
+
+            if (!result.IsSuccess)
             {
-                return View(await _orders.GetUndeliveredOrders());
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
+
+                TempData["ErrorMessage"] = result.ResponseMessage;
 
                 return RedirectToAction("Index", "Home");
             }
+
+            return View(result.UndeliveredOrders);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CompleteDelivery(Guid orderId)
         {
-            try
-            {
-                await _orders.DeliverOrders(orderId);
+            var result = await _orderControllerService.DeliverOrdersAsync(orderId);
 
-                return RedirectToAction("Deliver", "Order", new { Area = AdminAreaName });
-            }
-            catch (Exception ex)
+            if (!result.IsSuccess)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                TempData["ErrorMessage"] = result.ResponseMessage;
 
                 return RedirectToAction("Index", "Home");
             }
+
+            TempData["Message"] = result.ResponseMessage;
+
+            return RedirectToAction("Deliver", "Order", new { Area = AdminAreaName });
         }
     }
 }

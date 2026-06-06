@@ -1,0 +1,13 @@
+﻿@model List<ProductViewModel>
+
+@{
+    ViewData["Title"] = "Добре дошли! - Ицо Бийч";
+}
+
+<div class="jumbotron jumbotron-fluid text-center">
+    <h1 class="display-4">Ицо Бийч - магазин за летни забавления и усмивки</h1>
+    <p class="lead">За незабравимо плажно изживяване!</p>
+</div>
+<hr />
+
+<partial name="_GetProductsPartial" model="Model" />

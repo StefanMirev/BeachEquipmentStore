@@ -1,0 +1,47 @@
+﻿@model List<OrderHistoryViewModel>
+@{
+    ViewBag.Title = "История на поръчките";
+}
+
+<h2>@ViewBag.Title</h2>
+<hr />  
+
+<div class="row">
+    <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+        <partial name="_AccountNavPartial" />
+    </nav>
+    <div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+        @if (Model.Any())
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Поръчка №</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                        <th>Всичко</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                        <td>@order.Number</td>
+                        <td>@order.DeliveryStatus</td>
+                        <td>@order.OrderDate</td>
+                        <td>@order.TotalPrice.ToString("C")</td>
+                        <td>
+                            <a asp-controller="Order" asp-action="Details" asp-route-orderId="@order.Id">Детайли</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            </table>
+        }
+        else
+        {
+            <h2>Все още нямате поръчки! Вижте предлаганите от нас продукти <a asp-controller="Product" asp-action="Catalogue">тук</a>.</h2>
+        }
+    </div>
+</div>

@@ -1,0 +1,35 @@
+﻿@model UserDetailsViewModel
+@{
+    ViewData["Title"] = "Редакция на данните в профила";
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+
+<div class="row">
+    <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+        <partial name="_AccountNavPartial" />
+    </nav>
+    <div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="FirstName">Име</label>
+                <input type="text" asp-for="FirstName" name="FirstName" class="form-control" value="@Model.FirstName" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName">Фамилия</label>
+                <input type="text" asp-for="LastName" name="LastName" class="form-control" value="@Model.LastName" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email">Е-поща</label>
+                <input type="email" asp-for="Email" name="Email" class="form-control" value="@Model.Email" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber">Телефон</label>
+                <input type="text" asp-for="PhoneNumber" name="PhoneNumber" class="form-control" value="@Model.PhoneNumber" required>
+            </div>
+            <button style="margin-top: 5px;" type=" submit" class="btn btn-primary">Запази промените</button>
+            @Html.AntiForgeryToken()
+        </form>
+    </div>
+</div>

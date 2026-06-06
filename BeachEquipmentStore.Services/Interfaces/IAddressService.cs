@@ -4,14 +4,14 @@
 
     public interface IAddressService
     {
-        Task<List<AddressDetailsViewModel>> GetAllAddresses(Guid userId);
+        Task<List<AddressDetailsViewModel>> GetAllAddressesByUserIdAsync(Guid userId);
 
-        Task<AddressDetailsViewModel> GetAddressDetails(string addressId);
+        Task<AddressDetailsViewModel> GetAddressDetailsByIdAsync(string addressId);
 
-        Task AddAddress(Guid userId, string name, string town, string zipCode, bool? isPrimaryAddress);
+        Task AddAddressAsync(Guid userId, string name, string town, string zipCode, bool isPrimaryAddress = false);
 
-        Task ChangeAddressDetails(Guid addressId, string address, string town, string zipCode);
+        Task UpdateAddressByIdAsync(Guid addressId, string address, string town, string zipCode);
 
-        Task<List<AddressDetailsViewModel>> DeleteAddress(Guid userId, Guid addressId);
+        Task<List<AddressDetailsViewModel>> DeleteAddressByIdAsync(Guid userId, Guid addressId);
     }
 }

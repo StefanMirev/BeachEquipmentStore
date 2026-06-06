@@ -1,4 +1,4 @@
-﻿@model RestockProductsViewModel
+﻿@model List<ProductViewModel>
 
 @{
     ViewBag.Title = "Поръчай стока";
@@ -15,7 +15,7 @@
     <tbody>
 
         @{
-            foreach (var product in Model.Products)
+            foreach (var product in Model)
             {
                 <tr>
                     <td>@product.Name</td>

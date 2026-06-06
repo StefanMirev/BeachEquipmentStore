@@ -5,12 +5,6 @@
 
     public class ProductViewModel
     {
-        public ProductViewModel()
-        {
-            this.Categories = new List<CategoryViewModel>();
-            this.Manufacturers = new List<ManufacturerViewModel>();
-        }
-
         public Guid Id { get; set; }
 
         public string Name { get; set; } = null!;
@@ -23,8 +17,8 @@
 
         public DateTime CreatedAt { get; set; }
 
-        public List<CategoryViewModel>? Categories { get; set; }
+        public CategoryViewModel Category { get; set; } = null!;
 
-        public List<ManufacturerViewModel>? Manufacturers { get; set; }
+        public ManufacturerViewModel Manufacturer { get; set; } = null!;
     }
 }

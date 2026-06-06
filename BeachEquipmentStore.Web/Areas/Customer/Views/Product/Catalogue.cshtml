@@ -1,0 +1,11 @@
+﻿@model ProductSearchViewModel
+
+@{
+    ViewBag.Title = "Продукти";
+}
+
+<h2>@ViewBag.Title</h2>
+<hr />
+
+<partial name="_FilterProductsPartial" />
+<partial name="_GetProductsPartial" model="Model.Products" />

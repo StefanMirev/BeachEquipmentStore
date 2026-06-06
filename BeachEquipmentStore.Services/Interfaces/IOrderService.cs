@@ -1,20 +1,19 @@
-﻿namespace BeachEquipmentStore.Services.Interfaces
+namespace BeachEquipmentStore.Services.Interfaces
 {
     using BeachEquipmentStore.ViewModels.Order;
-    using BeachEquipmentStore.ViewModels.Profile;
 
     public interface IOrderService
     {
-        Task<List<OrderHistoryViewModel>> GetOrderHistory(Guid userId);
+        Task<List<OrderHistoryViewModel>> GetCurrentUserOrderHistoryAsync();
 
-        Task<CreateOrderViewModel> GetDataRequiredForOrder(Guid userId);
+        Task<CreateOrderViewModel> GetDetailsForCreateOrderAsync();
 
-        Task GenerateOrder(Guid userId, bool hasAddress, string? addressName, string? town, string zipCode, decimal totalSum);
+        Task CreateOrderAsync(string? addressName, string? town, string zipCode);
 
-        Task<OrderDetailViewModel> GetOrderDetails(string orderId, Guid userId);
+        Task<OrderDetailViewModel> GetOrderDetailsAsync(string orderId);
 
-        Task<List<CompleteOrderViewModel>> GetUndeliveredOrders();
+        Task<List<PendingOrderViewModel>> GetUndeliveredOrdersAsync();
 
-        Task DeliverOrders(Guid orderId);
+        Task<bool> DeliverOrdersAsync(Guid orderId);
     }
 }

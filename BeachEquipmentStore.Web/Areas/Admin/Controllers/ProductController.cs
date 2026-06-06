@@ -1,76 +1,50 @@
 ﻿namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
-    using BeachEquipmentStore.Services.Interfaces;
-    using BeachEquipmentStore.Web.Areas.Admin.ViewModels.Product;
-    using BeachEquipmentStore.ViewModels.Product;
     using Microsoft.AspNetCore.Mvc;
-    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
+    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
+    using BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Interfaces;
 
     [Area("Admin")]
     public class ProductController : BaseAdminController
     {
-        private readonly IProductService _products;
+        private readonly IProductControllerService _productControllerService;
 
-        public ProductController(IProductService products)
+        public ProductController(IProductControllerService products)
         {
-            _products = products;
-        }
-        public IActionResult Index()
-        {
-            return View();
+            _productControllerService = products;
         }
 
         [HttpGet]
+        [Route("Restock")]
         public async Task<IActionResult> Restock()
         {
-            try
-            {
-                List<ProductViewModel> allProducts = await _products.GetAllProductsAsync();
 
-                return View(new RestockProductsViewModel
-                {
-                    Products = allProducts.Select(p => new ProductViewModel
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Quantity = p.Quantity,
-                        Price = 0,
-                        ImageUrl = ""
-                    })
-                    .OrderBy(p => p.Quantity)
-                    .ToList()
-                });
-            }
-            catch (Exception ex)
+            var result = await _productControllerService.GetAllProductsAsync();
+
+            if (!result.IsSuccess)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                TempData["ErrorMessage"] = result.ResponseMessage;
 
                 return RedirectToAction("Index", "Home");
             }
+
+            return View(result.Products);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FinishRestock(Guid productId, int quantity)
         {
-            try
+
+            var result = await _productControllerService.RestockProductAsync(productId, quantity);
+
+            if (!result.IsSuccess)
             {
-                if (quantity < 1)
-                {
-                    throw new ArgumentException("Трябва да добавите поне една бройка от продукта!");
-                }
-
-                await _products.RestockProduct(productId, quantity);
-
-                return RedirectToAction("Restock", "Product", new { Area = AdminAreaName });
+                TempData["ErrorMessage"] = result.ResponseMessage;
             }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
 
-                return RedirectToAction("Restock", "Product", new { Area = AdminAreaName });
-            }
+            return RedirectToAction("Restock", "Product", new { Area = AdminAreaName });
         }
-
     }
+
 }

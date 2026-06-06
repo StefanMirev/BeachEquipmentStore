@@ -6,13 +6,13 @@
     @if (UserService.IsUserSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Cart" asp-action="GoToCart">Количка</a>
+            <a class="nav-link text-dark" asp-area="Customer" asp-controller="Cart" asp-action="Cart">Количка</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Profile" asp-action="MyProfile" title="Manage">Профил</a>
+                    <a class="nav-link text-dark" asp-area="Customer" asp-controller="Profile" asp-action="MyProfile" title="Manage">Профил</a>
         </li>
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@("/")">
                 <button type="submit" class="nav-link btn btn-link text-dark">Изход</button>
             </form>
         </li>

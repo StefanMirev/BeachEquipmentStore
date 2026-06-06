@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using static BeachEquipmentStore.Common.EntityValidationConstants.ApplicationUser;
+using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.ApplicationUser;
+using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
+using static BeachEquipmentStore.Common.Constants.Messages;
 
 namespace BeachEquipmentStore.Web.Areas.Identity.Pages.Account
 {
@@ -63,27 +65,27 @@ namespace BeachEquipmentStore.Web.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessage = FirstNameRequired)]
             [Unicode]
-            [StringLength(FirstNameMaxLength, MinimumLength = FirstNameMinLength)]
+            [StringLength(FirstNameMaxLength, ErrorMessage = FirstNameLengthError, MinimumLength = FirstNameMinLength)]
             [Display(Name = "Име")]
             public string FirstName { get; set; } = null!;
 
-            [Required]
+            [Required(ErrorMessage = LastNameRequired)]
             [Unicode]
-            [StringLength(LastNameMaxLength, MinimumLength = LastNameMinLength)]
+            [StringLength(LastNameMaxLength, ErrorMessage = LastNameLengthError, MinimumLength = LastNameMinLength)]
             [Display(Name = "Фамилия")]
             public string LastName { get; set; } = null!;
 
-            [Required]
+            [Required(ErrorMessage = PhoneNumberRequired)]
             [Display(Name = "Телефон")]
             public string PhoneNumber { get; set; } = null!;
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = EmailRequired)]
+            [EmailAddress(ErrorMessage = EmailInvalid)]
             [Display(Name = "Електронна поща")]
             public string Email { get; set; }
 
@@ -91,8 +93,9 @@ namespace BeachEquipmentStore.Web.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "{0} трябва да бъде поне {2} и не повече от {1} символа.", MinimumLength = 6)]
+            [Required(ErrorMessage = PasswordRequired)]
+            [StringLength(100, ErrorMessage = PasswordLengthError, MinimumLength = PasswordMinLength)]
+            [RegularExpression(PasswordPattern, ErrorMessage = PasswordInvalid)]
             [DataType(DataType.Password)]
             [Display(Name = "Парола")]
             public string Password { get; set; }
@@ -101,9 +104,10 @@ namespace BeachEquipmentStore.Web.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+            [Required(ErrorMessage = PasswordRequired)]
             [DataType(DataType.Password)]
             [Display(Name = "Потвърди парола")]
-            [Compare("Password", ErrorMessage = "Полетата за парола не съотвестват.")]
+            [Compare("Password", ErrorMessage = PasswordMismatchError)]
             public string ConfirmPassword { get; set; }
         }
 

@@ -31,6 +31,11 @@ body {
     min-height: 50px;
 }
 
+.alert-danger ul {
+    margin-bottom: 0;
+    padding-left: 1.2rem;
+}
+
 .btn-outline-primary {
     border-color: #007bff;
     color: #007bff;

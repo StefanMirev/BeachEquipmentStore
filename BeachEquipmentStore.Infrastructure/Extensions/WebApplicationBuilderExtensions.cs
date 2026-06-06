@@ -5,63 +5,79 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.DependencyInjection;
     using System.Reflection;
-    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
+    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
 
     public static class WebApplicationBuilderExtensions
     {
-        public static void AddApplicationServices(this IServiceCollection services, Type serviceType)
+        public static void AddApplicationServices(this IServiceCollection services)
         {
-            Assembly? serviceAssembly = Assembly.GetAssembly(serviceType);
-            if (serviceAssembly == null)
+            var entryAssembly = Assembly.GetEntryAssembly()
+                ?? throw new InvalidOperationException("Could not determine entry assembly.");
+
+            var assemblies = entryAssembly
+                .GetReferencedAssemblies()
+                .Where(a => a.Name!.StartsWith("BeachEquipmentStore"))
+                .Select(Assembly.Load)
+                .Append(entryAssembly);
+
+            foreach (var assembly in assemblies)
             {
-                throw new InvalidOperationException("Invalid service type provided!");
-            }
+                var serviceTypes = assembly
+                    .GetTypes()
+                    .Where(t => t.Name.EndsWith("Service") && !t.IsInterface && !t.IsAbstract);
 
-            Type[] serviceTypes = serviceAssembly
-                .GetTypes()
-                .Where(t => t.Name.EndsWith("Service") && !t.IsInterface)
-                .ToArray();
-
-            foreach (Type implementationType in serviceTypes)
-            {
-                Type? interfaceType = implementationType
-                    .GetInterface($"I{implementationType.Name}");
-
-                if (interfaceType == null)
+                foreach (var implementationType in serviceTypes)
                 {
-                    throw new InvalidOperationException($"No interface for the service {implementationType.Name} provided!");
-                }
+                    var interfaceType = implementationType.GetInterface($"I{implementationType.Name}");
 
-                services.AddScoped(interfaceType, implementationType);
+                    if (interfaceType == null)
+                    {
+                        throw new InvalidOperationException(
+                            $"No interface for the service {implementationType.Name} was found.");
+                    }
+
+                    services.AddScoped(interfaceType, implementationType);
+                }
             }
         }
 
-        public static IApplicationBuilder SeedAdministrator(this IApplicationBuilder app, string email)
+        public static async Task<IApplicationBuilder> SeedAdministratorAsync(
+            this IApplicationBuilder app, string email)
         {
             using IServiceScope scopedServices = app.ApplicationServices.CreateScope();
 
             IServiceProvider serviceProvider = scopedServices.ServiceProvider;
 
-            UserManager<ApplicationUser> userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            RoleManager<IdentityRole<Guid>> roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
-            Task.Run(async () =>
+            if (!await roleManager.RoleExistsAsync(AdminRoleName))
             {
-                if (await roleManager.RoleExistsAsync(AdminRoleName))
+                var result = await roleManager.CreateAsync(new IdentityRole<Guid>(AdminRoleName));
+                if (!result.Succeeded)
                 {
-                    return;
+                    throw new InvalidOperationException(
+                        $"Failed to create role '{AdminRoleName}': " +
+                        string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
+            }
 
-                IdentityRole<Guid> role = new IdentityRole<Guid>(AdminRoleName);
+            var adminUser = await userManager.FindByEmailAsync(email);
+            if (adminUser == null)
+            {
+                return app;
+            }
 
-                await roleManager.CreateAsync(role);
-
-                ApplicationUser adminUser = await userManager.FindByEmailAsync(email);
-
-                await userManager.AddToRoleAsync(adminUser, AdminRoleName);
-            })
-            .GetAwaiter()
-            .GetResult();
+            if (!await userManager.IsInRoleAsync(adminUser, AdminRoleName))
+            {
+                var result = await userManager.AddToRoleAsync(adminUser, AdminRoleName);
+                if (!result.Succeeded)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to assign '{AdminRoleName}' to {email}: " +
+                        string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+            }
 
             return app;
         }

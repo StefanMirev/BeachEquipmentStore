@@ -1,47 +1,52 @@
 ﻿namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
-    using BeachEquipmentStore.Services.Interfaces;
+    using BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Interfaces;
     using Microsoft.AspNetCore.Mvc;
-    using static BeachEquipmentStore.Common.GeneralApplicationConstants;
+    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
 
     [Area("Admin")]
     public class UserController : BaseAdminController
     {
-        private readonly IUserService _users;
+        private readonly IUserControllerService _userControllerService;
 
-        public UserController(IUserService users)
+        public UserController(IUserControllerService userControllerService)
         {
-            _users = users;
+            _userControllerService = userControllerService;
         }
 
+        [HttpGet]
+        [Route("Make-Admin")]
         public async Task<IActionResult> MakeAdmin()
         {
-            try
+            var result = await _userControllerService.GetAllNonAdminUsersAsync();
+
+            if (!result.IsSuccess)
             {
-                return View(await _users.GetAllNotAdminUsers());
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
+                TempData["ErrorMessage"] = result.ResponseMessage;
 
                 return RedirectToAction("Index", "Home");
             }
+
+            return View(result.Users);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateUserRole(Guid userId)
         {
-            try
-            {
-                await _users.MakeAdmin(userId);
 
-                return RedirectToAction("MakeAdmin", "User", new { Area = AdminAreaName });
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
+            var result = await _userControllerService.MakeAdmin(userId);
 
-                return RedirectToAction("MakeAdmin", "User", new { Area = AdminAreaName });
+            if (!result.IsSuccess)
+            {
+                TempData["ErrorMessage"] = result.ResponseMessage;
             }
+            else
+            {
+                TempData["Message"] = result.ResponseMessage;
+            }
+
+            return RedirectToAction("MakeAdmin", "User", new { Area = AdminAreaName });
         }
     }
 }

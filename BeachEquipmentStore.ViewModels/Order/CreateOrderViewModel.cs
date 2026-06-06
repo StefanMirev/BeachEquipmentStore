@@ -1,19 +1,14 @@
-﻿namespace BeachEquipmentStore.ViewModels.Order
+namespace BeachEquipmentStore.ViewModels.Order
 {
-    using BeachEquipmentStore.ViewModels.Product;
+    using BeachEquipmentStore.ViewModels.Cart;
     using BeachEquipmentStore.ViewModels.Profile;
 
     public class CreateOrderViewModel
     {
-        public CreateOrderViewModel()
-        {
-            this.Products = new List<ProductViewModel>();
-        }
-
         public UserDetailsViewModel UserDetails { get; set; } = null!;
 
         public AddressDetailsViewModel? UserAddress { get; set; }
 
-        public List<ProductViewModel> Products { get; set; }
+        public List<CartProductViewModel> Products { get; set; } = new();
     }
 }
