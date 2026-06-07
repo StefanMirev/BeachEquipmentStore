@@ -1,13 +1,14 @@
-﻿namespace BeachEquipmentStore.Infrastructure.Extensions
+namespace BeachEquipmentStore.Infrastructure.Extensions
 {
+    using BeachEquipmentStore.Common.Enums;
     using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Data.Entities;
+    using BeachEquipmentStore.Common.Helpers;
     using BeachEquipmentStore.Services;
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using System.Reflection;
-    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
 
     public static class WebApplicationBuilderExtensions
     {
@@ -42,46 +43,76 @@
                 }
             }
 
-            services.AddScoped<AllBusinessLogics>(sp => new AllBusinessLogics(sp.GetRequiredService<EquipmentStoreDbContext>()));
+            services.AddScoped<AllBusinessLogics>(sp =>
+                new AllBusinessLogics(sp.GetRequiredService<EquipmentStoreDbContext>()));
         }
 
         public static async Task<IApplicationBuilder> SeedAdministratorAsync(
-            this IApplicationBuilder app, string email)
+            this IApplicationBuilder app, string email, string? password)
         {
-            using IServiceScope scopedServices = app.ApplicationServices.CreateScope();
-
-            IServiceProvider serviceProvider = scopedServices.ServiceProvider;
-
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-
-            if (!await roleManager.RoleExistsAsync(AdminRoleName))
-            {
-                var result = await roleManager.CreateAsync(new IdentityRole<Guid>(AdminRoleName));
-                if (!result.Succeeded)
-                {
-                    throw new InvalidOperationException(
-                        $"Failed to create role '{AdminRoleName}': " +
-                        string.Join(", ", result.Errors.Select(e => e.Description)));
-                }
-            }
-
-            var adminUser = await userManager.FindByEmailAsync(email);
-            if (adminUser == null)
-            {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
                 return app;
+
+            using IServiceScope scope = app.ApplicationServices.CreateScope();
+            var allBls = scope.ServiceProvider.GetRequiredService<AllBusinessLogics>();
+
+            var existingUser = await allBls.UsersBL.AsQueryable()
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (existingUser != null)
+            {
+                var adminAlreadyExists = await allBls.AdminUsersBL.AsQueryable()
+                    .AnyAsync(a => a.Id == existingUser.Id);
+
+                if (adminAlreadyExists) return app;
+
+                var customerExists = await allBls.CustomerUsersBL.AsQueryable()
+                    .AnyAsync(c => c.Id == existingUser.Id);
+
+                if (customerExists) return app;
             }
 
-            if (!await userManager.IsInRoleAsync(adminUser, AdminRoleName))
+            var adminRole = await allBls.UserRolesBL.AsQueryable()
+                .FirstOrDefaultAsync(r => r.RoleType == UserType.Admin && r.IsActive);
+
+            if (adminRole == null)
             {
-                var result = await userManager.AddToRoleAsync(adminUser, AdminRoleName);
-                if (!result.Succeeded)
+                adminRole = new UserRole
                 {
-                    throw new InvalidOperationException(
-                        $"Failed to assign '{AdminRoleName}' to {email}: " +
-                        string.Join(", ", result.Errors.Select(e => e.Description)));
-                }
+                    Name = "Administrator",
+                    RoleType = UserType.Admin,
+                    CanRead = true,
+                    CanWrite = true,
+                    CanDelete = true,
+                    IsActive = true
+                };
+                await allBls.UserRolesBL.AddAsync(adminRole);
+                await allBls.UserRolesBL.SaveChangesAsync();
             }
+
+            if (existingUser == null)
+            {
+                existingUser = new User
+                {
+                    Email = email,
+                    Username = email,
+                    PasswordHash = PasswordHasher.HashPassword(password)
+                };
+                await allBls.UsersBL.AddAsync(existingUser);
+                await allBls.UsersBL.SaveChangesAsync();
+            }
+
+            var adminUser = new AdminUser
+            {
+                Id = existingUser.Id,
+                FirstName = "Admin",
+                LastName = "User",
+                IsActive = true,
+                UserRoleId = adminRole.Id
+            };
+
+            await allBls.AdminUsersBL.AddAsync(adminUser);
+            await allBls.AdminUsersBL.SaveChangesAsync();
 
             return app;
         }

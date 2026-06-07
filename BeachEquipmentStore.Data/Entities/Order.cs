@@ -46,9 +46,9 @@
         public AddressLog AddressLog { get; set; } = null!;
 
         [Required]
-        public Guid CustomerId { get; set; }
-        [ForeignKey(nameof(CustomerId))]
-        public ApplicationUser Customer { get; set; } = null!;
+        public Guid CustomerUserId { get; set; }
+        [ForeignKey(nameof(CustomerUserId))]
+        public CustomerUser CustomerUser { get; set; } = null!;
 
         public ICollection<ProductOrder> OrderProducts { get; set; }
     }

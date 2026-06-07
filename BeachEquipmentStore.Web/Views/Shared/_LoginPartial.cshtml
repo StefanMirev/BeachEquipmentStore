@@ -1,4 +1,4 @@
-﻿@inject IUserService UserService
+@inject IUserService UserService
 
 @model UserViewModel
 
@@ -9,21 +9,22 @@
             <a class="nav-link text-dark" asp-area="Customer" asp-controller="Cart" asp-action="Cart">Количка</a>
         </li>
         <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="Customer" asp-controller="Profile" asp-action="MyProfile" title="Manage">Профил</a>
+            <a class="nav-link text-dark" asp-area="Customer" asp-controller="Profile" asp-action="MyProfile" title="Manage">Профил</a>
         </li>
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@("/")">
+            <form class="form-inline" asp-controller="Auth" asp-action="Logout" method="post">
                 <button type="submit" class="nav-link btn btn-link text-dark">Изход</button>
+                @Html.AntiForgeryToken()
             </form>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Регистрация</a>
+            <a class="nav-link text-dark" asp-controller="Auth" asp-action="Register">Регистрация</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Вход</a>
+            <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Вход</a>
         </li>
     }
 </ul>

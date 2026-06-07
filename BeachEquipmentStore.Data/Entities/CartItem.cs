@@ -14,9 +14,9 @@ namespace BeachEquipmentStore.Data.Entities
         [Key]
         public Guid Id { get; set; }
 
-        public Guid CustomerId { get; set; }
-        [ForeignKey(nameof(CustomerId))]
-        public ApplicationUser Customer { get; set; } = null!;
+        public Guid CustomerUserId { get; set; }
+        [ForeignKey(nameof(CustomerUserId))]
+        public CustomerUser CustomerUser { get; set; } = null!;
 
         public Guid ProductId { get; set; }
         [ForeignKey(nameof(ProductId))]

@@ -22,7 +22,7 @@ namespace BeachEquipmentStore.Services
                 throw new ArgumentException(UserNotFound);
             }
 
-            var addresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerId == userId);
+            var addresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerUserId == userId);
 
             if (!addresses.Any())
             {
@@ -68,7 +68,7 @@ namespace BeachEquipmentStore.Services
             if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
                 throw new ArgumentException(UserNotFound);
 
-            var userAddresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerId == userId);
+            var userAddresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerUserId == userId);
 
             if (userAddresses.Count >= 10)
                 throw new InvalidOperationException(AddressLimitReached);
@@ -95,7 +95,7 @@ namespace BeachEquipmentStore.Services
                     ZipCode = zipCode,
                     IsPrimaryAddress = isPrimaryAddress,
                     CreatedAt = DateTime.Now,
-                    CustomerId = userId
+                    CustomerUserId = userId
                 };
 
                 await _allBls.AddressesBL.AddAsync(address);
@@ -121,7 +121,6 @@ namespace BeachEquipmentStore.Services
                 addressToChange.Name = name;
                 addressToChange.Town = town;
                 addressToChange.ZipCode = zipCode;
-                addressToChange.UpdatedAt = DateTime.Now;
 
                 await _allBls.AddressesBL.SaveChangesAsync();
 
@@ -145,7 +144,7 @@ namespace BeachEquipmentStore.Services
                 if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
                     throw new ArgumentException(UserNotFound);
 
-                if (address.CustomerId != userId)
+                if (address.CustomerUserId != userId)
                     throw new ArgumentException(AddressNotFound);
 
                 _allBls.AddressesBL.Remove(address);

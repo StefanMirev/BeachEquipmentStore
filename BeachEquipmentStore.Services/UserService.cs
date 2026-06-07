@@ -1,96 +1,108 @@
 namespace BeachEquipmentStore.Services
 {
+    using BeachEquipmentStore.Common.Helpers;
     using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Profile;
     using BeachEquipmentStore.ViewModels.User;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
     using System.Security.Claims;
-    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
     using static BeachEquipmentStore.Common.Constants.Messages;
 
     public class UserService : IUserService
     {
         private readonly AllBusinessLogics _allBls;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserService(AllBusinessLogics allBls, IHttpContextAccessor httpContextAccessor, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        public UserService(AllBusinessLogics allBls, IHttpContextAccessor httpContextAccessor)
         {
             _allBls = allBls;
             _httpContextAccessor = httpContextAccessor;
-            _signInManager = signInManager;
-            _userManager = userManager;
         }
 
         public Guid GetCurrentLoggedInUserId()
         {
-            var userId = _userManager.GetUserId(_httpContextAccessor.HttpContext!.User);
+            var claim = _httpContextAccessor.HttpContext?.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return Guid.TryParse(userId, out Guid result) ? result : Guid.Empty;
+            return Guid.TryParse(claim, out var id) ? id : Guid.Empty;
         }
 
-        public async Task<UserViewModel?> GetCurrentLoggedInUserAsync()
+        public Task<UserViewModel?> GetCurrentLoggedInUserAsync()
         {
-            var userId = GetCurrentLoggedInUserId();
+            var principal = _httpContextAccessor.HttpContext?.User;
 
-            if (userId != Guid.Empty)
+            if (principal?.Identity?.IsAuthenticated != true)
+                return Task.FromResult<UserViewModel?>(null);
+
+            var idClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(idClaim, out var id))
+                return Task.FromResult<UserViewModel?>(null);
+
+            var model = new UserViewModel
             {
-                var appUser = await _userManager.FindByIdAsync(userId.ToString()!);
-                return appUser == null ? null : new UserViewModel
-                {
-                    Id = appUser.Id,
-                    UserName = appUser.UserName!,
-                    Email = appUser.Email!,
-                    FirstName = appUser.FirstName,
-                    LastName = appUser.LastName
-                };
-            }
+                Id = id,
+                Email = principal.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
+                UserName = principal.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
+                FirstName = principal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
+                LastName = principal.FindFirstValue(ClaimTypes.Surname) ?? string.Empty
+            };
 
-            return null;
+            return Task.FromResult<UserViewModel?>(model);
         }
 
         public bool IsUserSignedIn(ClaimsPrincipal user)
-        {
-            return _signInManager.IsSignedIn(user);
-        }
+            => user.Identity?.IsAuthenticated == true;
 
         public bool IsCurrentLoggedInUserAdmin()
         {
-            return _httpContextAccessor.HttpContext!.User.IsInRole(AdminRoleName);
+            var userType = _httpContextAccessor.HttpContext?.User
+                .FindFirstValue("UserType");
+
+            return userType == "Admin";
         }
 
         public async Task<UserDetailsViewModel> GetUserDetailsAsync(Guid userId)
         {
-            var currentUser = await _allBls.UsersBL.FindAsNoTrackingAsync(userId)
-                ?? throw new ArgumentNullException(UserNotFound);
+            var customerUser = await _allBls.CustomerUsersBL.FindAsNoTrackingAsync(userId)
+                ?? throw new ArgumentException(UserNotFound);
+
+            var user = await _allBls.UsersBL.FindAsNoTrackingAsync(userId)
+                ?? throw new ArgumentException(UserNotFound);
 
             return new UserDetailsViewModel
             {
-                FirstName = currentUser.FirstName,
-                LastName = currentUser.LastName,
-                Email = currentUser.Email!,
-                PhoneNumber = currentUser.PhoneNumber!
+                FirstName = customerUser.FirstName,
+                LastName = customerUser.LastName,
+                Email = user.Email,
+                PhoneNumber = customerUser.PhoneNumber ?? string.Empty
             };
         }
 
         public async Task ChangeUserDetailsAsync(UserDetailsViewModel detailsModel)
         {
-            using var transaction = _allBls.UsersBL.GetTransactionProxy();
+            using var transaction = _allBls.CustomerUsersBL.GetTransactionProxy();
             try
             {
-                var currentUser = await _allBls.UsersBL.FindAsync(GetCurrentLoggedInUserId())
-                    ?? throw new ArgumentNullException(UserNotFound);
+                var userId = GetCurrentLoggedInUserId();
 
-                currentUser.FirstName = detailsModel.FirstName;
-                currentUser.LastName = detailsModel.LastName;
-                currentUser.Email = detailsModel.Email;
-                currentUser.PhoneNumber = detailsModel.PhoneNumber;
-                currentUser.UpdatedAt = DateTime.Now;
+                var customerUser = await _allBls.CustomerUsersBL.FindAsync(userId)
+                    ?? throw new ArgumentException(UserNotFound);
 
-                await _allBls.UsersBL.SaveChangesAsync();
+                var user = await _allBls.UsersBL.FindAsync(userId)
+                    ?? throw new ArgumentException(UserNotFound);
+
+                customerUser.FirstName = detailsModel.FirstName;
+                customerUser.LastName = detailsModel.LastName;
+                customerUser.PhoneNumber = detailsModel.PhoneNumber;
+
+                user.Email = detailsModel.Email;
+                user.Username = detailsModel.Email;
+
+                await _allBls.CustomerUsersBL.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
             catch
@@ -100,51 +112,55 @@ namespace BeachEquipmentStore.Services
             }
         }
 
-        public async Task<IdentityResult> ChangeUserPasswordAsync(string currentPassword, string newPassword)
+        public async Task<bool> ChangeUserPasswordAsync(string currentPassword, string newPassword)
         {
-            var applicationUser = await _userManager.FindByIdAsync(GetCurrentLoggedInUserId().ToString())
-                ?? throw new ArgumentNullException(UserNotFound);
+            var userId = GetCurrentLoggedInUserId();
 
-            return await _userManager.ChangePasswordAsync(applicationUser, currentPassword, newPassword);
+            var user = await _allBls.UsersBL.FindAsync(userId)
+                ?? throw new ArgumentException(UserNotFound);
+
+            if (!PasswordHasher.VerifyPassword(currentPassword, user.PasswordHash))
+                return false;
+
+            user.PasswordHash = PasswordHasher.HashPassword(newPassword);
+            user.SecurityStamp = Guid.NewGuid().ToString();
+
+            await _allBls.UsersBL.SaveChangesAsync();
+
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext != null)
+                await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return true;
         }
 
         public async Task<List<UserViewModel>> GetAllNonAdminUsersAsync()
         {
-            var admins = await _userManager.GetUsersInRoleAsync(AdminRoleName);
-            var adminIds = admins.Select(a => a.Id).ToHashSet();
-
-            var users = await _allBls.UsersBL.GetAllAsync(u => !adminIds.Contains(u.Id));
-
-            return users
-                .Select(u => new UserViewModel
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Email = u.Email ?? string.Empty,
-                    CreatedAt = u.CreatedAt
-                })
+            var users = await _allBls.CustomerUsersBL
+                .AsQueryable()
+                .Join(
+                    _allBls.UsersBL.AsQueryable(),
+                    cu => cu.Id,
+                    u => u.Id,
+                    (cu, u) => new UserViewModel
+                    {
+                        Id = cu.Id,
+                        FirstName = cu.FirstName,
+                        LastName = cu.LastName,
+                        Email = u.Email,
+                        UserName = u.Email,
+                        CreatedAt = u.CreatedAt
+                    })
                 .OrderByDescending(u => u.CreatedAt)
-                .ToList();
+                .ToListAsync();
+
+            return users;
         }
 
-        public async Task<bool> MakeAdminAsync(Guid userId)
+        public Task<bool> MakeAdminAsync(Guid userId)
         {
-            using var transaction = _allBls.UsersBL.GetTransactionProxy();
-            try
-            {
-                var user = await _allBls.UsersBL.FindAsync(userId)
-                    ?? throw new ArgumentException(UserNotFound);
-
-                var result = await _userManager.AddToRoleAsync(user, AdminRoleName);
-                await transaction.CommitAsync();
-                return result.Succeeded;
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+            // Replaced by IAuthService.CreateAdminUserAsync — stub kept until web layer is updated.
+            throw new NotImplementedException("Use IAuthService.CreateAdminUserAsync instead.");
         }
     }
 }

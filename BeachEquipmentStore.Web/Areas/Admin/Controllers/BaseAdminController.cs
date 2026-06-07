@@ -1,14 +1,11 @@
-﻿namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
+namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
-    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-
     [Area("Admin")]
-    [Authorize(Roles = AdminRoleName)]
+    [Authorize(Policy = "AdminArea")]
     public class BaseAdminController : Controller
     {
-
     }
 }

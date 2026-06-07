@@ -74,12 +74,9 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
 
                 var changePasswordResult = await _userService.ChangeUserPasswordAsync(model.CurrentPassword, model.NewPassword);
 
-                if (!changePasswordResult.Succeeded)
+                if (!changePasswordResult)
                 {
-                    throw new ArgumentException(string.Join("\n", changePasswordResult.Errors
-                        .Select(e => e.Description == "Incorrect password."
-                            ? UserIncorrectPassword
-                            : e.Description)));
+                    throw new ArgumentException(UserIncorrectPassword);
                 }
 
                 return new ChangePasswordResponse

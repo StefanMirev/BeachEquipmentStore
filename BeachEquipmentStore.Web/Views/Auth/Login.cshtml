@@ -1,0 +1,49 @@
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Вход";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-5">
+        <h2 class="mb-3">@ViewData["Title"]</h2>
+        <hr />
+        <form method="post" asp-action="Login" asp-route-returnUrl="@returnUrl">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" autocomplete="email" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <div class="input-group has-validation">
+                    <input asp-for="Password" class="form-control" autocomplete="current-password" />
+                    <button type="button" class="btn btn-outline-secondary" data-password-toggle="Password" tabindex="-1" aria-label="Покажи паролата">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label"></label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Влез</button>
+            @Html.AntiForgeryToken()
+        </form>
+
+        <div class="mt-3">
+            <a asp-controller="Auth" asp-action="Register">Нямате акаунт? Регистрирайте се</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

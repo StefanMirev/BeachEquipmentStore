@@ -3,17 +3,20 @@
 document.addEventListener('DOMContentLoaded', function () {
     const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    const firstName       = document.getElementById('Input_FirstName');
-    const lastName        = document.getElementById('Input_LastName');
-    const phoneNumber     = document.getElementById('Input_PhoneNumber');
-    const email           = document.getElementById('Input_Email');
-    const password        = document.getElementById('Input_Password');
-    const confirmPassword = document.getElementById('Input_ConfirmPassword');
+    const firstName       = document.getElementById('FirstName');
+    const lastName        = document.getElementById('LastName');
+    const phoneNumber     = document.getElementById('PhoneNumber');
+    const email           = document.getElementById('Email');
+    const password        = document.getElementById('Password');
+    const confirmPassword = document.getElementById('ConfirmPassword');
+    const passwordHint    = document.getElementById('passwordHint');
 
     const MIN_FIRST_NAME = parseInt(firstName.dataset.valLengthMin);
     const MAX_FIRST_NAME = parseInt(firstName.dataset.valLengthMax);
     const MIN_LAST_NAME  = parseInt(lastName.dataset.valLengthMin);
     const MAX_LAST_NAME  = parseInt(lastName.dataset.valLengthMax);
+    const MIN_PHONE      = parseInt(phoneNumber.dataset.valLengthMin);
+    const MAX_PHONE      = parseInt(phoneNumber.dataset.valLengthMax);
     const MIN_PASSWORD   = parseInt(password.dataset.valLengthMin);
     const PASSWORD_REGEX = new RegExp(password.dataset.valRegexPattern);
 
@@ -23,41 +26,43 @@ document.addEventListener('DOMContentLoaded', function () {
         lastNameRequired:  lastName.dataset.valRequired,
         lastNameLength:    lastName.dataset.valLength,
         phoneRequired:     phoneNumber.dataset.valRequired,
+        phoneLength:       phoneNumber.dataset.valLength,
         emailRequired:     email.dataset.valRequired,
         emailInvalid:      email.dataset.valEmail,
         passwordRequired:  password.dataset.valRequired,
         passwordLength:    password.dataset.valLength,
         passwordInvalid:   password.dataset.valRegex,
-        confirmRequired:   confirmPassword.dataset.valRequired,
         passwordMismatch:  confirmPassword.dataset.valEqualto,
     };
 
     const form = document.getElementById('registerForm');
 
-    function errorSpan(modelPath) {
-        return document.querySelector(`[data-valmsg-for="${modelPath}"]`);
+    function errorSpan(fieldName) {
+        return document.querySelector(`[data-valmsg-for="${fieldName}"]`);
     }
 
     const spans = {
-        firstName:       errorSpan('Input.FirstName'),
-        lastName:        errorSpan('Input.LastName'),
-        phoneNumber:     errorSpan('Input.PhoneNumber'),
-        email:           errorSpan('Input.Email'),
-        password:        errorSpan('Input.Password'),
-        confirmPassword: errorSpan('Input.ConfirmPassword'),
+        firstName:       errorSpan('FirstName'),
+        lastName:        errorSpan('LastName'),
+        phoneNumber:     errorSpan('PhoneNumber'),
+        email:           errorSpan('Email'),
+        password:        errorSpan('Password'),
+        confirmPassword: errorSpan('ConfirmPassword'),
     };
 
-    function showError(field, span, message) {
+    function showError(field, span, message, hint) {
         span.textContent = message;
         field.classList.add('is-invalid');
+        if (hint) hint.style.display = 'none';
     }
 
-    function clearError(field, span) {
+    function clearError(field, span, hint) {
         span.textContent = '';
         field.classList.remove('is-invalid');
+        if (hint) hint.style.display = '';
     }
 
-    // --- Validation rules — each returns an error string or null ---
+    // --- Validation rules ---
 
     function validateFirstName() {
         const val = firstName.value.trim();
@@ -74,7 +79,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function validatePhoneNumber() {
-        if (!phoneNumber.value.trim()) return MSG.phoneRequired;
+        const val = phoneNumber.value.trim();
+        if (!val) return MSG.phoneRequired;
+        if (val.length < MIN_PHONE || val.length > MAX_PHONE) return MSG.phoneLength;
         return null;
     }
 
@@ -94,9 +101,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function validateConfirmPassword() {
-        const val = confirmPassword.value;
-        if (!val) return MSG.confirmRequired;
-        if (val !== password.value) return MSG.passwordMismatch;
+        // Treat empty confirm as mismatch when password has a value; both empty = required
+        if (!confirmPassword.value && !password.value) return null;
+        if (confirmPassword.value !== password.value) return MSG.passwordMismatch;
         return null;
     }
 
@@ -105,17 +112,17 @@ document.addEventListener('DOMContentLoaded', function () {
         { field: lastName,        span: spans.lastName,        validate: validateLastName },
         { field: phoneNumber,     span: spans.phoneNumber,     validate: validatePhoneNumber },
         { field: email,           span: spans.email,           validate: validateEmail },
-        { field: password,        span: spans.password,        validate: validatePassword },
+        { field: password,        span: spans.password,        validate: validatePassword, hint: passwordHint },
         { field: confirmPassword, span: spans.confirmPassword, validate: validateConfirmPassword },
     ];
 
     function runValidation(v) {
         const error = v.validate();
         if (error) {
-            showError(v.field, v.span, error);
+            showError(v.field, v.span, error, v.hint);
             return false;
         }
-        clearError(v.field, v.span);
+        clearError(v.field, v.span, v.hint);
         return true;
     }
 
@@ -125,30 +132,42 @@ document.addEventListener('DOMContentLoaded', function () {
         if (filtered !== this.value) this.value = filtered;
     });
 
-    // Show error on blur; while typing, only clear the error — never show a new one.
-    // This prevents format/length errors from appearing mid-input after a required error.
+    const confirmEntry = validations.find(function (v) { return v.field === confirmPassword; });
+
+    // All fields except confirm password: show error on blur, clear on input when already invalid
     validations.forEach(function (v) {
+        if (v.field === confirmPassword) return;
+
         v.field.addEventListener('blur', function () {
             runValidation(v);
         });
 
         v.field.addEventListener('input', function () {
             if (v.field.classList.contains('is-invalid')) {
-                clearError(v.field, v.span);
+                clearError(v.field, v.span, v.hint);
             }
         });
     });
 
-    // When password changes, clear the confirm mismatch only if they now match
-    password.addEventListener('input', function () {
-        if (confirmPassword.classList.contains('is-invalid')) {
-            if (!validateConfirmPassword()) clearError(confirmPassword, spans.confirmPassword);
-        }
-    });
+    // Confirm password: validate live on input of either field, never on blur
+    function revalidateConfirm() {
+        runValidation(confirmEntry);
+    }
+
+    confirmPassword.addEventListener('input', revalidateConfirm);
+    password.addEventListener('input', revalidateConfirm);
 
     // On submit: validate everything, block submission if anything fails
     form.addEventListener('submit', function (e) {
-        const allValid = validations.map(runValidation).every(Boolean);
+        // Also validate required on confirm password at submit time
+        const allValid = validations.map(function (v) {
+            // For confirm password, treat empty as a required error on submit
+            if (v.field === confirmPassword && !confirmPassword.value) {
+                showError(v.field, v.span, MSG.passwordMismatch || 'Полетата за парола трябва да съответстват!', v.hint);
+                return false;
+            }
+            return runValidation(v);
+        }).every(Boolean);
 
         if (!allValid) {
             e.preventDefault();

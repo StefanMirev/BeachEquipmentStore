@@ -10,7 +10,6 @@ namespace BeachEquipmentStore.Common
             public const decimal DeliveryPrice = 5.50m;
 
             public const string AdminAreaName = "Admin";
-            public const string AdminRoleName = "Administrator";
 
             public const int PasswordMinLength = 10;
             public const string PasswordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{10,}$";
@@ -18,6 +17,44 @@ namespace BeachEquipmentStore.Common
 
         public static class EntityValidationConstants
         {
+            public static class User
+            {
+                public const int EmailMaxLength = 256;
+                public const int EmailMinLength = 5;
+
+                public const int UsernameMaxLength = 256;
+                public const int UsernameMinLength = 3;
+            }
+
+            public static class CustomerUser
+            {
+                public const int FirstNameMaxLength = 50;
+                public const int FirstNameMinLength = 2;
+
+                public const int LastNameMaxLength = 50;
+                public const int LastNameMinLength = 3;
+
+                public const int PhoneNumberMaxLength = 15;
+                public const int PhoneNumberMinLength = 7;
+            }
+
+            public static class AdminUser
+            {
+                public const int FirstNameMaxLength = 50;
+                public const int FirstNameMinLength = 2;
+
+                public const int LastNameMaxLength = 50;
+                public const int LastNameMinLength = 3;
+            }
+
+            public static class UserRole
+            {
+                public const int NameMaxLength = 50;
+                public const int NameMinLength = 3;
+
+                public const int DescriptionMaxLength = 200;
+            }
+
             public static class Address
             {
                 public const int AddressMaxLength = 100;
@@ -107,9 +144,10 @@ namespace BeachEquipmentStore.Common
             public const string EmailRequired = "Полето за електронна поща е задължително!";
             public const string EmailInvalid = "Моля въведете валиден адрес на електронна поща!";
             public const string PhoneNumberRequired = "Полето за телефонен номер е задължително!";
+            public const string PhoneNumberLengthError = "Телефонният номер трябва да съдържа поне {2} и не повече от {1} символа.";
             public const string PasswordRequired = "Полето за парола е задължително!";
             public const string PasswordInvalid = "Паролата трябва да съдържа поне една главна буква, една малка буква, една цифра и един специален символ.";
-            public const string PasswordMismatchError = "Полетата за парола не съответстват!";
+            public const string PasswordMismatchError = "Полетата за парола трябва да съответстват!";
             public const string PasswordLengthError = "{0} трябва да бъде поне {2} и не повече от {1} символа!";
 
             //User
@@ -119,6 +157,11 @@ namespace BeachEquipmentStore.Common
             public const string UserPasswordChangeSuccess = "Успешно променихте паролата си.";
             public const string UserAdminGrantSuccess = "Потребителят е направен администратор.";
             public const string UserAdminGrantFailure = "Възникна грешка при опита потребителя да бъде направен администратор!";
+            public const string UserEmailAlreadyExists = "Вече съществува акаунт с този имейл адрес!";
+            public const string UserAlreadyCustomer = "Потребителят е клиент и не може да бъде направен администратор!";
+            public const string UserAlreadyAdmin = "Потребителят вече е администратор!";
+            public const string UserLockedOut = "Акаунтът ви е заключен. Моля, опитайте по-късно.";
+            public const string UserInvalidCredentials = "Невалиден имейл или парола!";
         }
     }
 }

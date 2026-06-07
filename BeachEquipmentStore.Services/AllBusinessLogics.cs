@@ -9,9 +9,13 @@ namespace BeachEquipmentStore.Services
         private BaseLogic<T> GetLogic<T>() where T : class
             => new BaseLogic<T>(new Database<T>(context));
 
+        public BaseLogic<User> UsersBL => GetLogic<User>();
+        public BaseLogic<CustomerUser> CustomerUsersBL => GetLogic<CustomerUser>();
+        public BaseLogic<AdminUser> AdminUsersBL => GetLogic<AdminUser>();
+        public BaseLogic<UserRole> UserRolesBL => GetLogic<UserRole>();
+        public BaseLogic<UserToken> UserTokensBL => GetLogic<UserToken>();
         public BaseLogic<Address> AddressesBL => GetLogic<Address>();
         public BaseLogic<AddressLog> AddressLogsBL => GetLogic<AddressLog>();
-        public BaseLogic<ApplicationUser> UsersBL => GetLogic<ApplicationUser>();
         public BaseLogic<CartItem> CartItemsBL => GetLogic<CartItem>();
         public BaseLogic<Category> CategoriesBL => GetLogic<Category>();
         public BaseLogic<Manufacturer> ManufacturersBL => GetLogic<Manufacturer>();

@@ -1,151 +1,17 @@
-﻿IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'sp_SeedDatabase')
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'sp_SeedDatabase')
 BEGIN
     DROP PROCEDURE sp_SeedDatabase;
 END;
 
 BEGIN
-	EXEC('CREATE PROCEDURE sp_SeedDatabase
+	EXEC('CREATE OR ALTER PROCEDURE sp_SeedDatabase
         AS
         BEGIN TRY
-		    DECLARE @UsersInsertCount INT = 0;
-			DECLARE @AddressesInsertCount INT = 0;
 			DECLARE @CategoriesInsertCount INT = 0;
 			DECLARE @ManufacturersInsertCount INT = 0;
 			DECLARE @ProductsInsertCount INT = 0;
 
 		    PRINT ''Seeding process started.'';
-
-			DECLARE @UserOneHash VARCHAR(255), @UserTwoHash VARCHAR(255), @UserThreeHash VARCHAR(255);
-
-			SET @UserOneHash = CONVERT(VARCHAR(255), HASHBYTES(''SHA2_256'', ''123123''), 2);
-			SET @UserTwoHash = CONVERT(VARCHAR(255), HASHBYTES(''SHA2_256'', ''123123''), 2);
-			SET @UserThreeHash = CONVERT(VARCHAR(255), HASHBYTES(''SHA2_256'', ''123123''), 2);
-
-	-- Start Insert Users
-			BEGIN TRANSACTION
-
-            IF NOT EXISTS (SELECT 1 FROM [dbo].[AspNetUsers] WHERE [Email] = ''p.petrov@mail.com'')
-            BEGIN
-                INSERT INTO [dbo].[AspNetUsers] (
-					[Id]
-					,[FirstName]
-					,[LastName]
-					,[UserName]
-					,[NormalizedUsername]
-					,[Email]
-					,[NormalizedEmail]
-					,[PhoneNumber]
-					,[PasswordHash]
-					,[SecurityStamp]
-					,[CreatedAt]
-					,[EmailConfirmed]
-					,[PhoneNumberConfirmed]
-					,[TwoFactorEnabled]
-					,[LockoutEnabled]
-					,[AccessFailedCount]
-					)
-					VALUES (
-						NEWID()
-						,''Petar''
-						,''Petrov''
-						,''p.petrov@mail.com''
-						,''P.PETROV@MAIL.COM''
-						,''p.petrov@mail.com''
-						,''P.PETROV@MAIL.COM''
-						,''0876596224''
-						,@UserOneHash
-						,NEWID()
-						,GETDATE()
-						,1
-						,1
-						,1
-						,0
-						,0
-						);
-
-				SET @UsersInsertCount = @UsersInsertCount + 1;
-            END;
-
-			IF NOT EXISTS (SELECT 1 FROM [dbo].[AspNetUsers] WHERE [Email] = ''n.flacko@mail.com'')
-            BEGIN
-                INSERT INTO [dbo].[AspNetUsers] ([Id], [FirstName], [LastName], [UserName], [NormalizedUsername], [Email], [NormalizedEmail], [PhoneNumber], [PasswordHash], [SecurityStamp], [CreatedAt], [EmailConfirmed], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnabled], [AccessFailedCount])
-					VALUES (NEWID(), ''Nicko'', ''Flacko'', ''n.flacko@mail.com'', ''N.FLACKO@MAIL.COM'', ''n.flacko@mail.com'', ''N.FLACKO@MAIL.COM'', ''0888202449'', @UserTwoHash, NEWID(), GETDATE(), 1, 1, 1, 0, 0);
-				SET @UsersInsertCount = @UsersInsertCount + 1;
-			END;
-
-			IF NOT EXISTS (SELECT 1 FROM [dbo].[AspNetUsers] WHERE [Email] = ''s.sarafov@mail.com'')
-            BEGIN
-                INSERT INTO [dbo].[AspNetUsers] ([Id], [FirstName], [LastName], [UserName], [NormalizedUsername], [Email], [NormalizedEmail], [PhoneNumber], [PasswordHash], [SecurityStamp], [CreatedAt], [EmailConfirmed], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnabled], [AccessFailedCount])
-					VALUES (NEWID(), ''Stamat'', ''Sarafov'', ''s.sarafov@mail.com'', ''S.SARAFOV@MAIL.COM'', ''s.sarafov@mail.com'', ''S.SARAFOV@MAIL.COM'', ''0885527733'', @UserThreeHash, NEWID(), GETDATE(), 1, 1, 1, 0, 0);
-				SET @UsersInsertCount = @UsersInsertCount + 1;
-			END;
-			
-			COMMIT TRANSACTION
-
-			PRINT ''Inserted '' + CAST(@UsersInsertCount AS VARCHAR(10)) + '' users into AspNetUsers table.'';
-
-	-- End Insert Users
-
-	-- Start Insert Addresses
-			BEGIN TRANSACTION
-
-			DECLARE @UserOneId UNIQUEIDENTIFIER, @UserTwoId UNIQUEIDENTIFIER, @UserThreeId UNIQUEIDENTIFIER;
-
-			SELECT @UserOneId = Id FROM AspNetUsers WHERE Email = ''p.petrov@mail.com'';
-			SELECT @UserTwoId = Id FROM AspNetUsers WHERE Email = ''n.flacko@mail.com'';
-			SELECT @UserThreeId = Id FROM AspNetUsers WHERE Email = ''s.sarafov@mail.com'';
-
-		    IF @UserOneId IS NOT NULL
-			BEGIN
-				IF NOT EXISTS (SELECT 1 FROM [dbo].[Addresses] WHERE [CustomerId] = @UserOneId)
-				BEGIN
-					INSERT INTO [dbo].[Addresses] (
-						[Id]
-						,[Name]
-						,[Town]
-						,[ZipCode]
-						,[CustomerId]
-						,[CreatedAt]
-						,[IsPrimaryAddress]
-						) 
-						VALUES (
-							NEWID()
-							,''ул. Кракра №3''
-							,''София''
-							,''1000''
-							,@UserOneId
-							,GETDATE()
-							,1
-							);
-					SET @AddressesInsertCount = @AddressesInsertCount + 1;
-				END
-			END;
-
-			IF @UserTwoId IS NOT NULL
-			BEGIN
-				IF NOT EXISTS (SELECT 1 FROM [dbo].[Addresses] WHERE [CustomerId] = @UserTwoId)
-				BEGIN
-					INSERT INTO [dbo].[Addresses] ([Id], [Name], [Town], [ZipCode], [CustomerId], [CreatedAt], [IsPrimaryAddress]) 
-						VALUES (NEWID(), ''кв. Овча Купел, ул. Рачка №9'', ''София'', ''1000'', @UserTwoId, GETDATE(), 1);
-					SET @AddressesInsertCount = @AddressesInsertCount + 1;
-				END
-			END;
-
-			IF @UserThreeId IS NOT NULL
-            BEGIN
-				IF NOT EXISTS (SELECT 1 FROM [dbo].[Addresses] WHERE [CustomerId] = @UserThreeId)
-				BEGIN
-					INSERT INTO [dbo].[Addresses] ([Id], [Name], [Town], [ZipCode], [CustomerId], [CreatedAt], [IsPrimaryAddress]) 
-						VALUES (NEWID(), ''ул. Обзорски Тигър № 33'', ''София'', ''1000'', (SELECT Id FROM AspNetUsers WHERE Email = ''s.sarafov@mail.com''), GETDATE(), 1);
-					SET @AddressesInsertCount = @AddressesInsertCount + 1;
-				END
-			END;
-
-			COMMIT TRANSACTION
-
-			PRINT ''Inserted '' + CAST(@AddressesInsertCount AS VARCHAR(10)) + '' addresses into Addresses table.'';
-
-	-- End Insert Addresses
 
 	-- Start Insert Categories
 			SET IDENTITY_INSERT Categories ON;
@@ -210,7 +76,7 @@ BEGIN
 					VALUES (7, ''Топки'', ''https://i.ibb.co/rHY9wjG/Ball-Category.jpg'', GETDATE());
 				SET @CategoriesInsertCount = @CategoriesInsertCount + 1;
 			END;
-			
+
 			SET IDENTITY_INSERT Categories OFF;
 
 			COMMIT TRANSACTION
@@ -627,7 +493,7 @@ BEGIN
         END TRY
 		BEGIN CATCH
 			ROLLBACK TRANSACTION
-			
+
 			PRINT ''Error occurred: '' + ERROR_MESSAGE();
 		END CATCH')
 END;

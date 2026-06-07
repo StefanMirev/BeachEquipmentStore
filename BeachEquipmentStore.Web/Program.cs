@@ -1,17 +1,14 @@
 namespace BeachEquipmentStore.Web
 {
     using BeachEquipmentStore.Data;
-    using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Infrastructure.Extensions;
     using BeachEquipmentStore.Infrastructure.Helpers;
     using BeachEquipmentStore.Infrastructure.ModelBinders;
-    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.DependencyInjection;
     using OwaspHeaders.Core.Extensions;
     using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
-    using static BeachEquipmentStore.Infrastructure.Extensions.WebApplicationBuilderExtensions;
 
     public class Program
     {
@@ -19,25 +16,39 @@ namespace BeachEquipmentStore.Web
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<EquipmentStoreDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+            builder.Services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                    options.SlidingExpiration = true;
+                    options.Cookie.SameSite = SameSiteMode.Lax;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.LoginPath = "/Login";
+                    options.AccessDeniedPath = "/AccessDenied";
+                });
+
+            builder.Services.AddAuthorization(options =>
             {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequiredLength = PasswordMinLength;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-                options.Lockout.MaxFailedAccessAttempts = 10;
-                options.Lockout.AllowedForNewUsers = true;
-            })
-                .AddRoles<IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<EquipmentStoreDbContext>()
-                .AddDefaultTokenProviders();
+                options.AddPolicy("RequireAuthenticatedUser", policy => policy.RequireAuthenticatedUser());
+                options.AddPolicy("AdminArea", policy => policy.RequireClaim("UserType", "Admin"));
+                options.AddPolicy("AdminWrite", policy =>
+                {
+                    policy.RequireClaim("UserType", "Admin");
+                    policy.RequireClaim("CanWrite", "true");
+                });
+                options.AddPolicy("AdminDelete", policy =>
+                {
+                    policy.RequireClaim("UserType", "Admin");
+                    policy.RequireClaim("CanDelete", "true");
+                });
+            });
 
             var mvcBuilder = builder.Services.AddControllersWithViews()
                 .AddMvcOptions(options =>
@@ -45,17 +56,6 @@ namespace BeachEquipmentStore.Web
                     options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
                     options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
                 });
-
-            builder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromDays(30);
-                options.SlidingExpiration = true;
-                options.Cookie.SameSite = SameSiteMode.Lax;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.LoginPath = "/Login";
-                options.AccessDeniedPath = "/AccessDenied";
-            });
 
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
@@ -66,14 +66,9 @@ namespace BeachEquipmentStore.Web
             });
 
             if (builder.Environment.IsDevelopment())
-            {
                 mvcBuilder.AddRazorRuntimeCompilation();
-                builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
-            }
-            else
-            {
-                builder.Services.AddRazorPages();
-            }
+
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddApplicationServices();
 
             CultureConfig.ConfigureCulture();
@@ -84,21 +79,13 @@ namespace BeachEquipmentStore.Web
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("RequireAuthenticatedUser", policy =>
-                {
-                    policy.RequireAuthenticatedUser();
-                });
-            });
-
             var app = builder.Build();
 
-            await app.SeedAdministratorAsync(builder.Configuration["AdminEmail"]!);
+            await app.SeedAdministratorAsync(builder.Configuration["AdminEmail"]!, builder.Configuration["AdminPassword"]);
 
             if (app.Environment.IsDevelopment())
             {
-                app.UseMigrationsEndPoint();
+                app.UseDeveloperExceptionPage();
             }
             else
             {
@@ -143,26 +130,10 @@ namespace BeachEquipmentStore.Web
                 await next();
             });
 
-
             app.UseSession();
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.MapControllerRoute(
-                name: "Register",
-                pattern: "/Register",
-                defaults: new { area = "Identity", page = "/Account/Register" });
-
-            app.MapControllerRoute(
-                name: "Login",
-                pattern: "/Login",
-                defaults: new { area = "Identity", page = "/Account/Login" });
-
-            app.MapControllerRoute(
-                name: "AccessDenied",
-                pattern: "/AccessDenied",
-                defaults: new { area = "Identity", page = "/Account/AccessDenied" });
 
             app.MapControllerRoute(
                 name: "areaRoute",
@@ -173,8 +144,6 @@ namespace BeachEquipmentStore.Web
                 name: "default",
                 pattern: "{controller}/{action}/{id?}",
                 defaults: new { controller = "Home", action = "Index" });
-
-            app.MapRazorPages();
 
             app.Run();
         }

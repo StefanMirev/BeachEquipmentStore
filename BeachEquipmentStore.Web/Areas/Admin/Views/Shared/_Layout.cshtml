@@ -19,8 +19,9 @@
                 <a asp-area="Admin" asp-controller="Product" asp-action="Restock" class="btn btn-outline-primary btn-lg">Възстанови запасите</a>
             </div>
             <div class="col" style="display: flex; justify-content: center">
-                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                    <button type="submit" class="nav-link btn btn-outline-primary btn-lg">Изход</button>
+                <form method="post" asp-controller="Auth" asp-action="Logout">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-primary btn-lg">Изход</button>
                 </form>
             </div>
         </div>

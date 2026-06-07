@@ -1,8 +1,7 @@
-﻿namespace BeachEquipmentStore.Services.Interfaces
+namespace BeachEquipmentStore.Services.Interfaces
 {
     using BeachEquipmentStore.ViewModels.Profile;
     using BeachEquipmentStore.ViewModels.User;
-    using Microsoft.AspNetCore.Identity;
     using System.Security.Claims;
 
     public interface IUserService
@@ -19,7 +18,7 @@
 
         Task ChangeUserDetailsAsync(UserDetailsViewModel detailsModel);
 
-        Task<IdentityResult> ChangeUserPasswordAsync(string currentPassword, string newPassword);
+        Task<bool> ChangeUserPasswordAsync(string currentPassword, string newPassword);
 
         Task<List<UserViewModel>> GetAllNonAdminUsersAsync();
 

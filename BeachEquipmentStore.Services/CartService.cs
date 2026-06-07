@@ -28,14 +28,14 @@ namespace BeachEquipmentStore.Services
             try
             {
                 var existingCartItem = await _allBls.CartItemsBL.AsQueryable()
-                    .FirstOrDefaultAsync(ci => ci.CustomerId == userId && ci.ProductId == productId);
+                    .FirstOrDefaultAsync(ci => ci.CustomerUserId == userId && ci.ProductId == productId);
 
                 if (existingCartItem != null)
                     existingCartItem.Quantity += quantity;
                 else
                     await _allBls.CartItemsBL.AddAsync(new CartItem
                     {
-                        CustomerId = userId,
+                        CustomerUserId = userId,
                         ProductId = productId,
                         Quantity = quantity
                     });
@@ -62,7 +62,7 @@ namespace BeachEquipmentStore.Services
                 throw new InvalidOperationException(UserNotFound);
             }
 
-            var cartItems = await _allBls.CartItemsBL.GetAllAsync(ci => ci.CustomerId == userId);
+            var cartItems = await _allBls.CartItemsBL.GetAllAsync(ci => ci.CustomerUserId == userId);
             var productIds = cartItems.Select(ci => ci.ProductId).ToList();
             var products = await _allBls.ProductsBL.GetAllAsync(p => productIds.Contains(p.Id));
 
@@ -90,7 +90,7 @@ namespace BeachEquipmentStore.Services
             using var transaction = _allBls.CartItemsBL.GetTransactionProxy();
             try
             {
-                var cartItems = await _allBls.CartItemsBL.GetAllAsync(p => p.CustomerId == userId);
+                var cartItems = await _allBls.CartItemsBL.GetAllAsync(p => p.CustomerUserId == userId);
 
                 foreach (var cartItem in cartItems)
                 {
@@ -127,7 +127,7 @@ namespace BeachEquipmentStore.Services
                     ?? throw new InvalidOperationException(ProductNotFound);
 
                 var cartItem = await _allBls.CartItemsBL.AsQueryable()
-                    .FirstOrDefaultAsync(ci => ci.CustomerId == userId && ci.ProductId == productId);
+                    .FirstOrDefaultAsync(ci => ci.CustomerUserId == userId && ci.ProductId == productId);
 
                 product.Stock += cartItem!.Quantity;
 

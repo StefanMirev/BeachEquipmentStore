@@ -1,5 +1,6 @@
 namespace BeachEquipmentStore.Services
 {
+    using BeachEquipmentStore.Common.Enums;
     using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Cart;
@@ -31,7 +32,7 @@ namespace BeachEquipmentStore.Services
                 throw new ArgumentNullException(UserNotFound);
             }
 
-            var orders = await _allBls.OrdersBL.GetAllAsync(o => o.CustomerId == userId);
+            var orders = await _allBls.OrdersBL.GetAllAsync(o => o.CustomerUserId == userId);
 
             return orders
                 .Select(o => new OrderHistoryViewModel
@@ -53,15 +54,18 @@ namespace BeachEquipmentStore.Services
             var user = await _allBls.UsersBL.FindAsNoTrackingAsync(userId)
                 ?? throw new InvalidOperationException(UserNotFound);
 
+            var customerUser = await _allBls.CustomerUsersBL.FindAsNoTrackingAsync(userId)
+                ?? throw new InvalidOperationException(UserNotFound);
+
             var userDetails = new UserSummaryViewModel
             {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email ?? string.Empty,
-                PhoneNumber = user.PhoneNumber ?? string.Empty
+                FirstName = customerUser.FirstName,
+                LastName = customerUser.LastName,
+                Email = user.Email,
+                PhoneNumber = customerUser.PhoneNumber ?? string.Empty
             };
 
-            var addresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerId == userId);
+            var addresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerUserId == userId);
             var userAddress = addresses
                 .OrderByDescending(a => a.IsPrimaryAddress)
                 .Select(a => new AddressDetailsViewModel
@@ -74,7 +78,7 @@ namespace BeachEquipmentStore.Services
 
             var userProducts = await _allBls.CartItemsBL.AsQueryable().AsNoTracking()
                 .Include(ci => ci.Product)
-                .Where(ci => ci.CustomerId == userId)
+                .Where(ci => ci.CustomerUserId == userId)
                 .OrderByDescending(ci => ci.CreatedAt)
                 .Select(p => new CartProductViewModel
                 {
@@ -101,7 +105,7 @@ namespace BeachEquipmentStore.Services
             if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
                 throw new InvalidOperationException(UserNotFound);
 
-            var userAddresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerId == userId);
+            var userAddresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerUserId == userId);
 
             if (!userAddresses.Any(a => a.Name == addressName && a.Town == town && a.ZipCode == zipCode))
                 await _addressService.AddAddressAsync(userId, addressName!, town!, zipCode!, true);
@@ -118,13 +122,13 @@ namespace BeachEquipmentStore.Services
 
                 var cartItems = await _allBls.CartItemsBL.AsQueryable().AsNoTracking()
                     .Include(ci => ci.Product)
-                    .Where(ci => ci.CustomerId == userId)
+                    .Where(ci => ci.CustomerUserId == userId)
                     .ToListAsync();
 
                 var order = new Order
                 {
-                    DeliveryStatus = 0,
-                    CustomerId = userId,
+                    DeliveryStatus = DeliveryStatus.Пътува,
+                    CustomerUserId = userId,
                     AddressLogId = addressLog.Id
                 };
 
@@ -174,7 +178,7 @@ namespace BeachEquipmentStore.Services
                 .FirstOrDefaultAsync(o => o.Id == orderId)
                 ?? throw new InvalidOperationException(OrderNotFound);
 
-            if (_userService.GetCurrentLoggedInUserId() != order.CustomerId)
+            if (_userService.GetCurrentLoggedInUserId() != order.CustomerUserId)
             {
                 throw new InvalidOperationException(OrderNotFound);
             }
@@ -214,7 +218,7 @@ namespace BeachEquipmentStore.Services
 
         public async Task<List<PendingOrderViewModel>> GetUndeliveredOrdersAsync()
         {
-            var orders = await _allBls.OrdersBL.GetAllAsync(o => o.DeliveryStatus == 0);
+            var orders = await _allBls.OrdersBL.GetAllAsync(o => o.DeliveryStatus == DeliveryStatus.Пътува);
 
             return orders
                 .Select(o => new PendingOrderViewModel
@@ -235,8 +239,7 @@ namespace BeachEquipmentStore.Services
                     ?? throw new InvalidOperationException(OrderNotFound);
 
                 order.ShippingDate = DateTime.Now;
-                order.DeliveryStatus += 1;
-                order.UpdatedAt = DateTime.Now;
+                order.DeliveryStatus = DeliveryStatus.Доставена;
 
                 var result = await _allBls.OrdersBL.SaveChangesAsync() > 0;
                 await transaction.CommitAsync();

@@ -1,21 +1,20 @@
-﻿namespace BeachEquipmentStore.Data.Entities
+namespace BeachEquipmentStore.Data.Entities
 {
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.ApplicationUser;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.AdminUser;
 
-    public class ApplicationUser : IdentityUser<Guid>, IEntity
+    public class AdminUser : IEntity
     {
-        public ApplicationUser()
+        public AdminUser()
         {
-            this.Id = Guid.NewGuid();
-            this.CartItems = new HashSet<CartItem>();
             this.CreatedAt = DateTime.Now;
-            this.Orders = new HashSet<Order>();
-            this.Addresses = new HashSet<Address>();
         }
+
+        [Key]
+        public Guid Id { get; set; }
 
         [Required]
         [Unicode]
@@ -30,14 +29,16 @@
         public string LastName { get; set; } = null!;
 
         [Required]
+        [DisplayName("Is Active")]
+        public bool IsActive { get; set; } = true;
+
+        [Required]
         public DateTime CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
-        public ICollection<Address> Addresses { get; set; }
-
-        public ICollection<CartItem> CartItems { get; set; }
-
-        public ICollection<Order> Orders { get; set; }
+        public Guid? UserRoleId { get; set; }
+        [ForeignKey(nameof(UserRoleId))]
+        public UserRole? UserRole { get; set; }
     }
 }
