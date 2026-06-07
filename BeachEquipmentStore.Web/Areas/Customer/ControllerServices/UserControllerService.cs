@@ -139,7 +139,8 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
 
                 return new BaseResponse
                 {
-                    IsSuccess = true
+                    IsSuccess = true,
+                    ResponseMessage = AddressAddSuccess
                 };
             }
             catch (Exception ex)
@@ -152,7 +153,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
             }
         }
 
-        public async Task<GetAddressResponse> GetUserAddressDetailsAsync(string addressId)
+        public async Task<GetAddressResponse> GetUserAddressDetailsAsync(Guid addressId)
         {
             try
             {
@@ -238,46 +239,5 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
             }
         }
 
-        public async Task<GetUsersResponse> GetAllNonAdminUsersAsync()
-        {
-            try
-            {
-                return new GetUsersResponse
-                {
-                    IsSuccess = true,
-                    Users = await _userService.GetAllNonAdminUsersAsync()
-                };
-            }
-            catch (Exception ex)
-            {
-                return new GetUsersResponse
-                {
-                    IsSuccess = false,
-                    ResponseMessage = ex.Message
-                };
-            }
-        }
-
-        public async Task<BaseResponse> MakeAdmin(Guid userId)
-        {
-            try
-            {
-                var isSuccess = await _userService.MakeAdmin(userId);
-
-                return new BaseResponse
-                {
-                    IsSuccess = isSuccess,
-                    ResponseMessage = isSuccess ? UserAdminGrantSuccess : UserAdminGrantFailure,
-                };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse
-                {
-                    IsSuccess = false,
-                    ResponseMessage = ex.Message
-                };
-            }
-        }
     }
 }

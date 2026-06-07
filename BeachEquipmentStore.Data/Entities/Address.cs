@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Data.Models
+﻿namespace BeachEquipmentStore.Data.Entities
 {
     using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.Address;
     using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class Address
+    public class Address : IEntity
     {
         public Address()
         {
@@ -28,7 +28,7 @@
         public string Town { get; set; } = null!;
 
         [Required]
-        [Range(ZipCodeMinLength, ZipCodeMaxLength)]
+        [StringLength(ZipCodeMaxLength, MinimumLength = ZipCodeMinLength)]
         [DisplayName("Zip Code")]
         public string ZipCode { get; set; } = null!;
 

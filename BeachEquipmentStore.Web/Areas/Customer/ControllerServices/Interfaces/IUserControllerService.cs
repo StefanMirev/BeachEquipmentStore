@@ -10,11 +10,9 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Inte
         Task<ChangePasswordResponse> ChangeUserPasswordAsync(ChangePasswordViewModel model);
         Task<GetAllAddressesResponse> GetAllUserAddressesAsync();
         Task<BaseResponse> AddUserAddressAsync(string name, string town, string zipCode, bool isPrimaryAddress);
-        Task<GetAddressResponse> GetUserAddressDetailsAsync(string addressId);
+        Task<GetAddressResponse> GetUserAddressDetailsAsync(Guid addressId);
         Task<BaseResponse> ChangeUserAddressDetailsAsync(Guid addressId, string name, string town, string zipCode);
         Task<DeleteAddressResponse> DeleteUserAddressAsync(Guid addressId);
         Task<GetOrderHistoryResponse> GetUserOrderHistoryAsync();
-        Task<GetUsersResponse> GetAllNonAdminUsersAsync();
-        Task<BaseResponse> MakeAdmin(Guid userId);
     }
 }

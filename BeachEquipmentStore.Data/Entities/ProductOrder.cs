@@ -1,15 +1,19 @@
-﻿namespace BeachEquipmentStore.Data.Models
+namespace BeachEquipmentStore.Data.Entities
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class ProductOrder
+    public class ProductOrder : IEntity
     {
         public ProductOrder()
         {
+            this.Id = Guid.NewGuid();
             this.CreatedAt = DateTime.Now;
         }
+
+        [Key]
+        public Guid Id { get; set; }
 
         public Guid ProductId { get; set; }
         [ForeignKey(nameof(ProductId))]
@@ -26,7 +30,8 @@
         public DateTime CreatedAt { get; set; }
 
         [Required]
-        [Precision(18, 2)]
-        public decimal SingularPrice { get; set; }
+        public Guid ProductLogId { get; set; }
+        [ForeignKey(nameof(ProductLogId))]
+        public ProductLog ProductLog { get; set; } = null!;
     }
 }

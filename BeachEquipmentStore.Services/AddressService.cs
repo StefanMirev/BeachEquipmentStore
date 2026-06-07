@@ -1,7 +1,6 @@
-﻿namespace BeachEquipmentStore.Services
+namespace BeachEquipmentStore.Services
 {
-    using BeachEquipmentStore.Data;
-    using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Profile;
     using Microsoft.EntityFrameworkCore;
@@ -9,27 +8,28 @@
 
     public class AddressService : IAddressService
     {
-        private readonly EquipmentStoreDbContext _data;
+        private readonly AllBusinessLogics _allBls;
 
-        public AddressService(EquipmentStoreDbContext data)
+        public AddressService(AllBusinessLogics allBls)
         {
-            _data= data;
+            _allBls = allBls;
         }
 
         public async Task<List<AddressDetailsViewModel>> GetAllAddressesByUserIdAsync(Guid userId)
         {
-            if (!await _data.Users.AnyAsync(a => a.Id == userId))
+            if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
             {
                 throw new ArgumentException(UserNotFound);
             }
 
-            if (!await _data.Addresses.AnyAsync(a => a.CustomerId == userId))
+            var addresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerId == userId);
+
+            if (!addresses.Any())
             {
-                throw new InvalidOperationException(AddressesEmpty);
+                throw new InvalidOperationException(AddressNotFound);
             }
 
-            var userAddresses = await _data.Addresses
-                .Where(a => a.CustomerId == userId)
+            return addresses
                 .Select(a => new AddressDetailsViewModel
                 {
                     Id = a.Id,
@@ -41,19 +41,17 @@
                 })
                 .OrderByDescending(a => a.IsPrimaryAddress)
                 .ThenBy(a => a.CreatedAt)
-                .ToListAsync();
-
-            return userAddresses;
+                .ToList();
         }
 
-        public async Task<AddressDetailsViewModel> GetAddressDetailsByIdAsync(string addressId)
+        public async Task<AddressDetailsViewModel> GetAddressDetailsByIdAsync(Guid addressId)
         {
-            if (!await _data.Addresses.AnyAsync(a => a.Id == Guid.Parse(addressId)))
-            {
-                throw new InvalidOperationException(AddressesEmpty);
-            }
+            var address = await _allBls.AddressesBL.FindAsNoTrackingAsync(addressId);
 
-            var address = await _data.Addresses.FirstAsync(a => a.Id.ToString() == addressId);
+            if (address == null)
+            {
+                throw new InvalidOperationException(AddressNotFound);
+            }
 
             return new AddressDetailsViewModel
             {
@@ -67,86 +65,99 @@
 
         public async Task AddAddressAsync(Guid userId, string name, string town, string zipCode, bool isPrimaryAddress = false)
         {
-            if (!_data.Users.Any(u => u.Id == userId))
-            {
+            if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
                 throw new ArgumentException(UserNotFound);
-            }
 
-            if (_data.Addresses.Where(a => a.CustomerId == userId).Count() >= 10)
-            {
+            var userAddresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerId == userId);
+
+            if (userAddresses.Count >= 10)
                 throw new InvalidOperationException(AddressLimitReached);
-            }
 
-            if (!int.TryParse(zipCode, out int result))
-            {
+            if (!int.TryParse(zipCode, out int _))
                 throw new ArgumentException(AddressZipCodeInvalid);
-            }
 
-            if (isPrimaryAddress)
+            using var transaction = _allBls.AddressesBL.GetTransactionProxy();
+            try
             {
-                var primaryAddress = await _data.Addresses.FirstOrDefaultAsync(a => a.IsPrimaryAddress == true);
-
-                if(primaryAddress != null)
+                if (isPrimaryAddress)
                 {
-                    primaryAddress.IsPrimaryAddress = false;
+                    var primaryAddress = await _allBls.AddressesBL.AsQueryable()
+                        .FirstOrDefaultAsync(a => a.IsPrimaryAddress);
+
+                    if (primaryAddress != null)
+                        primaryAddress.IsPrimaryAddress = false;
                 }
+
+                var address = new Address
+                {
+                    Name = name,
+                    Town = town,
+                    ZipCode = zipCode,
+                    IsPrimaryAddress = isPrimaryAddress,
+                    CreatedAt = DateTime.Now,
+                    CustomerId = userId
+                };
+
+                await _allBls.AddressesBL.AddAsync(address);
+                await _allBls.AddressesBL.SaveChangesAsync();
+
+                await transaction.CommitAsync();
             }
-
-            var address = new Address()
+            catch
             {
-                Id = Guid.NewGuid(),
-                Name = name,
-                Town = town,
-                ZipCode = zipCode,
-                IsPrimaryAddress = isPrimaryAddress,
-                CreatedAt = DateTime.Now,
-                CustomerId = userId
-            };
-
-            await _data.Addresses.AddAsync(address);
-            await _data.SaveChangesAsync();
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task UpdateAddressByIdAsync(Guid addressId, string name, string town, string zipCode)
         {
-            if (!await _data.Addresses.AnyAsync(a => a.Id == addressId))
+            using var transaction = _allBls.AddressesBL.GetTransactionProxy();
+            try
             {
-                throw new InvalidOperationException(AddressesEmpty);
+                var addressToChange = await _allBls.AddressesBL.FindAsync(addressId)
+                    ?? throw new InvalidOperationException(AddressNotFound);
+
+                addressToChange.Name = name;
+                addressToChange.Town = town;
+                addressToChange.ZipCode = zipCode;
+                addressToChange.UpdatedAt = DateTime.Now;
+
+                await _allBls.AddressesBL.SaveChangesAsync();
+
+                await transaction.CommitAsync();
             }
-
-            var addressToChange = await _data.Addresses.FirstAsync(a => a.Id == addressId);
-
-            addressToChange.Name = name;
-            addressToChange.Town = town;
-            addressToChange.ZipCode = zipCode;
-            addressToChange.UpdatedAt = DateTime.Now;
-
-            await _data.SaveChangesAsync();
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<List<AddressDetailsViewModel>> DeleteAddressByIdAsync(Guid userId, Guid addressId)
         {
-            if (!_data.Addresses.Any(a => a.Id == addressId))
+            using var transaction = _allBls.AddressesBL.GetTransactionProxy();
+            try
             {
-                throw new ArgumentException(AddressNotFound);
-            }
+                var address = await _allBls.AddressesBL.FindAsync(addressId)
+                    ?? throw new ArgumentException(AddressNotFound);
 
-            if(!_data.Users.Any(u => u.Id == userId))
+                if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
+                    throw new ArgumentException(UserNotFound);
+
+                if (address.CustomerId != userId)
+                    throw new ArgumentException(AddressNotFound);
+
+                _allBls.AddressesBL.Remove(address);
+                await _allBls.AddressesBL.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch
             {
-                throw new ArgumentException(UserNotFound);
+                await transaction.RollbackAsync();
+                throw;
             }
-
-            var address = await _data.Addresses
-                .Where(a => a.CustomerId == userId && a.Id == addressId)
-                .FirstOrDefaultAsync();
-
-            if (address == null)
-            {
-                throw new ArgumentException(AddressNotFound);
-            }
-
-            _data.Addresses.Remove(address);
-            await _data.SaveChangesAsync();
 
             return await GetAllAddressesByUserIdAsync(userId);
         }

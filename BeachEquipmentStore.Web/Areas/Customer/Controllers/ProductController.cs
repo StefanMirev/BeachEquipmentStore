@@ -5,18 +5,18 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
 
     public class ProductController : BaseCustomerController
     {
-        private readonly IProductControllerService _productsControllerService;
+        private readonly IProductControllerService _productControllerService;
 
-        public ProductController(IProductControllerService productsControllerService)
+        public ProductController(IProductControllerService productControllerService)
         {
-            _productsControllerService = productsControllerService;
+            _productControllerService = productControllerService;
         }
 
         [HttpGet]
         [Route("Product")]
         public async Task<IActionResult> Details(Guid productId)
         {
-            var result = await this._productsControllerService.GetProductByIdAsync(productId);
+            var result = await this._productControllerService.GetProductByIdAsync(productId);
 
             if (!result.IsSuccess)
             {
@@ -32,7 +32,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [Route("Catalogue")]
         public async Task<IActionResult> Catalogue(string keyword, int categoryId, int manufacturerId)
         {
-            var result = await _productsControllerService.GetFilteredProductsAsync(keyword, categoryId, manufacturerId);
+            var result = await _productControllerService.GetFilteredProductsAsync(keyword, categoryId, manufacturerId);
 
             if (!result.IsSuccess)
             {

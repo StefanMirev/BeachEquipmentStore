@@ -63,10 +63,10 @@
             <tr>
                 <td>@item.Name</td>
                 <td>@item.Barcode</td>
-                <td>@item.Stock</td>
+                <td>@item.Quantity</td>
                 <td>@item.Price.ToString("C")</td>
                 @{
-                    decimal totalItemPrice = item.Price * item.Stock;
+                    decimal totalItemPrice = item.Price * item.Quantity;
                 }
                 <td>@totalItemPrice.ToString("C")</td>
             </tr>

@@ -1,36 +1,35 @@
-﻿namespace BeachEquipmentStore.Services
+namespace BeachEquipmentStore.Services
 {
-    using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Manufacturer;
-    using Microsoft.EntityFrameworkCore;
     using static BeachEquipmentStore.Common.Constants.Messages;
 
     public class ManufacturerService : IManufacturerService
     {
-        private readonly EquipmentStoreDbContext _data;
+        private readonly AllBusinessLogics _allBls;
 
-        public ManufacturerService(EquipmentStoreDbContext data)
+        public ManufacturerService(AllBusinessLogics allBls)
         {
-            _data = data;
+            _allBls = allBls;
         }
 
         public async Task<List<ManufacturerViewModel>> GetAllManufacturersAsync()
         {
+            var manufacturers = await _allBls.ManufacturersBL.GetAllAsync();
 
-            if (!_data.Manufacturers.Any())
+            if (!manufacturers.Any())
             {
                 throw new InvalidOperationException(ManufacturersNotFound);
             }
 
-            return await _data.Manufacturers
-                .Select(manufacturer => new ManufacturerViewModel
+            return manufacturers
+                .Select(m => new ManufacturerViewModel
                 {
-                    Id = manufacturer.Id,
-                    Name = manufacturer.Name,
-                    ImageUrl = manufacturer.ImageUrl
+                    Id = m.Id,
+                    Name = m.Name,
+                    ImageUrl = m.ImageUrl
                 })
-                .ToListAsync();
+                .ToList();
         }
     }
 }

@@ -1,7 +1,5 @@
 namespace BeachEquipmentStore.Services.Interfaces
 {
-    using BeachEquipmentStore.Services.DTOs;
-    using BeachEquipmentStore.ViewModels.Cart;
     using BeachEquipmentStore.ViewModels.Product;
 
     public interface IProductService
@@ -13,8 +11,6 @@ namespace BeachEquipmentStore.Services.Interfaces
         Task<ExtendedProductViewModel> GetProductByIdAsync(Guid productId);
 
         Task<List<ProductViewModel>> GetRandomProductsInStockAsync();
-
-        Task<List<CartProductViewModel>> GetProductsInCartAsync(List<CartItemDto> cartItems);
 
         Task<ProductSearchViewModel> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId);
 

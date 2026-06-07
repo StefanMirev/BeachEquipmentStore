@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Data.Models
+﻿namespace BeachEquipmentStore.Data.Entities
 {
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,7 @@
     using System.ComponentModel.DataAnnotations;
     using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.ApplicationUser;
 
-    public class ApplicationUser : IdentityUser<Guid>
+    public class ApplicationUser : IdentityUser<Guid>, IEntity
     {
         public ApplicationUser()
         {

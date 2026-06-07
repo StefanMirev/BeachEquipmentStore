@@ -1,9 +1,6 @@
 namespace BeachEquipmentStore.Services
 {
-    using BeachEquipmentStore.Data;
-    using BeachEquipmentStore.Services.DTOs;
     using BeachEquipmentStore.Services.Interfaces;
-    using BeachEquipmentStore.ViewModels.Cart;
     using BeachEquipmentStore.ViewModels.Category;
     using BeachEquipmentStore.ViewModels.Manufacturer;
     using BeachEquipmentStore.ViewModels.Product;
@@ -12,24 +9,20 @@ namespace BeachEquipmentStore.Services
 
     public class ProductService : IProductService
     {
-        private readonly EquipmentStoreDbContext _data;
+        private readonly AllBusinessLogics _allBls;
 
-        public ProductService(EquipmentStoreDbContext data)
+        public ProductService(AllBusinessLogics allBls)
         {
-            _data = data;
+            _allBls = allBls;
         }
 
         public async Task<ExtendedProductViewModel> GetProductByIdAsync(Guid productId)
         {
-            if (!await _data.Products.AnyAsync(a => a.Id == productId))
-            {
-                throw new InvalidOperationException(ProductNotFound);
-            }
-
-            var product = await _data.Products
+            var product = await _allBls.ProductsBL.AsQueryable().AsNoTracking()
                 .Include(p => p.Manufacturer)
                 .Include(p => p.Category)
-                .FirstAsync(p => p.Id.ToString() == productId.ToString());
+                .FirstOrDefaultAsync(p => p.Id == productId)
+                ?? throw new InvalidOperationException(ProductNotFound);
 
             return new ExtendedProductViewModel
             {
@@ -39,7 +32,7 @@ namespace BeachEquipmentStore.Services
                 ImageUrl = product.ImageUrl,
                 Barcode = product.Barcode,
                 Price = product.Price,
-                Stock = product.Stock,
+                Quantity = product.Stock,
                 Manufacturer = new ManufacturerViewModel
                 {
                     Id = product.Manufacturer.Id,
@@ -55,76 +48,53 @@ namespace BeachEquipmentStore.Services
 
         public async Task<List<ProductViewModel>> GetAllProductsAsync()
         {
-            return await _data.Products
-                 .Select(p => new ProductViewModel
-                 {
-                     Id = p.Id,
-                     Name = p.Name,
-                     ImageUrl = p.ImageUrl,
-                     Price = p.Price,
-                     Quantity = p.Stock
-                 })
-                 .ToListAsync();
+            var products = await _allBls.ProductsBL.GetAllAsync();
+
+            return products
+                .Select(p => new ProductViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    Price = p.Price,
+                    Quantity = p.Stock
+                })
+                .ToList();
         }
 
         public async Task<List<ProductViewModel>> GetRandomProductsInStockAsync()
         {
-            var productsInStock = await _data.Products.Where(p => p.Stock > 0).CountAsync();
+            var productsInStock = await _allBls.ProductsBL.GetAllAsync(p => p.Stock > 0);
 
-            if (productsInStock <= 0)
+            if (!productsInStock.Any())
             {
                 throw new InvalidOperationException(ProductOutOfStock);
             }
 
-            return await _data.Products
-                 .Where(p => p.Stock > 0)
-                 .OrderBy(p => Guid.NewGuid())
-                 .Take(productsInStock > 9 ? 9 : productsInStock)
-                 .Select(p => new ProductViewModel
-                 {
-                     Id = p.Id,
-                     Name = p.Name,
-                     ImageUrl = p.ImageUrl,
-                     Price = p.Price
-                 })
-                 .ToListAsync();
-        }
-
-        public async Task<List<CartProductViewModel>> GetProductsInCartAsync(List<CartItemDto> cartItems)
-        {
-            var productsInCart = new List<CartProductViewModel>();
-
-            foreach (var cartItem in cartItems)
-            {
-                productsInCart.AddRange(await _data.Products
-                    .Where(p => p.Id == cartItem.ProductId)
-                    .Select(p => new CartProductViewModel
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        ImageUrl = p.ImageUrl,
-                        Price = p.Price,
-                        CartQuantity = cartItem.Quantity
-                    })
-                    .ToListAsync());
-            }
-
-            return productsInCart;
+            return productsInStock
+                .OrderBy(p => Guid.NewGuid())
+                .Take(9)
+                .Select(p => new ProductViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    Price = p.Price
+                })
+                .ToList();
         }
 
         public async Task<bool> IsInStockAsync(Guid productId, int quantity)
         {
-            if (!await _data.Products.AnyAsync(a => a.Id == productId))
-            {
-                throw new InvalidOperationException(ProductNotFound);
-            }
+            var product = await _allBls.ProductsBL.FindAsNoTrackingAsync(productId)
+                ?? throw new InvalidOperationException(ProductNotFound);
 
-            return (await _data.Products.FindAsync(productId))!.Stock >= quantity;
+            return product.Stock >= quantity;
         }
 
         public async Task<ProductSearchViewModel> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId)
         {
-            var filteredProducts = _data.Products.AsQueryable();
+            var filteredProducts = _allBls.ProductsBL.AsQueryable();
 
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -147,21 +117,16 @@ namespace BeachEquipmentStore.Services
                 filteredProducts = filteredProducts.Where(p => p.Manufacturer.Id == manufacturerId);
             }
 
+            var categories = await _allBls.CategoriesBL.GetAllAsync();
+            var manufacturers = await _allBls.ManufacturersBL.GetAllAsync();
+
             return new ProductSearchViewModel
             {
                 Keyword = keyword,
                 CategoryId = categoryId,
                 ManufacturerId = manufacturerId,
-                Categories = await _data.Categories.Select(c => new CategoryViewModel
-                {
-                    Id = c.Id,
-                    Name = c.Name
-                }).ToListAsync(),
-                Manufacturers = await _data.Manufacturers.Select(m => new ManufacturerViewModel
-                {
-                    Id = m.Id,
-                    Name = m.Name
-                }).ToListAsync(),
+                Categories = categories.Select(c => new CategoryViewModel { Id = c.Id, Name = c.Name }).ToList(),
+                Manufacturers = manufacturers.Select(m => new ManufacturerViewModel { Id = m.Id, Name = m.Name }).ToList(),
                 Products = await filteredProducts.Select(p => new ProductViewModel
                 {
                     Id = p.Id,
@@ -175,16 +140,22 @@ namespace BeachEquipmentStore.Services
 
         public async Task RestockProductAsync(Guid productId, int quantity)
         {
-            if (!await _data.Products.AnyAsync(a => a.Id == productId))
+            using var transaction = _allBls.ProductsBL.GetTransactionProxy();
+            try
             {
-                throw new InvalidOperationException(ProductNotFound);
+                var product = await _allBls.ProductsBL.FindAsync(productId)
+                    ?? throw new InvalidOperationException(ProductNotFound);
+
+                product.Stock += quantity;
+
+                await _allBls.ProductsBL.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
-
-            var product = await _data.Products.FindAsync(productId);
-
-            product!.Stock += quantity;
-
-            await _data.SaveChangesAsync();
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

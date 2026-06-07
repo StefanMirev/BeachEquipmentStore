@@ -1,13 +1,12 @@
-﻿namespace BeachEquipmentStore.Data.Models
+﻿namespace BeachEquipmentStore.Data.Entities
 {
-    using BeachEquipmentStore.Data.Models.Enums;
+    using BeachEquipmentStore.Common.Enums;
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.Address;
 
-    public class Order
+    public class Order : IEntity
     {
         public Order()
         {
@@ -42,19 +41,9 @@
         public decimal TotalPrice { get; set; }
 
         [Required]
-        [Unicode]
-        [StringLength(AddressMaxLength, MinimumLength = AddressMinLength)]
-        public string AddressName { get; set; } = null!;
-
-        [Required]
-        [Unicode]
-        [StringLength(TownNameMaxLength, MinimumLength = TownNameMinLength)]
-        public string TownName { get; set; } = null!;
-
-        [Required]
-        [Range(ZipCodeMinLength, ZipCodeMaxLength)]
-        [DisplayName("Zip Code")]
-        public string ZipCode { get; set; } = null!;
+        public Guid AddressLogId { get; set; }
+        [ForeignKey(nameof(AddressLogId))]
+        public AddressLog AddressLog { get; set; } = null!;
 
         [Required]
         public Guid CustomerId { get; set; }

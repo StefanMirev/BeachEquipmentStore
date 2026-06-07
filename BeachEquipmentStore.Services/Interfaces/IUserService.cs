@@ -17,12 +17,12 @@
 
         Task<UserDetailsViewModel> GetUserDetailsAsync(Guid userId);
 
-        Task ChangeUserDetailsAsync(UserDetailsViewModel DetailsModel);
+        Task ChangeUserDetailsAsync(UserDetailsViewModel detailsModel);
 
         Task<IdentityResult> ChangeUserPasswordAsync(string currentPassword, string newPassword);
 
         Task<List<UserViewModel>> GetAllNonAdminUsersAsync();
 
-        Task<bool> MakeAdmin(Guid userId);
+        Task<bool> MakeAdminAsync(Guid userId);
     }
 }

@@ -4,6 +4,6 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Inte
 {
     public interface IHomeControllerService
     {
-        Task<GetProductsResponse> ResolveHomePage();
+        Task<GetProductsResponse> ResolveHomePageAsync();
     }
 }

@@ -1,14 +1,18 @@
-﻿namespace BeachEquipmentStore.Data.Models
+namespace BeachEquipmentStore.Data.Entities
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class CartItem
+    public class CartItem : IEntity
     {
         public CartItem()
         {
+            this.Id = Guid.NewGuid();
             this.CreatedAt = DateTime.Now;
         }
+
+        [Key]
+        public Guid Id { get; set; }
 
         public Guid CustomerId { get; set; }
         [ForeignKey(nameof(CustomerId))]

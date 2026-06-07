@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Data.Models
+﻿namespace BeachEquipmentStore.Data.Entities
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel;
@@ -6,14 +6,14 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.Product;
 
-    public class Product
+    public class Product : IEntity
     {
         public Product()
         {
             this.Id = Guid.NewGuid();
             this.CartItems = new HashSet<CartItem>();
             this.CreatedAt = DateTime.Now;
-            this.ProductsOrders = new HashSet<ProductOrder>();
+            this.ProductOrders = new HashSet<ProductOrder>();
         }
 
         [Key]
@@ -37,7 +37,7 @@
         [Required]
         [Range(BarcodeMinLength, BarcodeMaxLength)]
         [DisplayName("EAN")]
-        public int Barcode { get; set; }
+        public long Barcode { get; set; }
 
         [Required]
         [Precision(18, 2)]
@@ -65,6 +65,6 @@
 
         public ICollection<CartItem> CartItems { get; set; }
 
-        public ICollection<ProductOrder> ProductsOrders { get; set; }
+        public ICollection<ProductOrder> ProductOrders { get; set; }
     }
 }

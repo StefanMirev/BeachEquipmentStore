@@ -1,7 +1,7 @@
 namespace BeachEquipmentStore.Web
 {
     using BeachEquipmentStore.Data;
-    using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Infrastructure.Extensions;
     using BeachEquipmentStore.Infrastructure.Helpers;
     using BeachEquipmentStore.Infrastructure.ModelBinders;
@@ -108,6 +108,11 @@ namespace BeachEquipmentStore.Web
             app.UseHsts();
 
             app.UseSecureHeadersMiddleware();
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers["Cross-Origin-Embedder-Policy"] = "unsafe-none";
+                await next(context);
+            });
 
             app.UseHttpsRedirection();
             app.UseStaticFiles(new StaticFileOptions
@@ -116,7 +121,7 @@ namespace BeachEquipmentStore.Web
                     ctx.Context.Response.Headers["Cache-Control"] = "public, max-age=31536000, immutable"
             });
 
-            app.UseStatusCodePages();
+            app.UseStatusCodePagesWithReExecute("/NotFound");
 
             app.UseRouting();
 

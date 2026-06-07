@@ -8,8 +8,5 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Inte
 
         Task<GetFilteredProductsResponse> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId);
 
-        Task<GetProductsResponse> GetAllProductsAsync();
-
-        Task<BaseResponse> RestockProductAsync(Guid productId, int quantity);
     }
 }

@@ -33,7 +33,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Create-Order")]
-        public async Task<IActionResult> CreateOrder(string? addressName, string? town, string zipCode)
+        public async Task<IActionResult> CreateOrder(string? addressName, string? town, string? zipCode)
         {
             var result = await _orderControllerService.CreateOrderAsync(addressName, town, zipCode);
 
@@ -49,7 +49,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
 
         [HttpGet]
         [Route("Order-Details")]
-        public async Task<IActionResult> Details(string orderId)
+        public async Task<IActionResult> Details(Guid orderId)
         {
             var result = await _orderControllerService.GetOrderDetailsAsync(orderId);
 

@@ -7,15 +7,13 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
     public class HomeControllerService : IHomeControllerService
     {
         private readonly IProductService _productService;
-        private readonly IUserService _userService;
 
-        public HomeControllerService(IProductService productService, IUserService userService)
+        public HomeControllerService(IProductService productService)
         {
             _productService = productService;
-            _userService = userService;
         }
 
-        public async Task<GetProductsResponse> ResolveHomePage()
+        public async Task<GetProductsResponse> ResolveHomePageAsync()
         {
             try
             {

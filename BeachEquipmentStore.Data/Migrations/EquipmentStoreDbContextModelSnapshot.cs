@@ -17,14 +17,14 @@ namespace BeachEquipmentStore.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.36")
+                .HasAnnotation("ProductVersion", "8.0.27")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.HasSequence<int>("UniqueNumberSeq");
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Address", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Address", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,8 @@ namespace BeachEquipmentStore.Data.Migrations
 
                     b.Property<string>("ZipCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("Id");
 
@@ -65,7 +66,38 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.ApplicationUser", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.AddressLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Town")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AddressLogs");
+                });
+
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -149,34 +181,40 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.CartItem", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.CartItem", b =>
                 {
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("ProductId", "CustomerId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Category", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -199,13 +237,13 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Manufacturer", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Manufacturer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -228,17 +266,14 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.ToTable("Manufacturers");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Order", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AddressName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<Guid>("AddressLogId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -261,20 +296,13 @@ namespace BeachEquipmentStore.Data.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("TownName")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(25)");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ZipCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressLogId")
+                        .IsUnique();
 
                     b.HasIndex("CustomerId");
 
@@ -284,14 +312,14 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Product", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Barcode")
-                        .HasColumnType("int");
+                    b.Property<long>("Barcode")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -341,27 +369,59 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.ProductOrder", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.ProductLog", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductLogs");
+                });
+
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.ProductOrder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid>("ProductLogId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("SingularPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.HasKey("Id");
 
-                    b.HasKey("OrderId", "ProductId");
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductLogId")
+                        .IsUnique();
 
                     b.ToTable("ProductOrders");
                 });
@@ -400,7 +460,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -424,7 +484,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -497,9 +557,9 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Address", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Address", b =>
                 {
-                    b.HasOne("BeachEquipmentStore.Data.Models.ApplicationUser", "Customer")
+                    b.HasOne("BeachEquipmentStore.Data.Entities.ApplicationUser", "Customer")
                         .WithMany("Addresses")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -508,15 +568,15 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.CartItem", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.CartItem", b =>
                 {
-                    b.HasOne("BeachEquipmentStore.Data.Models.ApplicationUser", "Customer")
+                    b.HasOne("BeachEquipmentStore.Data.Entities.ApplicationUser", "Customer")
                         .WithMany("CartItems")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BeachEquipmentStore.Data.Models.Product", "Product")
+                    b.HasOne("BeachEquipmentStore.Data.Entities.Product", "Product")
                         .WithMany("CartItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -527,26 +587,34 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Order", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Order", b =>
                 {
-                    b.HasOne("BeachEquipmentStore.Data.Models.ApplicationUser", "Customer")
+                    b.HasOne("BeachEquipmentStore.Data.Entities.AddressLog", "AddressLog")
+                        .WithOne("Order")
+                        .HasForeignKey("BeachEquipmentStore.Data.Entities.Order", "AddressLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BeachEquipmentStore.Data.Entities.ApplicationUser", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("AddressLog");
+
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Product", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Product", b =>
                 {
-                    b.HasOne("BeachEquipmentStore.Data.Models.Category", "Category")
+                    b.HasOne("BeachEquipmentStore.Data.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BeachEquipmentStore.Data.Models.Manufacturer", "Manufacturer")
+                    b.HasOne("BeachEquipmentStore.Data.Entities.Manufacturer", "Manufacturer")
                         .WithMany("Products")
                         .HasForeignKey("ManufacturerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -557,23 +625,31 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.Navigation("Manufacturer");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.ProductOrder", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.ProductOrder", b =>
                 {
-                    b.HasOne("BeachEquipmentStore.Data.Models.Order", "Order")
+                    b.HasOne("BeachEquipmentStore.Data.Entities.Order", "Order")
                         .WithMany("OrderProducts")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BeachEquipmentStore.Data.Models.Product", "Product")
-                        .WithMany("ProductsOrders")
+                    b.HasOne("BeachEquipmentStore.Data.Entities.Product", "Product")
+                        .WithMany("ProductOrders")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BeachEquipmentStore.Data.Entities.ProductLog", "ProductLog")
+                        .WithOne("ProductOrder")
+                        .HasForeignKey("BeachEquipmentStore.Data.Entities.ProductOrder", "ProductLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+
+                    b.Navigation("ProductLog");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -587,7 +663,7 @@ namespace BeachEquipmentStore.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("BeachEquipmentStore.Data.Models.ApplicationUser", null)
+                    b.HasOne("BeachEquipmentStore.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -596,7 +672,7 @@ namespace BeachEquipmentStore.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("BeachEquipmentStore.Data.Models.ApplicationUser", null)
+                    b.HasOne("BeachEquipmentStore.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -611,7 +687,7 @@ namespace BeachEquipmentStore.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BeachEquipmentStore.Data.Models.ApplicationUser", null)
+                    b.HasOne("BeachEquipmentStore.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -620,14 +696,20 @@ namespace BeachEquipmentStore.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("BeachEquipmentStore.Data.Models.ApplicationUser", null)
+                    b.HasOne("BeachEquipmentStore.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.ApplicationUser", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.AddressLog", b =>
+                {
+                    b.Navigation("Order")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("Addresses");
 
@@ -636,26 +718,32 @@ namespace BeachEquipmentStore.Data.Migrations
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Category", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Category", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Manufacturer", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Manufacturer", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Order", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Order", b =>
                 {
                     b.Navigation("OrderProducts");
                 });
 
-            modelBuilder.Entity("BeachEquipmentStore.Data.Models.Product", b =>
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.Product", b =>
                 {
                     b.Navigation("CartItems");
 
-                    b.Navigation("ProductsOrders");
+                    b.Navigation("ProductOrders");
+                });
+
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.ProductLog", b =>
+                {
+                    b.Navigation("ProductOrder")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

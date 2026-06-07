@@ -36,12 +36,12 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
             }
         }
 
-        public async Task<BaseResponse> CreateOrderAsync(string? addressName, string? town, string zipCode)
+        public async Task<BaseResponse> CreateOrderAsync(string? addressName, string? town, string? zipCode)
         {
             try
             {
                 await _ordersService.CreateOrderAsync(addressName, town, zipCode);
-                await _cartService.ClearCartAfterOrderAsync();
+                await _cartService.ClearCartAsync(restoreStock: false);
 
                 return new BaseResponse
                 {
@@ -59,7 +59,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
             }
         }
 
-        public async Task<GetOrderDetailsResponse> GetOrderDetailsAsync(string orderId)
+        public async Task<GetOrderDetailsResponse> GetOrderDetailsAsync(Guid orderId)
         {
             try
             {
@@ -81,46 +81,5 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
             }
         }
 
-        public async Task<GetUndeliveredOrdersResponse> GetUndeliveredOrdersAsync()
-        {
-            try
-            {
-                return new GetUndeliveredOrdersResponse
-                {
-                    IsSuccess = true,
-                    UndeliveredOrders = await _ordersService.GetUndeliveredOrdersAsync()
-                };
-            }
-            catch (Exception ex)
-            {
-                return new GetUndeliveredOrdersResponse
-                {
-                    IsSuccess = false,
-                    ResponseMessage = ex.Message
-                };
-            }
-        }
-
-        public async Task<BaseResponse> DeliverOrdersAsync(Guid orderId)
-        {
-            try
-            {
-                var result = await _ordersService.DeliverOrdersAsync(orderId);
-
-                return new BaseResponse
-                {
-                    IsSuccess = result,
-                    ResponseMessage = result ? OrderDeliverySuccess : OrderDeliveryFailure
-                };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse
-                {
-                    IsSuccess = false,
-                    ResponseMessage = ex.Message
-                };
-            }
-        }
     }
 }

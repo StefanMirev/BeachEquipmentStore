@@ -5,7 +5,7 @@ namespace BeachEquipmentStore.ViewModels.Product
 
     public class ProductSearchViewModel
     {
-        public string Keyword { get; set; } = null!;
+        public string? Keyword { get; set; }
 
         public int CategoryId { get; set; }
 

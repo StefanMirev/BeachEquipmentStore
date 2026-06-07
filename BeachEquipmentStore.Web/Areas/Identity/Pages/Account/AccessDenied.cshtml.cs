@@ -8,7 +8,7 @@ namespace BeachEquipmentStore.Web.Areas.Identity.Pages.Account
 
         public void OnGet()
         {
-            Reason = HttpContext.Request.Query["reason"];
+            Reason = HttpContext.Request.Query["reason"].ToString();
 
             if (string.IsNullOrEmpty(Reason))
             {

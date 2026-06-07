@@ -5,7 +5,7 @@ namespace BeachEquipmentStore.ViewModels.Order
 
     public class CreateOrderViewModel
     {
-        public UserDetailsViewModel UserDetails { get; set; } = null!;
+        public UserSummaryViewModel UserDetails { get; set; } = null!;
 
         public AddressDetailsViewModel? UserAddress { get; set; }
 

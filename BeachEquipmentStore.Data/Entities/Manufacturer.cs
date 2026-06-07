@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Data.Models
+﻿namespace BeachEquipmentStore.Data.Entities
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel.DataAnnotations;

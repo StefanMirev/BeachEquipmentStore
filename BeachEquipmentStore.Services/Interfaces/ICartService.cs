@@ -1,17 +1,15 @@
 namespace BeachEquipmentStore.Services.Interfaces
 {
-    using BeachEquipmentStore.Services.DTOs;
+    using BeachEquipmentStore.ViewModels.Cart;
 
     public interface ICartService
     {
+        Task<List<CartProductViewModel>> GetCartProductsAsync();
+
         Task AddItemToCartAsync(Guid productId, int quantity);
 
-        Task<List<CartItemDto>> GetItemsInCartAsync();
-
-        Task RemoveAllItemsFromCartAsync();
+        Task ClearCartAsync(bool restoreStock);
 
         Task RemoveItemFromCartAsync(Guid productId);
-
-        Task ClearCartAfterOrderAsync();
     }
 }

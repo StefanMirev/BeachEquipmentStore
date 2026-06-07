@@ -8,9 +8,9 @@ namespace BeachEquipmentStore.Services.Interfaces
 
         Task<CreateOrderViewModel> GetDetailsForCreateOrderAsync();
 
-        Task CreateOrderAsync(string? addressName, string? town, string zipCode);
+        Task CreateOrderAsync(string? addressName, string? town, string? zipCode);
 
-        Task<OrderDetailViewModel> GetOrderDetailsAsync(string orderId);
+        Task<OrderDetailViewModel> GetOrderDetailsAsync(Guid orderId);
 
         Task<List<PendingOrderViewModel>> GetUndeliveredOrdersAsync();
 

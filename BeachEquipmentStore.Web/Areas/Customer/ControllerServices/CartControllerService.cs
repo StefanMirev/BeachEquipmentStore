@@ -1,4 +1,4 @@
-﻿using BeachEquipmentStore.Services.Interfaces;
+using BeachEquipmentStore.Services.Interfaces;
 using BeachEquipmentStore.Web.Responses;
 using BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Interfaces;
 using static BeachEquipmentStore.Common.Constants.Messages;
@@ -10,22 +10,20 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
         private readonly ICartService _cartService;
         private readonly IProductService _productService;
 
-        public CartControllerService(ICartService cartItems, IProductService products)
+        public CartControllerService(ICartService cartService, IProductService productService)
         {
-            _cartService = cartItems;
-            _productService = products;
+            _cartService = cartService;
+            _productService = productService;
         }
 
         public async Task<GetCartResponse> GoToCartAsync()
         {
             try
             {
-                var cartItems = await _cartService.GetItemsInCartAsync();
-
                 return new GetCartResponse
                 {
                     IsSuccess = true,
-                    Products = await _productService.GetProductsInCartAsync(cartItems)
+                    Products = await _cartService.GetCartProductsAsync()
                 };
             }
             catch (Exception ex)
@@ -70,11 +68,11 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
             }
         }
 
-        public async Task<BaseResponse> RemoveAllItemsFromCartAsync()
+        public async Task<BaseResponse> ClearCartAsync(bool restoreStock)
         {
             try
             {
-                await _cartService.RemoveAllItemsFromCartAsync();
+                await _cartService.ClearCartAsync(restoreStock);
 
                 return new BaseResponse
                 {

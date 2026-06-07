@@ -8,7 +8,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Inte
 
         Task<BaseResponse> AddToCartAsync(Guid productId, int quantity);
 
-        Task<BaseResponse> RemoveAllItemsFromCartAsync();
+        Task<BaseResponse> ClearCartAsync(bool restoreStock);
 
         Task<BaseResponse> RemoveItemFromCartAsync(Guid productId);
     }

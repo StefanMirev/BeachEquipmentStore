@@ -59,8 +59,8 @@ namespace BeachEquipmentStore.Common
                 public const int DescriptionMaxLength = 600;
                 public const int DescriptionMinLength = 15;
 
-                public const int BarcodeMinLength = 5;
-                public const int BarcodeMaxLength = 13;
+                public const long BarcodeMinLength = 10000;
+                public const long BarcodeMaxLength = 9999999999999;
 
                 public const string PriceMinValue = "0.01";
                 public const string PriceMaxValue = "250";
@@ -71,8 +71,8 @@ namespace BeachEquipmentStore.Common
         {
             //Address
             public const string AddressNotFound = "Адресът не съществува!";
-            public const string AddressesEmpty = "Все още нямате адрес!";
             public const string AddressLimitReached = "Максималният позволен брой адреси е 10. За да добавите друг, моля първо изтрийте един от съществуващите!";
+            public const string AddressAddSuccess = "Адресът бе успешно добавен.";
             public const string AddressUpdateSuccess = "Промените ви по адреса са запазени.";
             public const string AddressZipCodeInvalid = "Моля въведете валиден пощенски код!";
 

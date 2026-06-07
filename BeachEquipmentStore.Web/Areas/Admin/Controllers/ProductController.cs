@@ -2,16 +2,16 @@
 {
     using Microsoft.AspNetCore.Mvc;
     using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
-    using BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Interfaces;
+    using BeachEquipmentStore.Web.Areas.Admin.Interfaces;
 
     [Area("Admin")]
     public class ProductController : BaseAdminController
     {
         private readonly IProductControllerService _productControllerService;
 
-        public ProductController(IProductControllerService products)
+        public ProductController(IProductControllerService productControllerService)
         {
-            _productControllerService = products;
+            _productControllerService = productControllerService;
         }
 
         [HttpGet]

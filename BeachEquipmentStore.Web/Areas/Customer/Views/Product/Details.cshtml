@@ -15,7 +15,7 @@
             <p>Производител: <a asp-action="Catalogue" asp-controller="Product" asp-route-manufacturerId="@Model.Manufacturer.Id">@Model.Manufacturer.Name</a></p>
             <p>Цена: @Model.Price.ToString("C")</p>
             @{
-                if (Model.Stock > 0)
+                if (Model.Quantity > 0)
                 {
                     <p>В наличност</p>
 

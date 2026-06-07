@@ -1,7 +1,6 @@
-﻿namespace BeachEquipmentStore.Services
+namespace BeachEquipmentStore.Services
 {
-    using BeachEquipmentStore.Data;
-    using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Cart;
     using BeachEquipmentStore.ViewModels.Order;
@@ -14,26 +13,27 @@
     {
         private readonly IAddressService _addressService;
         private readonly IUserService _userService;
-        private readonly EquipmentStoreDbContext _data;
+        private readonly AllBusinessLogics _allBls;
 
-        public OrderService(IAddressService addressService, IUserService userService, EquipmentStoreDbContext data)
+        public OrderService(IAddressService addressService, IUserService userService, AllBusinessLogics allBls)
         {
             _addressService = addressService;
             _userService = userService;
-            _data = data;
+            _allBls = allBls;
         }
 
         public async Task<List<OrderHistoryViewModel>> GetCurrentUserOrderHistoryAsync()
         {
             var userId = _userService.GetCurrentLoggedInUserId();
 
-            if (!await _data.Users.AnyAsync(u => u.Id == userId))
+            if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
             {
                 throw new ArgumentNullException(UserNotFound);
             }
 
-            return await _data.Orders
-                .Where(o => o.CustomerId == userId)
+            var orders = await _allBls.OrdersBL.GetAllAsync(o => o.CustomerId == userId);
+
+            return orders
                 .Select(o => new OrderHistoryViewModel
                 {
                     Id = o.Id,
@@ -42,27 +42,27 @@
                     OrderDate = o.CreatedAt,
                     TotalPrice = o.TotalPrice
                 })
-                .OrderByDescending(oh => oh.OrderDate)
-                .ToListAsync();
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
         }
 
         public async Task<CreateOrderViewModel> GetDetailsForCreateOrderAsync()
         {
             var userId = _userService.GetCurrentLoggedInUserId();
 
-            var userDetails = await _data.Users
-                .Where(u => u.Id == userId)
-                .Select(u => new UserDetailsViewModel
-                {
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Email = u.Email,
-                    PhoneNumber = u.PhoneNumber
-                }).FirstOrDefaultAsync() ?? throw new InvalidOperationException(UserNotFound);
+            var user = await _allBls.UsersBL.FindAsNoTrackingAsync(userId)
+                ?? throw new InvalidOperationException(UserNotFound);
 
-            var userAddress = await _data.Users
-                .Where(u => u.Id == userId)
-                .SelectMany(u => u.Addresses)
+            var userDetails = new UserSummaryViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email ?? string.Empty,
+                PhoneNumber = user.PhoneNumber ?? string.Empty
+            };
+
+            var addresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerId == userId);
+            var userAddress = addresses
                 .OrderByDescending(a => a.IsPrimaryAddress)
                 .Select(a => new AddressDetailsViewModel
                 {
@@ -70,9 +70,10 @@
                     Town = a.Town,
                     ZipCode = a.ZipCode
                 })
-                .FirstOrDefaultAsync() ?? new AddressDetailsViewModel();
+                .FirstOrDefault() ?? new AddressDetailsViewModel();
 
-            var userProducts = await _data.CartItems.Include(p => p.Product)
+            var userProducts = await _allBls.CartItemsBL.AsQueryable().AsNoTracking()
+                .Include(ci => ci.Product)
                 .Where(ci => ci.CustomerId == userId)
                 .OrderByDescending(ci => ci.CreatedAt)
                 .Select(p => new CartProductViewModel
@@ -97,64 +98,104 @@
         {
             var userId = _userService.GetCurrentLoggedInUserId();
 
-            var user = await _data.Users.Include(u => u.Addresses).FirstOrDefaultAsync(u => u.Id == userId) ?? throw new InvalidOperationException(UserNotFound);
+            if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
+                throw new InvalidOperationException(UserNotFound);
 
-            if (!user.Addresses.Any(a => a.Name == addressName && a.Town == town && a.ZipCode == zipCode))
-            {
+            var userAddresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerId == userId);
+
+            if (!userAddresses.Any(a => a.Name == addressName && a.Town == town && a.ZipCode == zipCode))
                 await _addressService.AddAddressAsync(userId, addressName!, town!, zipCode!, true);
-            }
 
-            Order order = new Order()
+            using var transaction = _allBls.OrdersBL.GetTransactionProxy();
+            try
             {
-                Id = Guid.NewGuid(),
-                DeliveryStatus = 0,
-                CreatedAt = DateTime.Now,
-                CustomerId = userId,
-                AddressName = addressName,
-                TownName = town,
-                ZipCode = zipCode
-            };
+                var addressLog = new AddressLog
+                {
+                    Name = addressName!,
+                    Town = town!,
+                    ZipCode = zipCode!
+                };
 
-            var productOrders = await _data.CartItems.Include(p => p.Product)
-              .Where(ci => ci.CustomerId == userId)
-              .Select(po => new ProductOrder
-              {
-                  OrderId = order.Id,
-                  ProductId = po.ProductId,
-                  SingularPrice = po.Product.Price,
-                  Quantity = po.Quantity
-              })
-              .ToListAsync();
+                var cartItems = await _allBls.CartItemsBL.AsQueryable().AsNoTracking()
+                    .Include(ci => ci.Product)
+                    .Where(ci => ci.CustomerId == userId)
+                    .ToListAsync();
 
-            order.TotalPrice = productOrders.Sum(e => e.SingularPrice * e.Quantity);
+                var order = new Order
+                {
+                    DeliveryStatus = 0,
+                    CustomerId = userId,
+                    AddressLogId = addressLog.Id
+                };
 
-            await _data.ProductOrders.AddRangeAsync(productOrders);
-            await _data.Orders.AddRangeAsync(order);
+                var productLogs = new List<ProductLog>();
+                var productOrders = new List<ProductOrder>();
+                decimal totalPrice = 0;
 
-            await _data.SaveChangesAsync();
+                foreach (var ci in cartItems)
+                {
+                    var productLog = new ProductLog
+                    {
+                        Name = ci.Product.Name,
+                        Price = ci.Product.Price
+                    };
+                    productLogs.Add(productLog);
+                    productOrders.Add(new ProductOrder
+                    {
+                        OrderId = order.Id,
+                        ProductId = ci.ProductId,
+                        ProductLogId = productLog.Id,
+                        Quantity = ci.Quantity
+                    });
+                    totalPrice += productLog.Price * ci.Quantity;
+                }
+
+                order.TotalPrice = totalPrice;
+
+                await _allBls.AddressLogsBL.AddAsync(addressLog);
+                await _allBls.ProductLogsBL.AddRangeAsync(productLogs);
+                await _allBls.OrdersBL.AddAsync(order);
+                await _allBls.ProductOrdersBL.AddRangeAsync(productOrders);
+
+                await _allBls.OrdersBL.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
-        public async Task<OrderDetailViewModel> GetOrderDetailsAsync(string orderId)
+        public async Task<OrderDetailViewModel> GetOrderDetailsAsync(Guid orderId)
         {
-            var order = await _data.Orders.FirstOrDefaultAsync(p => p.Id.ToString() == orderId) ?? throw new InvalidOperationException(OrderNotFound);
+            var order = await _allBls.OrdersBL.AsQueryable().AsNoTracking()
+                .Include(o => o.AddressLog)
+                .FirstOrDefaultAsync(o => o.Id == orderId)
+                ?? throw new InvalidOperationException(OrderNotFound);
 
             if (_userService.GetCurrentLoggedInUserId() != order.CustomerId)
             {
                 throw new InvalidOperationException(OrderNotFound);
             }
 
-            var productOrders = await _data.ProductOrders
-                .Include(p => p.Product)
-                .Where(p => p.OrderId == Guid.Parse(orderId))
+            var productOrders = await _allBls.ProductOrdersBL.AsQueryable().AsNoTracking()
+                .Include(po => po.ProductLog)
+                .Include(po => po.Product)
+                .Where(po => po.OrderId == orderId)
+                .ToListAsync();
+
+            var products = productOrders
                 .Select(po => new ExtendedProductViewModel
                 {
-                    Name = po.Product.Name,
+                    Name = po.ProductLog.Name,
+                    Price = po.ProductLog.Price,
                     Barcode = po.Product.Barcode,
-                    Price = po.Product.Price,
-                    Stock = po.Quantity,
+                    Quantity = po.Quantity,
                     CreatedAt = po.CreatedAt
-                }).OrderByDescending(po => po.CreatedAt)
-                .ToListAsync();
+                })
+                .OrderByDescending(po => po.CreatedAt)
+                .ToList();
 
             return new OrderDetailViewModel
             {
@@ -164,37 +205,48 @@
                 ShippingDate = order.ShippingDate,
                 DeliveryStatus = order.DeliveryStatus.ToString(),
                 TotalPrice = order.TotalPrice,
-                AddressName = order.AddressName,
-                TownName = order.TownName,
-                ZipCode = order.ZipCode,
-                Products = productOrders
+                AddressName = order.AddressLog.Name,
+                TownName = order.AddressLog.Town,
+                ZipCode = order.AddressLog.ZipCode,
+                Products = products
             };
         }
 
         public async Task<List<PendingOrderViewModel>> GetUndeliveredOrdersAsync()
         {
-            var orders = await _data.Orders
-                .Where(o => o.DeliveryStatus == 0)
+            var orders = await _allBls.OrdersBL.GetAllAsync(o => o.DeliveryStatus == 0);
+
+            return orders
                 .Select(o => new PendingOrderViewModel
                 {
                     Id = o.Id,
                     CreatedAt = o.CreatedAt
                 })
                 .OrderBy(o => o.CreatedAt)
-                .ToListAsync();
-
-            return orders;
+                .ToList();
         }
 
         public async Task<bool> DeliverOrdersAsync(Guid orderId)
         {
-            var order = await _data.Orders.FirstOrDefaultAsync(o => o.Id == orderId) ?? throw new InvalidOperationException(OrderNotFound);
+            using var transaction = _allBls.OrdersBL.GetTransactionProxy();
+            try
+            {
+                var order = await _allBls.OrdersBL.FindAsync(orderId)
+                    ?? throw new InvalidOperationException(OrderNotFound);
 
-            order.ShippingDate = DateTime.Now;
-            order.DeliveryStatus += 1;
-            order.UpdatedAt = DateTime.Now;
+                order.ShippingDate = DateTime.Now;
+                order.DeliveryStatus += 1;
+                order.UpdatedAt = DateTime.Now;
 
-            return await _data.SaveChangesAsync() > 0;
+                var result = await _allBls.OrdersBL.SaveChangesAsync() > 0;
+                await transaction.CommitAsync();
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

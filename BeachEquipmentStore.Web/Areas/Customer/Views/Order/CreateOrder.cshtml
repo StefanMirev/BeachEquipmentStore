@@ -104,7 +104,7 @@
                             <td><img src="@product.ImageUrl" alt="@product.Name" style="max-width: 100px; max-height: 100px;" />   <span>@product.Name</span></td>
                             <td class="text-center align-middle">@product.CartQuantity</td>
                             <td class="text-center align-middle">@product.Price.ToString("C")</td>
-                            <td class="text-center align-middle">@String.Format("{0:C}", product.Price * product.CartQuantity);</td>
+                            <td class="text-center align-middle">@String.Format("{0:C}", product.Price * product.CartQuantity)</td>
                         </tr>
                     }
                 </tbody>

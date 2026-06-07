@@ -6,6 +6,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
     using Microsoft.AspNetCore.Mvc;
     using System.Diagnostics;
 
+    [AllowAnonymous]
     public class HomeController : BaseCustomerController
     {
         private readonly IHomeControllerService _homeControllerService;
@@ -16,11 +17,10 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         [Route("")]
         public async Task<IActionResult> Index()
         {
-            var result = await _homeControllerService.ResolveHomePage();
+            var result = await _homeControllerService.ResolveHomePageAsync();
 
             if (!result.IsSuccess)
             {
@@ -33,7 +33,6 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         [Route("About")]
         public IActionResult About()
         {
@@ -41,7 +40,6 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         [Route("Contact")]
         public IActionResult Contact()
         {

@@ -37,12 +37,8 @@ else
                                 @product.CartQuantity
                             </td>
                             <td class="text-center align-middle">@product.Price.ToString("C")</td>
-                            @{
-                                decimal? totalProductPrice = product.Price * product.CartQuantity;
-                                string formattedTotalProductPrice = string.Format("{0:C}", totalProductPrice);
-                            }
                             <td class ="text-center align-middle">
-                                @formattedTotalProductPrice
+                                @String.Format("{0:C}", product.Price * product.CartQuantity)
 
                             </td>
                             <td class="text-center align-middle">

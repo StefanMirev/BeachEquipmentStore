@@ -4,3 +4,9 @@ if (preloader) {
         preloader.remove();
     });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.toast').forEach(function (el) {
+        bootstrap.Toast.getOrCreateInstance(el).show();
+    });
+});

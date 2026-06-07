@@ -8,18 +8,18 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
     [Authorize(Policy = "RequireAuthenticatedUser")]
     public class ProfileController : BaseCustomerController
     {
-        private readonly IUserControllerService _profileControllerService;
+        private readonly IUserControllerService _userControllerService;
 
-        public ProfileController(IUserControllerService profileControllerService)
+        public ProfileController(IUserControllerService userControllerService)
         {
-            _profileControllerService = profileControllerService;
+            _userControllerService = userControllerService;
         }
 
         [HttpGet]
         [Route("Profile")]
         public async Task<IActionResult> MyProfile()
         {
-            var result = await _profileControllerService.GetUserDetailsAsync();
+            var result = await _userControllerService.GetUserDetailsAsync();
 
             if (!result.IsSuccess)
             {
@@ -35,7 +35,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [Route("Edit-Profile")]
         public async Task<IActionResult> EditProfile()
         {
-            var result = await _profileControllerService.GetUserDetailsAsync();
+            var result = await _userControllerService.GetUserDetailsAsync();
 
             if (!result.IsSuccess)
             {
@@ -52,7 +52,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [Route("Edit-Profile")]
         public async Task<IActionResult> EditProfile(UserDetailsViewModel userDetails)
         {
-            var result = await _profileControllerService.ChangeUserDetailsAsync(userDetails);
+            var result = await _userControllerService.ChangeUserDetailsAsync(userDetails);
 
             if (!result.IsSuccess)
             {
@@ -66,7 +66,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
 
         [HttpGet]
         [Route("Change-Password")]
-        public async Task<IActionResult> ChangePassword()
+        public IActionResult ChangePassword()
         {
             return View();
         }
@@ -76,22 +76,23 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [Route("Change-Password")]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            if (!ModelState.IsValid)
+            var result = await _userControllerService.ChangeUserPasswordAsync(model);
+
+            if (!result.IsSuccess)
             {
-                var errors = string.Join("\n", ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage));
-                return BadRequest(errors);
+                if (!result.UserFound)
+                {
+                    TempData["ErrorMessage"] = result.ResponseMessage;
+
+                    return RedirectToAction("Index", "Home");
+                }
+
+                TempData["ErrorMessage"] = result.ResponseMessage;
+
+                return RedirectToAction("ChangePassword", "Profile");
             }
 
-            var result = await _profileControllerService.ChangeUserPasswordAsync(model);
-
-            if (!result.UserFound)
-            {
-                return NotFound();
-            }
-
-            TempData[result.IsSuccess ? "Message" : "ErrorMessage"] = result.ResponseMessage;
+            TempData["Message"] = result.ResponseMessage;
 
             return RedirectToAction("ChangePassword", "Profile");
         }
@@ -100,7 +101,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [Route("My-Addresses")]
         public async Task<IActionResult> Addresses()
         {
-            var result = await _profileControllerService.GetAllUserAddressesAsync();
+            var result = await _userControllerService.GetAllUserAddressesAsync();
 
             if (!result.IsSuccess)
             {
@@ -114,7 +115,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
 
         [HttpGet]
         [Route("Add-Address")]
-        public async Task<IActionResult> AddAddress()
+        public IActionResult AddAddress()
         {
             return View();
         }
@@ -124,7 +125,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddAddress(string name, string town, string zipCode, bool isPrimaryAddress)
         {
-            var result = await _profileControllerService.AddUserAddressAsync(name, town, zipCode, isPrimaryAddress);
+            var result = await _userControllerService.AddUserAddressAsync(name, town, zipCode, isPrimaryAddress);
 
             if (!result.IsSuccess)
             {
@@ -136,9 +137,9 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
 
         [HttpGet]
         [Route("Edit-Address")]
-        public async Task<IActionResult> EditAddress(string addressId)
+        public async Task<IActionResult> EditAddress(Guid addressId)
         {
-            var result = await _profileControllerService.GetUserAddressDetailsAsync(addressId);
+            var result = await _userControllerService.GetUserAddressDetailsAsync(addressId);
 
             if (!result.IsSuccess)
             {
@@ -155,7 +156,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [Route("Edit-Address")]
         public async Task<IActionResult> EditAddress(Guid addressId, string name, string town, string zipCode)
         {
-            var result = await _profileControllerService.ChangeUserAddressDetailsAsync(addressId, name, town, zipCode);
+            var result = await _userControllerService.ChangeUserAddressDetailsAsync(addressId, name, town, zipCode);
 
             if (!result.IsSuccess)
             {
@@ -172,7 +173,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [Route("Delete-Address")]
         public async Task<IActionResult> DeleteAddress(Guid addressId)
         {
-            var result = await _profileControllerService.DeleteUserAddressAsync(addressId);
+            var result = await _userControllerService.DeleteUserAddressAsync(addressId);
 
             if (!result.IsSuccess)
             {
@@ -193,7 +194,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [Route("Order-History")]
         public async Task<IActionResult> OrderHistory()
         {
-            var result = await _profileControllerService.GetUserOrderHistoryAsync();
+            var result = await _userControllerService.GetUserOrderHistoryAsync();
 
             if (!result.IsSuccess)
             {

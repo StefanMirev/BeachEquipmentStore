@@ -54,7 +54,7 @@ namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearCart()
         {
-            var result = await _cartControllerService.RemoveAllItemsFromCartAsync();
+            var result = await _cartControllerService.ClearCartAsync(restoreStock: true);
 
             if (!result.IsSuccess)
             {

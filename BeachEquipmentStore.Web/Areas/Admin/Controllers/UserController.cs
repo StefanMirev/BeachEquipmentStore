@@ -1,6 +1,6 @@
 ﻿namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
-    using BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Interfaces;
+    using BeachEquipmentStore.Web.Areas.Admin.Interfaces;
     using Microsoft.AspNetCore.Mvc;
     using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
 
@@ -35,7 +35,7 @@
         public async Task<IActionResult> UpdateUserRole(Guid userId)
         {
 
-            var result = await _userControllerService.MakeAdmin(userId);
+            var result = await _userControllerService.MakeAdminAsync(userId);
 
             if (!result.IsSuccess)
             {

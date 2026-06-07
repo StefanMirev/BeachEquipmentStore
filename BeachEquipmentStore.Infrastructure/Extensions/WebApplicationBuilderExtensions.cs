@@ -1,6 +1,8 @@
 ﻿namespace BeachEquipmentStore.Infrastructure.Extensions
 {
-    using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Data;
+    using BeachEquipmentStore.Data.Entities;
+    using BeachEquipmentStore.Services;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +41,8 @@
                     services.AddScoped(interfaceType, implementationType);
                 }
             }
+
+            services.AddScoped<AllBusinessLogics>(sp => new AllBusinessLogics(sp.GetRequiredService<EquipmentStoreDbContext>()));
         }
 
         public static async Task<IApplicationBuilder> SeedAdministratorAsync(

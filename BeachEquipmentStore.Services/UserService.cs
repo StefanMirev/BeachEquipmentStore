@@ -1,27 +1,25 @@
-﻿namespace BeachEquipmentStore.Services
+namespace BeachEquipmentStore.Services
 {
-    using BeachEquipmentStore.Data;
-    using BeachEquipmentStore.Data.Models;
+    using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Profile;
     using BeachEquipmentStore.ViewModels.User;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
     using System.Security.Claims;
     using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
     using static BeachEquipmentStore.Common.Constants.Messages;
 
     public class UserService : IUserService
     {
-        private readonly EquipmentStoreDbContext _data;
+        private readonly AllBusinessLogics _allBls;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserService(EquipmentStoreDbContext data, IHttpContextAccessor httpContextAccessor, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        public UserService(AllBusinessLogics allBls, IHttpContextAccessor httpContextAccessor, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
         {
-            _data = data;
+            _allBls = allBls;
             _httpContextAccessor = httpContextAccessor;
             _signInManager = signInManager;
             _userManager = userManager;
@@ -40,7 +38,6 @@
 
             if (userId != Guid.Empty)
             {
-
                 var appUser = await _userManager.FindByIdAsync(userId.ToString()!);
                 return appUser == null ? null : new UserViewModel
                 {
@@ -67,9 +64,10 @@
 
         public async Task<UserDetailsViewModel> GetUserDetailsAsync(Guid userId)
         {
-            var currentUser = await _data.Users.FirstOrDefaultAsync(u => u.Id == userId) ?? throw new ArgumentNullException(UserNotFound);
+            var currentUser = await _allBls.UsersBL.FindAsNoTrackingAsync(userId)
+                ?? throw new ArgumentNullException(UserNotFound);
 
-            return new UserDetailsViewModel()
+            return new UserDetailsViewModel
             {
                 FirstName = currentUser.FirstName,
                 LastName = currentUser.LastName,
@@ -80,47 +78,73 @@
 
         public async Task ChangeUserDetailsAsync(UserDetailsViewModel detailsModel)
         {
-            var currentUser = await _data.Users.FirstOrDefaultAsync(u => u.Id == GetCurrentLoggedInUserId()) ?? throw new ArgumentNullException(UserNotFound);
+            using var transaction = _allBls.UsersBL.GetTransactionProxy();
+            try
+            {
+                var currentUser = await _allBls.UsersBL.FindAsync(GetCurrentLoggedInUserId())
+                    ?? throw new ArgumentNullException(UserNotFound);
 
-            currentUser.FirstName = detailsModel.FirstName;
-            currentUser.LastName = detailsModel.LastName;
-            currentUser.Email = detailsModel.Email;
-            currentUser.PhoneNumber = detailsModel.PhoneNumber;
-            currentUser.UpdatedAt = DateTime.Now;
+                currentUser.FirstName = detailsModel.FirstName;
+                currentUser.LastName = detailsModel.LastName;
+                currentUser.Email = detailsModel.Email;
+                currentUser.PhoneNumber = detailsModel.PhoneNumber;
+                currentUser.UpdatedAt = DateTime.Now;
 
-            await _data.SaveChangesAsync();
+                await _allBls.UsersBL.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<IdentityResult> ChangeUserPasswordAsync(string currentPassword, string newPassword)
         {
-            var applicationUser = await _userManager.FindByIdAsync(GetCurrentLoggedInUserId().ToString()) ?? throw new ArgumentNullException(UserNotFound);
+            var applicationUser = await _userManager.FindByIdAsync(GetCurrentLoggedInUserId().ToString())
+                ?? throw new ArgumentNullException(UserNotFound);
 
             return await _userManager.ChangePasswordAsync(applicationUser, currentPassword, newPassword);
         }
 
         public async Task<List<UserViewModel>> GetAllNonAdminUsersAsync()
         {
-            return await _data.Users.Where(u => !_data.UserRoles
-                .Any(ur => ur.UserId == u.Id && _data.Roles.Any(r => r.Id == ur.RoleId && r.Name == AdminRoleName)))
+            var admins = await _userManager.GetUsersInRoleAsync(AdminRoleName);
+            var adminIds = admins.Select(a => a.Id).ToHashSet();
+
+            var users = await _allBls.UsersBL.GetAllAsync(u => !adminIds.Contains(u.Id));
+
+            return users
                 .Select(u => new UserViewModel
                 {
                     Id = u.Id,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
-                    Email = u.Email,
+                    Email = u.Email ?? string.Empty,
                     CreatedAt = u.CreatedAt
                 })
-               .OrderByDescending(u => u.CreatedAt)
-               .ToListAsync();
+                .OrderByDescending(u => u.CreatedAt)
+                .ToList();
         }
 
-        public async Task<bool> MakeAdmin(Guid userId)
+        public async Task<bool> MakeAdminAsync(Guid userId)
         {
-            var user = await _data.Users.FirstOrDefaultAsync(u => u.Id == userId)
-                ?? throw new ArgumentException(UserNotFound);
+            using var transaction = _allBls.UsersBL.GetTransactionProxy();
+            try
+            {
+                var user = await _allBls.UsersBL.FindAsync(userId)
+                    ?? throw new ArgumentException(UserNotFound);
 
-            var result = await _userManager.AddToRoleAsync(user, AdminRoleName);
-            return result.Succeeded;
+                var result = await _userManager.AddToRoleAsync(user, AdminRoleName);
+                await transaction.CommitAsync();
+                return result.Succeeded;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }
