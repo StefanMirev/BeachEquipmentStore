@@ -1,9 +1,9 @@
-namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
+﻿namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using System.Security.Claims;
-    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
+    using static Core.Common.Constants.GeneralApplicationConstants;
 
     [Area("Customer")]
     public class BaseCustomerController : Controller

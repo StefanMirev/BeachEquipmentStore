@@ -1,6 +1,6 @@
 namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
 {
-    using BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Interfaces;
+    using BeachEquipmentStore.Web.Areas.Customer.ControllerServices.Interfaces;
     using Microsoft.AspNetCore.Mvc;
 
     public class ManufacturerController : BaseCustomerController

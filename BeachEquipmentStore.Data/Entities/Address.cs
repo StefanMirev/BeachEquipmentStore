@@ -1,6 +1,6 @@
 ﻿namespace BeachEquipmentStore.Data.Entities
 {
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.Address;
+    using static Core.Common.Constants.EntityValidationConstants.Address;
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;

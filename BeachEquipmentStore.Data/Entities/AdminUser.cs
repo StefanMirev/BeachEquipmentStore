@@ -1,10 +1,10 @@
-namespace BeachEquipmentStore.Data.Entities
+﻿namespace BeachEquipmentStore.Data.Entities
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.AdminUser;
+    using static Core.Common.Constants.EntityValidationConstants.AdminUser;
 
     public class AdminUser : IEntity
     {
@@ -40,5 +40,7 @@ namespace BeachEquipmentStore.Data.Entities
         public Guid? UserRoleId { get; set; }
         [ForeignKey(nameof(UserRoleId))]
         public UserRole? UserRole { get; set; }
+
+        public User User { get; set; } = null!;
     }
 }

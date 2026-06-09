@@ -16,7 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BeachEquipmentStore.Common\BeachEquipmentStore.Common.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\DbContextTransactionProxy\" />
   </ItemGroup>
 
 </Project>

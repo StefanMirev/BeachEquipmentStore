@@ -1,4 +1,4 @@
-namespace BeachEquipmentStore.Data.Database.DbContextTransactionProxy
+namespace BeachEquipmentStore.Data.Interfaces
 {
     public interface IDbContextTransactionProxy : IDisposable
     {

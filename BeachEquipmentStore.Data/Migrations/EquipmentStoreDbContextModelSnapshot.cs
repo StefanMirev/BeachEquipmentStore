@@ -576,8 +576,8 @@ namespace BeachEquipmentStore.Data.Migrations
 
             modelBuilder.Entity("BeachEquipmentStore.Data.Entities.AdminUser", b =>
                 {
-                    b.HasOne("BeachEquipmentStore.Data.Entities.User", null)
-                        .WithOne()
+                    b.HasOne("BeachEquipmentStore.Data.Entities.User", "User")
+                        .WithOne("AdminUser")
                         .HasForeignKey("BeachEquipmentStore.Data.Entities.AdminUser", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -586,6 +586,8 @@ namespace BeachEquipmentStore.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserRoleId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("User");
 
                     b.Navigation("UserRole");
                 });
@@ -611,8 +613,8 @@ namespace BeachEquipmentStore.Data.Migrations
 
             modelBuilder.Entity("BeachEquipmentStore.Data.Entities.CustomerUser", b =>
                 {
-                    b.HasOne("BeachEquipmentStore.Data.Entities.User", null)
-                        .WithOne()
+                    b.HasOne("BeachEquipmentStore.Data.Entities.User", "User")
+                        .WithOne("CustomerUser")
                         .HasForeignKey("BeachEquipmentStore.Data.Entities.CustomerUser", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -621,6 +623,8 @@ namespace BeachEquipmentStore.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserRoleId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("User");
 
                     b.Navigation("UserRole");
                 });
@@ -742,6 +746,13 @@ namespace BeachEquipmentStore.Data.Migrations
                 {
                     b.Navigation("ProductOrder")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BeachEquipmentStore.Data.Entities.User", b =>
+                {
+                    b.Navigation("AdminUser");
+
+                    b.Navigation("CustomerUser");
                 });
 #pragma warning restore 612, 618
         }

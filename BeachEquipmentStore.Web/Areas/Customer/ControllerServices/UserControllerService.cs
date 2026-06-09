@@ -1,10 +1,10 @@
 ﻿using BeachEquipmentStore.Services.Interfaces;
 using BeachEquipmentStore.ViewModels.Profile;
 using BeachEquipmentStore.Web.Responses;
-using BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Interfaces;
-using static BeachEquipmentStore.Common.Constants.Messages;
+using BeachEquipmentStore.Web.Areas.Customer.ControllerServices.Interfaces;
+using static Core.Common.Constants.Messages;
 
-namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
+namespace BeachEquipmentStore.Web.Areas.Customer.ControllerServices
 {
     public class UserControllerService : IUserControllerService
     {

@@ -1,6 +1,6 @@
-namespace BeachEquipmentStore.Services
+Ôªønamespace BeachEquipmentStore.Services
 {
-    using BeachEquipmentStore.Common.Enums;
+    using Core.Enums;
     using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Cart;
@@ -8,7 +8,7 @@ namespace BeachEquipmentStore.Services
     using BeachEquipmentStore.ViewModels.Product;
     using BeachEquipmentStore.ViewModels.Profile;
     using Microsoft.EntityFrameworkCore;
-    using static BeachEquipmentStore.Common.Constants.Messages;
+    using static Core.Common.Constants.Messages;
 
     public class OrderService : IOrderService
     {
@@ -32,9 +32,8 @@ namespace BeachEquipmentStore.Services
                 throw new ArgumentNullException(UserNotFound);
             }
 
-            var orders = await _allBls.OrdersBL.GetAllAsync(o => o.CustomerUserId == userId);
-
-            return orders
+            return await _allBls.OrdersBL.SearchFor(o => o.CustomerUserId == userId)
+                .OrderByDescending(o => o.CreatedAt)
                 .Select(o => new OrderHistoryViewModel
                 {
                     Id = o.Id,
@@ -43,8 +42,7 @@ namespace BeachEquipmentStore.Services
                     OrderDate = o.CreatedAt,
                     TotalPrice = o.TotalPrice
                 })
-                .OrderByDescending(o => o.OrderDate)
-                .ToList();
+                .ToListAsync();
         }
 
         public async Task<CreateOrderViewModel> GetDetailsForCreateOrderAsync()
@@ -65,8 +63,7 @@ namespace BeachEquipmentStore.Services
                 PhoneNumber = customerUser.PhoneNumber ?? string.Empty
             };
 
-            var addresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerUserId == userId);
-            var userAddress = addresses
+            var userAddress = await _allBls.AddressesBL.SearchFor(a => a.CustomerUserId == userId)
                 .OrderByDescending(a => a.IsPrimaryAddress)
                 .Select(a => new AddressDetailsViewModel
                 {
@@ -74,21 +71,27 @@ namespace BeachEquipmentStore.Services
                     Town = a.Town,
                     ZipCode = a.ZipCode
                 })
-                .FirstOrDefault() ?? new AddressDetailsViewModel();
+                .FirstOrDefaultAsync() ?? new AddressDetailsViewModel();
 
-            var userProducts = await _allBls.CartItemsBL.AsQueryable().AsNoTracking()
-                .Include(ci => ci.Product)
-                .Where(ci => ci.CustomerUserId == userId)
+            var cartItems = await _allBls.CartItemsBL.SearchFor(ci => ci.CustomerUserId == userId)
                 .OrderByDescending(ci => ci.CreatedAt)
-                .Select(p => new CartProductViewModel
-                {
-                    Id = p.ProductId,
-                    Name = p.Product.Name,
-                    ImageUrl = p.Product.ImageUrl,
-                    Price = p.Product.Price,
-                    CartQuantity = p.Quantity
-                })
                 .ToListAsync();
+
+            var cartProductIds = cartItems.Select(ci => ci.ProductId).ToList();
+            var cartProducts = await _allBls.ProductsBL.SearchFor(p => cartProductIds.Contains(p.Id)).ToListAsync();
+            var cartProductMap = cartProducts.ToDictionary(p => p.Id);
+
+            var userProducts = cartItems
+                .Where(ci => cartProductMap.ContainsKey(ci.ProductId))
+                .Select(ci => new CartProductViewModel
+                {
+                    Id = ci.ProductId,
+                    Name = cartProductMap[ci.ProductId].Name,
+                    ImageUrl = cartProductMap[ci.ProductId].ImageUrl,
+                    Price = cartProductMap[ci.ProductId].Price,
+                    CartQuantity = ci.Quantity
+                })
+                .ToList();
 
             return new CreateOrderViewModel
             {
@@ -105,9 +108,7 @@ namespace BeachEquipmentStore.Services
             if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
                 throw new InvalidOperationException(UserNotFound);
 
-            var userAddresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerUserId == userId);
-
-            if (!userAddresses.Any(a => a.Name == addressName && a.Town == town && a.ZipCode == zipCode))
+            if (!await _allBls.AddressesBL.All().AnyAsync(a => a.CustomerUserId == userId && a.Name == addressName && a.Town == town && a.ZipCode == zipCode))
                 await _addressService.AddAddressAsync(userId, addressName!, town!, zipCode!, true);
 
             using var transaction = _allBls.OrdersBL.GetTransactionProxy();
@@ -120,14 +121,15 @@ namespace BeachEquipmentStore.Services
                     ZipCode = zipCode!
                 };
 
-                var cartItems = await _allBls.CartItemsBL.AsQueryable().AsNoTracking()
-                    .Include(ci => ci.Product)
-                    .Where(ci => ci.CustomerUserId == userId)
-                    .ToListAsync();
+                var cartItems = await _allBls.CartItemsBL.SearchFor(ci => ci.CustomerUserId == userId).ToListAsync();
+
+                var orderProductIds = cartItems.Select(ci => ci.ProductId).ToList();
+                var orderProducts = await _allBls.ProductsBL.SearchFor(p => orderProductIds.Contains(p.Id)).ToListAsync();
+                var orderProductMap = orderProducts.ToDictionary(p => p.Id);
 
                 var order = new Order
                 {
-                    DeliveryStatus = DeliveryStatus.œ˙ÚÛ‚‡,
+                    DeliveryStatus = DeliveryStatus.–ü—ä—Ç—É–≤–∞,
                     CustomerUserId = userId,
                     AddressLogId = addressLog.Id
                 };
@@ -138,10 +140,11 @@ namespace BeachEquipmentStore.Services
 
                 foreach (var ci in cartItems)
                 {
+                    var product = orderProductMap[ci.ProductId];
                     var productLog = new ProductLog
                     {
-                        Name = ci.Product.Name,
-                        Price = ci.Product.Price
+                        Name = product.Name,
+                        Price = product.Price
                     };
                     productLogs.Add(productLog);
                     productOrders.Add(new ProductOrder
@@ -157,9 +160,11 @@ namespace BeachEquipmentStore.Services
                 order.TotalPrice = totalPrice;
 
                 await _allBls.AddressLogsBL.AddAsync(addressLog);
-                await _allBls.ProductLogsBL.AddRangeAsync(productLogs);
+                foreach (var productLog in productLogs)
+                    await _allBls.ProductLogsBL.AddAsync(productLog);
                 await _allBls.OrdersBL.AddAsync(order);
-                await _allBls.ProductOrdersBL.AddRangeAsync(productOrders);
+                foreach (var productOrder in productOrders)
+                    await _allBls.ProductOrdersBL.AddAsync(productOrder);
 
                 await _allBls.OrdersBL.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -173,28 +178,31 @@ namespace BeachEquipmentStore.Services
 
         public async Task<OrderDetailViewModel> GetOrderDetailsAsync(Guid orderId)
         {
-            var order = await _allBls.OrdersBL.AsQueryable().AsNoTracking()
-                .Include(o => o.AddressLog)
-                .FirstOrDefaultAsync(o => o.Id == orderId)
+            var order = await _allBls.OrdersBL.FindAsNoTrackingAsync(orderId)
                 ?? throw new InvalidOperationException(OrderNotFound);
 
             if (_userService.GetCurrentLoggedInUserId() != order.CustomerUserId)
-            {
                 throw new InvalidOperationException(OrderNotFound);
-            }
 
-            var productOrders = await _allBls.ProductOrdersBL.AsQueryable().AsNoTracking()
-                .Include(po => po.ProductLog)
-                .Include(po => po.Product)
-                .Where(po => po.OrderId == orderId)
-                .ToListAsync();
+            var addressLog = await _allBls.AddressLogsBL.FindAsNoTrackingAsync(order.AddressLogId);
 
-            var products = productOrders
+            var productOrders = await _allBls.ProductOrdersBL.SearchFor(po => po.OrderId == orderId).ToListAsync();
+
+            var productLogIds = productOrders.Select(po => po.ProductLogId).ToList();
+            var detailProductIds = productOrders.Select(po => po.ProductId).ToList();
+
+            var productLogs = await _allBls.ProductLogsBL.SearchFor(pl => productLogIds.Contains(pl.Id)).ToListAsync();
+            var detailProducts = await _allBls.ProductsBL.SearchFor(p => detailProductIds.Contains(p.Id)).ToListAsync();
+
+            var productLogMap = productLogs.ToDictionary(pl => pl.Id);
+            var detailProductMap = detailProducts.ToDictionary(p => p.Id);
+
+            var orderedProducts = productOrders
                 .Select(po => new ExtendedProductViewModel
                 {
-                    Name = po.ProductLog.Name,
-                    Price = po.ProductLog.Price,
-                    Barcode = po.Product.Barcode,
+                    Name = productLogMap[po.ProductLogId].Name,
+                    Price = productLogMap[po.ProductLogId].Price,
+                    Barcode = detailProductMap[po.ProductId].Barcode,
                     Quantity = po.Quantity,
                     CreatedAt = po.CreatedAt
                 })
@@ -209,25 +217,23 @@ namespace BeachEquipmentStore.Services
                 ShippingDate = order.ShippingDate,
                 DeliveryStatus = order.DeliveryStatus.ToString(),
                 TotalPrice = order.TotalPrice,
-                AddressName = order.AddressLog.Name,
-                TownName = order.AddressLog.Town,
-                ZipCode = order.AddressLog.ZipCode,
-                Products = products
+                AddressName = addressLog!.Name,
+                TownName = addressLog.Town,
+                ZipCode = addressLog.ZipCode,
+                Products = orderedProducts
             };
         }
 
         public async Task<List<PendingOrderViewModel>> GetUndeliveredOrdersAsync()
         {
-            var orders = await _allBls.OrdersBL.GetAllAsync(o => o.DeliveryStatus == DeliveryStatus.œ˙ÚÛ‚‡);
-
-            return orders
+            return await _allBls.OrdersBL.SearchFor(o => o.DeliveryStatus == DeliveryStatus.–ü—ä—Ç—É–≤–∞)
+                .OrderBy(o => o.CreatedAt)
                 .Select(o => new PendingOrderViewModel
                 {
                     Id = o.Id,
                     CreatedAt = o.CreatedAt
                 })
-                .OrderBy(o => o.CreatedAt)
-                .ToList();
+                .ToListAsync();
         }
 
         public async Task<bool> DeliverOrdersAsync(Guid orderId)
@@ -239,7 +245,7 @@ namespace BeachEquipmentStore.Services
                     ?? throw new InvalidOperationException(OrderNotFound);
 
                 order.ShippingDate = DateTime.Now;
-                order.DeliveryStatus = DeliveryStatus.ƒÓÒÚ‡‚ÂÌ‡;
+                order.DeliveryStatus = DeliveryStatus.–î–æ—Å—Ç–∞–≤–µ–Ω–∞;
 
                 var result = await _allBls.OrdersBL.SaveChangesAsync() > 0;
                 await transaction.CommitAsync();

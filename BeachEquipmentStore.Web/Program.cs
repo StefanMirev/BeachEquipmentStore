@@ -1,4 +1,4 @@
-namespace BeachEquipmentStore.Web
+﻿namespace BeachEquipmentStore.Web
 {
     using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Infrastructure.Extensions;
@@ -8,7 +8,7 @@ namespace BeachEquipmentStore.Web
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using OwaspHeaders.Core.Extensions;
-    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
+    using static Core.Common.Constants.GeneralApplicationConstants;
 
     public class Program
     {

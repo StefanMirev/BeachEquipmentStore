@@ -2,7 +2,7 @@
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel.DataAnnotations;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.Manufacturer;
+    using static Core.Common.Constants.EntityValidationConstants.Manufacturer;
 
     public class Manufacturer
     {

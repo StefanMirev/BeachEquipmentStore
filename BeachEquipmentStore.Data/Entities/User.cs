@@ -1,8 +1,8 @@
-namespace BeachEquipmentStore.Data.Entities
+﻿namespace BeachEquipmentStore.Data.Entities
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel.DataAnnotations;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.User;
+    using static Core.Common.Constants.EntityValidationConstants.User;
 
     public class User
     {
@@ -36,5 +36,8 @@ namespace BeachEquipmentStore.Data.Entities
         public DateTime CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
+
+        public AdminUser? AdminUser { get; set; }
+        public CustomerUser? CustomerUser { get; set; }
     }
 }

@@ -1,10 +1,10 @@
-namespace BeachEquipmentStore.Data.Entities
+﻿namespace BeachEquipmentStore.Data.Entities
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.CustomerUser;
+    using static Core.Common.Constants.EntityValidationConstants.CustomerUser;
 
     public class CustomerUser : IEntity
     {
@@ -73,6 +73,8 @@ namespace BeachEquipmentStore.Data.Entities
         public Guid? UserRoleId { get; set; }
         [ForeignKey(nameof(UserRoleId))]
         public UserRole? UserRole { get; set; }
+
+        public User User { get; set; } = null!;
 
         public ICollection<Address> Addresses { get; set; } = new HashSet<Address>();
         public ICollection<CartItem> CartItems { get; set; } = new HashSet<CartItem>();

@@ -1,5 +1,6 @@
-namespace BeachEquipmentStore.Data.Database.DbContextTransactionProxy
+namespace BeachEquipmentStore.Data
 {
+    using BeachEquipmentStore.Data.Interfaces;
     using Microsoft.EntityFrameworkCore.Storage;
 
     public class DbContextTransactionProxy : IDbContextTransactionProxy

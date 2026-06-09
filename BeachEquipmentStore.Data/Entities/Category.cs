@@ -2,7 +2,7 @@
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel.DataAnnotations;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.Category;
+    using static Core.Common.Constants.EntityValidationConstants.Category;
 
     public class Category
     {

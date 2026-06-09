@@ -1,9 +1,9 @@
-namespace BeachEquipmentStore.Web.Controllers
+﻿namespace BeachEquipmentStore.Web.Controllers
 {
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Auth;
     using Microsoft.AspNetCore.Mvc;
-    using static BeachEquipmentStore.Common.Constants.Messages;
+    using static Core.Common.Constants.Messages;
 
     [Route("[action]")]
     public class AuthController : Controller
@@ -87,7 +87,7 @@ namespace BeachEquipmentStore.Web.Controllers
         public IActionResult AccessDenied(string? reason = null)
         {
             ViewData["Reason"] = string.IsNullOrWhiteSpace(reason)
-                ? "Нямате право да достъпите тази страница!"
+                ? "РќСЏРјР°С‚Рµ РїСЂР°РІРѕ РґР° РґРѕСЃС‚СЉРїРёС‚Рµ С‚Р°Р·Рё СЃС‚СЂР°РЅРёС†Р°!"
                 : reason;
             return View();
         }

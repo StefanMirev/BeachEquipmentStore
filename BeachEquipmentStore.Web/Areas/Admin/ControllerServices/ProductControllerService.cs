@@ -1,7 +1,7 @@
-using BeachEquipmentStore.Services.Interfaces;
+﻿using BeachEquipmentStore.Services.Interfaces;
 using BeachEquipmentStore.Web.Areas.Admin.Interfaces;
 using BeachEquipmentStore.Web.Responses;
-using static BeachEquipmentStore.Common.Constants.Messages;
+using static Core.Common.Constants.Messages;
 
 namespace BeachEquipmentStore.Web.Areas.Admin.ControllerServices
 {

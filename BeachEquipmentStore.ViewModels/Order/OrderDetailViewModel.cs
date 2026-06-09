@@ -1,6 +1,6 @@
-namespace BeachEquipmentStore.ViewModels.Order
+﻿namespace BeachEquipmentStore.ViewModels.Order
 {
-    using BeachEquipmentStore.Common;
+    using Core.Common;
     using BeachEquipmentStore.ViewModels.Product;
 
     public class OrderDetailViewModel : OrderHistoryViewModel

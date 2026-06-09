@@ -1,13 +1,13 @@
-namespace BeachEquipmentStore.ViewModels.Auth
+﻿namespace BeachEquipmentStore.ViewModels.Auth
 {
     using System.ComponentModel.DataAnnotations;
-    using static BeachEquipmentStore.Common.Constants.Messages;
+    using static Core.Common.Constants.Messages;
 
     public class LoginViewModel
     {
         [Required(ErrorMessage = EmailRequired)]
         [EmailAddress(ErrorMessage = EmailInvalid)]
-        [Display(Name = "Имейл")]
+        [Display(Name = "Електронна поща")]
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = PasswordRequired)]

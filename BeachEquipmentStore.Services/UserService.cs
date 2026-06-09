@@ -1,7 +1,6 @@
-namespace BeachEquipmentStore.Services
+﻿namespace BeachEquipmentStore.Services
 {
-    using BeachEquipmentStore.Common.Helpers;
-    using BeachEquipmentStore.Data.Entities;
+    using Core.Utilities;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Profile;
     using BeachEquipmentStore.ViewModels.User;
@@ -10,7 +9,7 @@ namespace BeachEquipmentStore.Services
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using System.Security.Claims;
-    using static BeachEquipmentStore.Common.Constants.Messages;
+    using static Core.Common.Constants.Messages;
 
     public class UserService : IUserService
     {
@@ -55,7 +54,9 @@ namespace BeachEquipmentStore.Services
         }
 
         public bool IsUserSignedIn(ClaimsPrincipal user)
-            => user.Identity?.IsAuthenticated == true;
+        {
+            return user.Identity?.IsAuthenticated == true;
+        }
 
         public bool IsCurrentLoggedInUserAdmin()
         {
@@ -136,10 +137,9 @@ namespace BeachEquipmentStore.Services
 
         public async Task<List<UserViewModel>> GetAllNonAdminUsersAsync()
         {
-            var users = await _allBls.CustomerUsersBL
-                .AsQueryable()
+            return await _allBls.CustomerUsersBL.All()
                 .Join(
-                    _allBls.UsersBL.AsQueryable(),
+                    _allBls.UsersBL.All(),
                     cu => cu.Id,
                     u => u.Id,
                     (cu, u) => new UserViewModel
@@ -153,13 +153,11 @@ namespace BeachEquipmentStore.Services
                     })
                 .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
-
-            return users;
         }
 
         public Task<bool> MakeAdminAsync(Guid userId)
         {
-            // Replaced by IAuthService.CreateAdminUserAsync — stub kept until web layer is updated.
+            // Replaced by IAuthService.CreateAdminUserAsync вЂ” stub kept until web layer is updated.
             throw new NotImplementedException("Use IAuthService.CreateAdminUserAsync instead.");
         }
     }

@@ -117,12 +117,12 @@
                     <tr>
                         <th colspan="2"></th>
                         <th style="right: -17px; position:relative">Цена на доставката:</th>
-                        <th class="text-center align-middle" style="position:relative;">@String.Format("{0:C}", BeachEquipmentStore.Common.Constants.GeneralApplicationConstants.DeliveryPrice)</th>
+                        <th class="text-center align-middle" style="position:relative;">@String.Format("{0:C}", Constants.GeneralApplicationConstants.DeliveryPrice)</th>
                     </tr>
                     <tr>
                         <th colspan="2"></th>
                         <th style="right: -17px; position:relative">Общо:</th>
-                        <th class="text-center align-middle" style="position:relative;">@String.Format("{0:C}", Model.Products.Sum(p => p.Price * p.CartQuantity) + BeachEquipmentStore.Common.Constants.GeneralApplicationConstants.DeliveryPrice)</th>
+                        <th class="text-center align-middle" style="position:relative;">@String.Format("{0:C}", Model.Products.Sum(p => p.Price * p.CartQuantity) + Constants.GeneralApplicationConstants.DeliveryPrice)</th>
                     </tr>
                 </tfoot>
             </table>

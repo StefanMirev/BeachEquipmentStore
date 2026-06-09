@@ -1,7 +1,7 @@
 namespace BeachEquipmentStore.Web.Areas.Customer.Controllers
 {
     using BeachEquipmentStore.ViewModels.Profile;
-    using BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Interfaces;
+    using BeachEquipmentStore.Web.Areas.Customer.ControllerServices.Interfaces;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,4 @@
-namespace BeachEquipmentStore.Common
+namespace Core.Common
 {
     public static class Constants
     {

@@ -1,7 +1,7 @@
 ﻿namespace BeachEquipmentStore.Web.Areas.Admin.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
-    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
+    using static Core.Common.Constants.GeneralApplicationConstants;
     using BeachEquipmentStore.Web.Areas.Admin.Interfaces;
 
     [Area("Admin")]

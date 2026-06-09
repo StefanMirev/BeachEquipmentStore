@@ -1,7 +1,7 @@
 ﻿namespace BeachEquipmentStore.ViewModels.Profile
 {
     using System.ComponentModel.DataAnnotations;
-    using static BeachEquipmentStore.Common.Constants.Messages;
+    using static Core.Common.Constants.Messages;
 
     public class ChangePasswordViewModel
     {

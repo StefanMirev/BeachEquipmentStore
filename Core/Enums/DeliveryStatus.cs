@@ -1,4 +1,4 @@
-﻿namespace BeachEquipmentStore.Common.Enums
+﻿namespace Core.Enums
 {
     public enum DeliveryStatus
     {

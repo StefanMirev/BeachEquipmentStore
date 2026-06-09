@@ -1,8 +1,8 @@
 using BeachEquipmentStore.Services.Interfaces;
 using BeachEquipmentStore.Web.Responses;
-using BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices.Interfaces;
+using BeachEquipmentStore.Web.Areas.Customer.ControllerServices.Interfaces;
 
-namespace BeachEquipmentStore.Web.Areas.Customer.CustomerControllerServices
+namespace BeachEquipmentStore.Web.Areas.Customer.ControllerServices
 {
     public class CategoryControllerService : ICategoryControllerService
     {

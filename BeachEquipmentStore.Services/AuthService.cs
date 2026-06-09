@@ -1,7 +1,7 @@
-namespace BeachEquipmentStore.Services
+﻿namespace BeachEquipmentStore.Services
 {
-    using BeachEquipmentStore.Common.Enums;
-    using BeachEquipmentStore.Common.Helpers;
+    using Core.Enums;
+    using Core.Utilities;
     using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Services.Interfaces;
     using Microsoft.AspNetCore.Authentication;
@@ -10,8 +10,8 @@ namespace BeachEquipmentStore.Services
     using Microsoft.EntityFrameworkCore;
     using System.Security.Claims;
     using System.Text.RegularExpressions;
-    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
-    using static BeachEquipmentStore.Common.Constants.Messages;
+    using static Core.Common.Constants.GeneralApplicationConstants;
+    using static Core.Common.Constants.Messages;
 
     public class AuthService : IAuthService
     {
@@ -26,28 +26,27 @@ namespace BeachEquipmentStore.Services
 
         public async Task<bool> LoginAsync(string email, string password, bool rememberMe)
         {
-            var user = await _allBls.UsersBL.AsQueryable()
-                .FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _allBls.UsersBL.FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
                 return false;
 
-            var adminUser = await _allBls.AdminUsersBL.AsQueryable()
-                .Include(a => a.UserRole)
-                .FirstOrDefaultAsync(a => a.Id == user.Id);
+            var adminUser = await _allBls.AdminUsersBL.FindAsNoTrackingAsync(user.Id);
 
             if (adminUser != null)
             {
                 if (!adminUser.IsActive || !PasswordHasher.VerifyPassword(password, user.PasswordHash))
                     return false;
 
-                await SignInAsync(BuildAdminClaims(user, adminUser), rememberMe);
+                var adminRole = adminUser.UserRoleId.HasValue
+                    ? await _allBls.UserRolesBL.FindAsNoTrackingAsync(adminUser.UserRoleId.Value)
+                    : null;
+
+                await SignInAsync(BuildAdminClaims(user, adminUser, adminRole), rememberMe);
                 return true;
             }
 
-            var customerUser = await _allBls.CustomerUsersBL.AsQueryable()
-                .Include(c => c.UserRole)
-                .FirstOrDefaultAsync(c => c.Id == user.Id);
+            var customerUser = await _allBls.CustomerUsersBL.FindAsync(user.Id);
 
             if (customerUser == null || !customerUser.IsActive)
                 return false;
@@ -78,7 +77,11 @@ namespace BeachEquipmentStore.Services
                 await _allBls.CustomerUsersBL.SaveChangesAsync();
             }
 
-            await SignInAsync(BuildCustomerClaims(user, customerUser), rememberMe);
+            var customerRole = customerUser.UserRoleId.HasValue
+                ? await _allBls.UserRolesBL.FindAsNoTrackingAsync(customerUser.UserRoleId.Value)
+                : null;
+
+            await SignInAsync(BuildCustomerClaims(user, customerUser, customerRole), rememberMe);
             return true;
         }
 
@@ -87,14 +90,13 @@ namespace BeachEquipmentStore.Services
             if (!Regex.IsMatch(password, PasswordPattern))
                 throw new ArgumentException(PasswordInvalid);
 
-            var emailExists = await _allBls.UsersBL.AsQueryable()
+            var emailExists = await _allBls.UsersBL.All()
                 .AnyAsync(u => u.Email == email);
 
             if (emailExists)
                 throw new InvalidOperationException(UserEmailAlreadyExists);
 
-            var defaultRole = await _allBls.UserRolesBL.AsQueryable()
-                .FirstOrDefaultAsync(r => r.RoleType == UserType.Customer && r.IsActive);
+            var defaultRole = await _allBls.UserRolesBL.FirstOrDefaultAsync(r => r.RoleType == UserType.Customer && r.IsActive);
 
             if (defaultRole == null)
             {
@@ -139,7 +141,7 @@ namespace BeachEquipmentStore.Services
                 throw;
             }
 
-            await SignInAsync(BuildCustomerClaims(user, customerUser), false);
+            await SignInAsync(BuildCustomerClaims(user, customerUser, defaultRole), false);
         }
 
         public async Task CreateAdminUserAsync(Guid userId, string firstName, string lastName)
@@ -147,14 +149,13 @@ namespace BeachEquipmentStore.Services
             if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
                 throw new InvalidOperationException(UserNotFound);
 
-            if (await _allBls.CustomerUsersBL.AsQueryable().AnyAsync(c => c.Id == userId))
+            if (await _allBls.CustomerUsersBL.All().AnyAsync(c => c.Id == userId))
                 throw new InvalidOperationException(UserAlreadyCustomer);
 
-            if (await _allBls.AdminUsersBL.AsQueryable().AnyAsync(a => a.Id == userId))
+            if (await _allBls.AdminUsersBL.All().AnyAsync(a => a.Id == userId))
                 throw new InvalidOperationException(UserAlreadyAdmin);
 
-            var adminRole = await _allBls.UserRolesBL.AsQueryable()
-                .FirstOrDefaultAsync(r => r.RoleType == UserType.Admin && r.IsActive);
+            var adminRole = await _allBls.UserRolesBL.FirstOrDefaultAsync(r => r.RoleType == UserType.Admin && r.IsActive);
 
             if (adminRole == null)
             {
@@ -191,7 +192,7 @@ namespace BeachEquipmentStore.Services
             await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-        private static List<Claim> BuildAdminClaims(User user, AdminUser adminUser)
+        private static List<Claim> BuildAdminClaims(User user, AdminUser adminUser, UserRole? role)
         {
             var claims = new List<Claim>
             {
@@ -202,18 +203,18 @@ namespace BeachEquipmentStore.Services
                 new("UserType", "Admin")
             };
 
-            if (adminUser.UserRole != null)
+            if (role != null)
             {
-                claims.Add(new Claim("RoleName", adminUser.UserRole.Name));
-                claims.Add(new Claim("CanRead", adminUser.UserRole.CanRead.ToString().ToLower()));
-                claims.Add(new Claim("CanWrite", adminUser.UserRole.CanWrite.ToString().ToLower()));
-                claims.Add(new Claim("CanDelete", adminUser.UserRole.CanDelete.ToString().ToLower()));
+                claims.Add(new Claim("RoleName", role.Name));
+                claims.Add(new Claim("CanRead", role.CanRead.ToString().ToLower()));
+                claims.Add(new Claim("CanWrite", role.CanWrite.ToString().ToLower()));
+                claims.Add(new Claim("CanDelete", role.CanDelete.ToString().ToLower()));
             }
 
             return claims;
         }
 
-        private static List<Claim> BuildCustomerClaims(User user, CustomerUser customerUser)
+        private static List<Claim> BuildCustomerClaims(User user, CustomerUser customerUser, UserRole? role)
         {
             var claims = new List<Claim>
             {
@@ -224,8 +225,8 @@ namespace BeachEquipmentStore.Services
                 new("UserType", "Customer")
             };
 
-            if (customerUser.UserRole != null)
-                claims.Add(new Claim("RoleName", customerUser.UserRole.Name));
+            if (role != null)
+                claims.Add(new Claim("RoleName", role.Name));
 
             return claims;
         }

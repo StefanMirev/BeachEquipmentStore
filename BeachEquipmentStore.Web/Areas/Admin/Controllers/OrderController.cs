@@ -2,7 +2,7 @@
 {
     using BeachEquipmentStore.Web.Areas.Admin.Interfaces;
     using Microsoft.AspNetCore.Mvc;
-    using static BeachEquipmentStore.Common.Constants.GeneralApplicationConstants;
+    using static Core.Common.Constants.GeneralApplicationConstants;
 
     [Area("Admin")]
     public class OrderController : BaseAdminController

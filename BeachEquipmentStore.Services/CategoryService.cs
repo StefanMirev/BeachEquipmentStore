@@ -1,8 +1,9 @@
-namespace BeachEquipmentStore.Services
+﻿namespace BeachEquipmentStore.Services
 {
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Category;
-    using static BeachEquipmentStore.Common.Constants.Messages;
+    using Microsoft.EntityFrameworkCore;
+    using static Core.Common.Constants.Messages;
 
     public class CategoryService : ICategoryService
     {
@@ -15,21 +16,21 @@ namespace BeachEquipmentStore.Services
 
         public async Task<List<CategoryViewModel>> GetAllCategoriesAsync()
         {
-            var categories = await _allBls.CategoriesBL.GetAllAsync();
-
-            if (!categories.Any())
-            {
-                throw new InvalidOperationException(CategoriesNotFound);
-            }
-
-            return categories
+            var categories = await _allBls.CategoriesBL.All()
                 .Select(c => new CategoryViewModel
                 {
                     Id = c.Id,
                     Name = c.Name,
                     ImageUrl = c.ImageUrl
                 })
-                .ToList();
+                .ToListAsync();
+
+            if (!categories.Any())
+            {
+                throw new InvalidOperationException(CategoriesNotFound);
+            }
+
+            return categories;
         }
     }
 }

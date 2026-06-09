@@ -1,13 +1,19 @@
 namespace BeachEquipmentStore.Services
 {
     using BeachEquipmentStore.Data.Entities;
-    using BeachEquipmentStore.Data.Repositories;
-    using Microsoft.EntityFrameworkCore;
+    using BeachEquipmentStore.Data.Interfaces;
 
-    public class AllBusinessLogics(DbContext context)
+    public class AllBusinessLogics(IDatabase database) : IDisposable
     {
+        private readonly Dictionary<Type, object> _logics = new();
+
         private BaseLogic<T> GetLogic<T>() where T : class
-            => new BaseLogic<T>(new Database<T>(context));
+        {
+            var type = typeof(T);
+            if (!_logics.ContainsKey(type))
+                _logics[type] = new BaseLogic<T>(database);
+            return (BaseLogic<T>)_logics[type];
+        }
 
         public BaseLogic<User> UsersBL => GetLogic<User>();
         public BaseLogic<CustomerUser> CustomerUsersBL => GetLogic<CustomerUser>();
@@ -23,5 +29,7 @@ namespace BeachEquipmentStore.Services
         public BaseLogic<Product> ProductsBL => GetLogic<Product>();
         public BaseLogic<ProductLog> ProductLogsBL => GetLogic<ProductLog>();
         public BaseLogic<ProductOrder> ProductOrdersBL => GetLogic<ProductOrder>();
+
+        public void Dispose() => _logics.Clear();
     }
 }

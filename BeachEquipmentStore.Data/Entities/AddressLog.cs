@@ -1,8 +1,8 @@
-namespace BeachEquipmentStore.Data.Entities
+﻿namespace BeachEquipmentStore.Data.Entities
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel.DataAnnotations;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.Address;
+    using static Core.Common.Constants.EntityValidationConstants.Address;
 
     public class AddressLog : IEntity
     {

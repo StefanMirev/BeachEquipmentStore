@@ -1,11 +1,11 @@
-namespace BeachEquipmentStore.Services
+﻿namespace BeachEquipmentStore.Services
 {
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Category;
     using BeachEquipmentStore.ViewModels.Manufacturer;
     using BeachEquipmentStore.ViewModels.Product;
     using Microsoft.EntityFrameworkCore;
-    using static BeachEquipmentStore.Common.Constants.Messages;
+    using static Core.Common.Constants.Messages;
 
     public class ProductService : IProductService
     {
@@ -18,11 +18,11 @@ namespace BeachEquipmentStore.Services
 
         public async Task<ExtendedProductViewModel> GetProductByIdAsync(Guid productId)
         {
-            var product = await _allBls.ProductsBL.AsQueryable().AsNoTracking()
-                .Include(p => p.Manufacturer)
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(p => p.Id == productId)
+            var product = await _allBls.ProductsBL.FindAsNoTrackingAsync(productId)
                 ?? throw new InvalidOperationException(ProductNotFound);
+
+            var manufacturer = await _allBls.ManufacturersBL.SearchFor(m => m.Id == product.ManufacturerId).FirstOrDefaultAsync();
+            var category = await _allBls.CategoriesBL.SearchFor(c => c.Id == product.CategoryId).FirstOrDefaultAsync();
 
             return new ExtendedProductViewModel
             {
@@ -35,22 +35,20 @@ namespace BeachEquipmentStore.Services
                 Quantity = product.Stock,
                 Manufacturer = new ManufacturerViewModel
                 {
-                    Id = product.Manufacturer.Id,
-                    Name = product.Manufacturer.Name
+                    Id = manufacturer!.Id,
+                    Name = manufacturer.Name
                 },
                 Category = new CategoryViewModel
                 {
-                    Id = product.Category.Id,
-                    Name = product.Category.Name
+                    Id = category!.Id,
+                    Name = category.Name
                 }
             };
         }
 
         public async Task<List<ProductViewModel>> GetAllProductsAsync()
         {
-            var products = await _allBls.ProductsBL.GetAllAsync();
-
-            return products
+            return await _allBls.ProductsBL.All()
                 .Select(p => new ProductViewModel
                 {
                     Id = p.Id,
@@ -59,12 +57,20 @@ namespace BeachEquipmentStore.Services
                     Price = p.Price,
                     Quantity = p.Stock
                 })
-                .ToList();
+                .ToListAsync();
         }
 
         public async Task<List<ProductViewModel>> GetRandomProductsInStockAsync()
         {
-            var productsInStock = await _allBls.ProductsBL.GetAllAsync(p => p.Stock > 0);
+            var productsInStock = await _allBls.ProductsBL.SearchFor(p => p.Stock > 0)
+                .Select(p => new ProductViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    Price = p.Price
+                })
+                .ToListAsync();
 
             if (!productsInStock.Any())
             {
@@ -74,13 +80,6 @@ namespace BeachEquipmentStore.Services
             return productsInStock
                 .OrderBy(p => Guid.NewGuid())
                 .Take(9)
-                .Select(p => new ProductViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    ImageUrl = p.ImageUrl,
-                    Price = p.Price
-                })
                 .ToList();
         }
 
@@ -94,7 +93,7 @@ namespace BeachEquipmentStore.Services
 
         public async Task<ProductSearchViewModel> GetFilteredProductsAsync(string keyword, int categoryId, int manufacturerId)
         {
-            var filteredProducts = _allBls.ProductsBL.AsQueryable();
+            var filteredProducts = _allBls.ProductsBL.All();
 
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -117,8 +116,8 @@ namespace BeachEquipmentStore.Services
                 filteredProducts = filteredProducts.Where(p => p.Manufacturer.Id == manufacturerId);
             }
 
-            var categories = await _allBls.CategoriesBL.GetAllAsync();
-            var manufacturers = await _allBls.ManufacturersBL.GetAllAsync();
+            var categories = await _allBls.CategoriesBL.All().ToListAsync();
+            var manufacturers = await _allBls.ManufacturersBL.All().ToListAsync();
 
             return new ProductSearchViewModel
             {

@@ -1,9 +1,9 @@
-namespace BeachEquipmentStore.Infrastructure.Extensions
+﻿namespace BeachEquipmentStore.Infrastructure.Extensions
 {
-    using BeachEquipmentStore.Common.Enums;
+    using Core.Enums;
     using BeachEquipmentStore.Data;
     using BeachEquipmentStore.Data.Entities;
-    using BeachEquipmentStore.Common.Helpers;
+    using Core.Utilities;
     using BeachEquipmentStore.Services;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.EntityFrameworkCore;
@@ -43,8 +43,10 @@ namespace BeachEquipmentStore.Infrastructure.Extensions
                 }
             }
 
-            services.AddScoped<AllBusinessLogics>(sp =>
-                new AllBusinessLogics(sp.GetRequiredService<EquipmentStoreDbContext>()));
+            services.AddScoped<BeachEquipmentStore.Data.Interfaces.IDatabase>(sp =>
+                new BeachEquipmentStore.Data.Database<object>(sp.GetRequiredService<EquipmentStoreDbContext>()));
+
+            services.AddScoped<AllBusinessLogics>();
         }
 
         public static async Task<IApplicationBuilder> SeedAdministratorAsync(
@@ -56,24 +58,22 @@ namespace BeachEquipmentStore.Infrastructure.Extensions
             using IServiceScope scope = app.ApplicationServices.CreateScope();
             var allBls = scope.ServiceProvider.GetRequiredService<AllBusinessLogics>();
 
-            var existingUser = await allBls.UsersBL.AsQueryable()
-                .FirstOrDefaultAsync(u => u.Email == email);
+            var existingUser = await allBls.UsersBL.FirstOrDefaultAsync(u => u.Email == email);
 
             if (existingUser != null)
             {
-                var adminAlreadyExists = await allBls.AdminUsersBL.AsQueryable()
+                var adminAlreadyExists = await allBls.AdminUsersBL.All()
                     .AnyAsync(a => a.Id == existingUser.Id);
 
                 if (adminAlreadyExists) return app;
 
-                var customerExists = await allBls.CustomerUsersBL.AsQueryable()
+                var customerExists = await allBls.CustomerUsersBL.All()
                     .AnyAsync(c => c.Id == existingUser.Id);
 
                 if (customerExists) return app;
             }
 
-            var adminRole = await allBls.UserRolesBL.AsQueryable()
-                .FirstOrDefaultAsync(r => r.RoleType == UserType.Admin && r.IsActive);
+            var adminRole = await allBls.UserRolesBL.FirstOrDefaultAsync(r => r.RoleType == UserType.Admin && r.IsActive);
 
             if (adminRole == null)
             {

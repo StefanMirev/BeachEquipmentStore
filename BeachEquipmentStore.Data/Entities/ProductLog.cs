@@ -1,8 +1,8 @@
-namespace BeachEquipmentStore.Data.Entities
+﻿namespace BeachEquipmentStore.Data.Entities
 {
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel.DataAnnotations;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.Product;
+    using static Core.Common.Constants.EntityValidationConstants.Product;
 
     public class ProductLog : IEntity
     {

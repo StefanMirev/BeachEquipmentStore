@@ -1,10 +1,10 @@
-namespace BeachEquipmentStore.Services
+﻿namespace BeachEquipmentStore.Services
 {
     using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Cart;
     using Microsoft.EntityFrameworkCore;
-    using static BeachEquipmentStore.Common.Constants.Messages;
+    using static Core.Common.Constants.Messages;
 
     public class CartService : ICartService
     {
@@ -27,8 +27,7 @@ namespace BeachEquipmentStore.Services
             using var transaction = _allBls.CartItemsBL.GetTransactionProxy();
             try
             {
-                var existingCartItem = await _allBls.CartItemsBL.AsQueryable()
-                    .FirstOrDefaultAsync(ci => ci.CustomerUserId == userId && ci.ProductId == productId);
+                var existingCartItem = await _allBls.CartItemsBL.FirstOrDefaultAsync(ci => ci.CustomerUserId == userId && ci.ProductId == productId);
 
                 if (existingCartItem != null)
                     existingCartItem.Quantity += quantity;
@@ -62,20 +61,25 @@ namespace BeachEquipmentStore.Services
                 throw new InvalidOperationException(UserNotFound);
             }
 
-            var cartItems = await _allBls.CartItemsBL.GetAllAsync(ci => ci.CustomerUserId == userId);
-            var productIds = cartItems.Select(ci => ci.ProductId).ToList();
-            var products = await _allBls.ProductsBL.GetAllAsync(p => productIds.Contains(p.Id));
+            var cartItems = await _allBls.CartItemsBL.SearchFor(ci => ci.CustomerUserId == userId)
+                .OrderByDescending(ci => ci.CreatedAt)
+                .ToListAsync();
 
-            return products
-                .Join(cartItems, p => p.Id, ci => ci.ProductId, (p, ci) => new { p, ci })
-                .OrderByDescending(x => x.ci.CreatedAt)
-                .Select(x => new CartProductViewModel
+            if (!cartItems.Any())
+                return new List<CartProductViewModel>();
+
+            var productIds = cartItems.Select(ci => ci.ProductId).ToList();
+            var products = await _allBls.ProductsBL.SearchFor(p => productIds.Contains(p.Id)).ToListAsync();
+            var productMap = products.ToDictionary(p => p.Id);
+
+            return cartItems
+                .Select(ci => new CartProductViewModel
                 {
-                    Id = x.p.Id,
-                    Name = x.p.Name,
-                    ImageUrl = x.p.ImageUrl,
-                    Price = x.p.Price,
-                    CartQuantity = x.ci.Quantity
+                    Id = ci.ProductId,
+                    Name = productMap[ci.ProductId].Name,
+                    ImageUrl = productMap[ci.ProductId].ImageUrl,
+                    Price = productMap[ci.ProductId].Price,
+                    CartQuantity = ci.Quantity
                 })
                 .ToList();
         }
@@ -90,7 +94,8 @@ namespace BeachEquipmentStore.Services
             using var transaction = _allBls.CartItemsBL.GetTransactionProxy();
             try
             {
-                var cartItems = await _allBls.CartItemsBL.GetAllAsync(p => p.CustomerUserId == userId);
+                var cartItems = await _allBls.CartItemsBL.SearchFor(p => p.CustomerUserId == userId)
+                    .ToListAsync();
 
                 foreach (var cartItem in cartItems)
                 {
@@ -126,7 +131,7 @@ namespace BeachEquipmentStore.Services
                 var product = await _allBls.ProductsBL.FindAsync(productId)
                     ?? throw new InvalidOperationException(ProductNotFound);
 
-                var cartItem = await _allBls.CartItemsBL.AsQueryable()
+                var cartItem = await _allBls.CartItemsBL.All()
                     .FirstOrDefaultAsync(ci => ci.CustomerUserId == userId && ci.ProductId == productId);
 
                 product.Stock += cartItem!.Quantity;

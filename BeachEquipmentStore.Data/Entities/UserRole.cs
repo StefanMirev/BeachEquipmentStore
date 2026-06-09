@@ -1,10 +1,10 @@
-namespace BeachEquipmentStore.Data.Entities
+﻿namespace BeachEquipmentStore.Data.Entities
 {
-    using BeachEquipmentStore.Common.Enums;
+    using Core.Enums;
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.UserRole;
+    using static Core.Common.Constants.EntityValidationConstants.UserRole;
 
     public class UserRole
     {

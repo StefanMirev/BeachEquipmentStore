@@ -1,6 +1,6 @@
 ﻿namespace BeachEquipmentStore.Data.Entities
 {
-    using BeachEquipmentStore.Common.Enums;
+    using Core.Enums;
     using Microsoft.EntityFrameworkCore;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;

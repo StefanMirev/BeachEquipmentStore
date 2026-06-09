@@ -4,7 +4,7 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using static BeachEquipmentStore.Common.Constants.EntityValidationConstants.Product;
+    using static Core.Common.Constants.EntityValidationConstants.Product;
 
     public class Product : IEntity
     {

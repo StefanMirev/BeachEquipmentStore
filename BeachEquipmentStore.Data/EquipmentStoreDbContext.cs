@@ -55,17 +55,17 @@ namespace BeachEquipmentStore.Data
                 .IsUnique();
 
             // CustomerUser: shared PK — Id is both the PK of CustomerUser and the FK to Users.Id
-            builder.Entity<CustomerUser>()
-                .HasOne<User>()
-                .WithOne()
-                .HasForeignKey<CustomerUser>(e => e.Id)
+            builder.Entity<User>()
+                .HasOne(u => u.AdminUser)
+                .WithOne(a => a.User)
+                .HasForeignKey<AdminUser>(a => a.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // AdminUser: shared PK — same pattern
-            builder.Entity<AdminUser>()
-                .HasOne<User>()
-                .WithOne()
-                .HasForeignKey<AdminUser>(e => e.Id)
+            builder.Entity<User>()
+                .HasOne(u => u.CustomerUser)
+                .WithOne(c => c.User)
+                .HasForeignKey<CustomerUser>(c => c.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // UserRole: prevent deletion if still assigned to any user

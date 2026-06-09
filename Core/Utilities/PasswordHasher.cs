@@ -1,4 +1,4 @@
-namespace BeachEquipmentStore.Common.Helpers
+namespace Core.Utilities
 {
     using Microsoft.AspNetCore.Cryptography.KeyDerivation;
     using System.Security.Cryptography;

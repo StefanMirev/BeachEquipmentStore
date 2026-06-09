@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BeachEquipmentStore.Common\BeachEquipmentStore.Common.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\BeachEquipmentStore.Data\BeachEquipmentStore.Data.csproj" />
     <ProjectReference Include="..\BeachEquipmentStore.Services\BeachEquipmentStore.Services.csproj" />
   </ItemGroup>

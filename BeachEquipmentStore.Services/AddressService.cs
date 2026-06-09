@@ -1,10 +1,10 @@
-namespace BeachEquipmentStore.Services
+﻿namespace BeachEquipmentStore.Services
 {
     using BeachEquipmentStore.Data.Entities;
     using BeachEquipmentStore.Services.Interfaces;
     using BeachEquipmentStore.ViewModels.Profile;
     using Microsoft.EntityFrameworkCore;
-    using static BeachEquipmentStore.Common.Constants.Messages;
+    using static Core.Common.Constants.Messages;
 
     public class AddressService : IAddressService
     {
@@ -22,14 +22,7 @@ namespace BeachEquipmentStore.Services
                 throw new ArgumentException(UserNotFound);
             }
 
-            var addresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerUserId == userId);
-
-            if (!addresses.Any())
-            {
-                throw new InvalidOperationException(AddressNotFound);
-            }
-
-            return addresses
+            var addresses = await _allBls.AddressesBL.SearchFor(a => a.CustomerUserId == userId)
                 .Select(a => new AddressDetailsViewModel
                 {
                     Id = a.Id,
@@ -41,7 +34,14 @@ namespace BeachEquipmentStore.Services
                 })
                 .OrderByDescending(a => a.IsPrimaryAddress)
                 .ThenBy(a => a.CreatedAt)
-                .ToList();
+                .ToListAsync();
+
+            if (!addresses.Any())
+            {
+                throw new InvalidOperationException(AddressNotFound);
+            }
+
+            return addresses;
         }
 
         public async Task<AddressDetailsViewModel> GetAddressDetailsByIdAsync(Guid addressId)
@@ -68,9 +68,7 @@ namespace BeachEquipmentStore.Services
             if (await _allBls.UsersBL.FindAsNoTrackingAsync(userId) == null)
                 throw new ArgumentException(UserNotFound);
 
-            var userAddresses = await _allBls.AddressesBL.GetAllAsync(a => a.CustomerUserId == userId);
-
-            if (userAddresses.Count >= 10)
+            if (await _allBls.AddressesBL.All().CountAsync(a => a.CustomerUserId == userId) >= 10)
                 throw new InvalidOperationException(AddressLimitReached);
 
             if (!int.TryParse(zipCode, out int _))
@@ -81,8 +79,7 @@ namespace BeachEquipmentStore.Services
             {
                 if (isPrimaryAddress)
                 {
-                    var primaryAddress = await _allBls.AddressesBL.AsQueryable()
-                        .FirstOrDefaultAsync(a => a.IsPrimaryAddress);
+                    var primaryAddress = await _allBls.AddressesBL.FirstOrDefaultAsync(a => a.IsPrimaryAddress);
 
                     if (primaryAddress != null)
                         primaryAddress.IsPrimaryAddress = false;
